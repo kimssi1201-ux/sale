@@ -9,7 +9,7 @@
       content="생활용품과 소형가전을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./manual.css?v=top-search-20260604" />
+    <link rel="stylesheet" href="./manual.css?v=scale-catalog-20260604" />
   </head>
   <body>
     <header class="site-header">
@@ -36,11 +36,18 @@
           <input id="search" type="search" placeholder="보풀제거기, 세제, 생활용품" autocomplete="off" />
         </div>
 
-        <div class="category-tabs" aria-label="카테고리 선택">
+        <div class="sort-box">
+          <label for="sort">정렬</label>
+          <select id="sort">
+            <option value="latest">최신순</option>
+            <option value="price-low">낮은 가격순</option>
+            <option value="discount-high">높은 할인율순</option>
+            <option value="review-high">상품평 많은순</option>
+          </select>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs" aria-label="카테고리 선택">
           <button class="category-tab is-active" type="button" data-category="전체">전체</button>
-          <button class="category-tab" type="button" data-category="생활가전">생활가전</button>
-          <button class="category-tab" type="button" data-category="생활용품">생활용품</button>
-          <button class="category-tab" type="button" data-category="식품">식품</button>
         </div>
       </section>
 
@@ -54,7 +61,7 @@
         <div class="hero-copy">
           <h1 id="heroName">필립스 보풀제거기 GC-026 블루</h1>
           <p id="heroSummary">
-            옷에 올라온 보풀이 눈에 뜰 때 바로 정리하기 좋은 건전지식 보풀제거기입니다.
+            옷에 올라온 보풀이 눈에 띌 때 바로 정리하기 좋은 건전지식 보풀제거기입니다.
           </p>
 
           <div class="price-board" aria-label="상품 가격 정보">
@@ -132,6 +139,9 @@
           </div>
 
           <div id="productGrid" class="product-grid" aria-live="polite"></div>
+          <div class="catalog-actions">
+            <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
+          </div>
         </section>
       </section>
     </main>
@@ -181,6 +191,6 @@
       </article>
     </template>
 
-    <script src="./app.js?v=lg-freezer-20260604"></script>
+    <script src="./app.js?v=scale-catalog-20260604"></script>
   </body>
 </html>

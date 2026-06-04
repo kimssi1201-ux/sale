@@ -409,55 +409,7 @@ img {
   background: var(--green);
 }
 
-.deal-focus {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-  gap: 26px;
-  width: min(1180px, calc(100% - 40px));
-  margin: 0 auto 18px;
-  padding: 28px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
-}
-
-.deal-focus h2 {
-  margin: 14px 0 10px;
-  font-size: 28px;
-  line-height: 1.24;
-}
-
-.deal-focus p:not(.kicker) {
-  margin: 0;
-  color: #4c5661;
-  line-height: 1.75;
-  word-break: keep-all;
-}
-
-.point-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  align-content: start;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.point-list li {
-  min-height: 52px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px;
-  background: var(--surface-soft);
-  color: #2d3741;
-  font-weight: 900;
-}
-
 .content-layout {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 18px;
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto 82px;
 }
@@ -682,7 +634,7 @@ img {
   bottom: 12px;
   z-index: 25;
   display: none;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   width: min(420px, calc(100% - 24px));
   overflow: hidden;
   border: 1px solid var(--line);
@@ -715,17 +667,12 @@ img {
   }
 
   .store-hero,
-  .deal-focus,
   .content-layout {
     grid-template-columns: 1fr;
   }
 
   .hero-media {
     min-height: 360px;
-  }
-
-  .side-panel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .product-card {
@@ -747,7 +694,6 @@ img {
   .store-hero,
   .quick-strip,
   .shop-toolbar,
-  .deal-focus,
   .content-layout {
     width: calc(100% - 24px);
   }
@@ -771,9 +717,7 @@ img {
   }
 
   .price-board,
-  .quick-strip,
-  .point-list,
-  .side-panel {
+  .quick-strip {
     grid-template-columns: 1fr;
   }
 

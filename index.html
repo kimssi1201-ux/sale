@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>픽앤샵 | 추천 상품 큐레이션</title>
+    <meta
+      name="description"
+      content="쿠팡파트너스 링크를 쇼핑몰처럼 정리하는 추천 상품 큐레이션 예시 화면입니다."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="픽앤샵 홈">
+        <span class="brand-mark">P</span>
+        <span>
+          <strong>픽앤샵</strong>
+          <small>추천 상품 큐레이션</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a href="#products">오늘의 추천</a>
+        <a href="#categories">카테고리</a>
+        <a href="#policy">운영 고지</a>
+      </nav>
+
+      <a class="header-cta" href="#products">상품 보기</a>
+    </header>
+
+    <main id="top">
+      <section class="notice-strip" id="policy" aria-label="파트너스 고지">
+        <strong>파트너스 고지</strong>
+        <span>쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.</span>
+        <span>결제와 배송은 쿠팡에서 진행됩니다.</span>
+      </section>
+
+      <section class="hero-band" aria-label="추천 상품 홈">
+        <div class="hero-copy">
+          <p class="eyebrow">오늘 업데이트된 추천 링크</p>
+          <h1>많은 쿠팡파트너스 링크를 한 화면에서 보기 좋게 정리합니다.</h1>
+          <p class="hero-text">
+            가격을 과장해서 보여주기보다 카테고리, 용도, 추천 이유를 먼저 보여주고
+            구매는 쿠팡 상품 페이지에서 확인하도록 연결합니다.
+          </p>
+        </div>
+
+        <div class="hero-panel" aria-label="추천 요약">
+          <div>
+            <span class="metric">24</span>
+            <span class="metric-label">오늘 추천</span>
+          </div>
+          <div>
+            <span class="metric">8</span>
+            <span class="metric-label">카테고리</span>
+          </div>
+          <div>
+            <span class="metric">1분</span>
+            <span class="metric-label">둘러보기</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar-band" id="categories" aria-label="상품 검색과 카테고리">
+        <div class="search-box">
+          <label for="search">검색</label>
+          <input id="search" type="search" placeholder="청소기, 캠핑, 반려동물" autocomplete="off" />
+        </div>
+
+        <div class="category-tabs" aria-label="카테고리 필터">
+          <button class="category-tab is-active" type="button" data-category="전체">전체</button>
+          <button class="category-tab" type="button" data-category="생활가전">생활가전</button>
+          <button class="category-tab" type="button" data-category="주방">주방</button>
+          <button class="category-tab" type="button" data-category="디지털">디지털</button>
+          <button class="category-tab" type="button" data-category="반려">반려</button>
+          <button class="category-tab" type="button" data-category="육아">육아</button>
+          <button class="category-tab" type="button" data-category="캠핑">캠핑</button>
+          <button class="category-tab" type="button" data-category="뷰티">뷰티</button>
+          <button class="category-tab" type="button" data-category="식품">식품</button>
+        </div>
+      </section>
+
+      <section class="content-layout" id="products" aria-label="추천 상품 목록">
+        <aside class="filter-panel" aria-label="상품 필터">
+          <div class="filter-block">
+            <h2>필터</h2>
+            <label>
+              <input type="checkbox" name="filter" value="오늘추천" checked />
+              오늘 추천
+            </label>
+            <label>
+              <input type="checkbox" name="filter" value="후기중심" />
+              후기 중심
+            </label>
+            <label>
+              <input type="checkbox" name="filter" value="선물추천" />
+              선물 추천
+            </label>
+          </div>
+
+          <div class="filter-block">
+            <h2>가격 표시</h2>
+            <p>가격은 쿠팡에서 확인</p>
+            <p class="muted">상품 가격과 배송 조건은 수시로 바뀔 수 있습니다.</p>
+          </div>
+
+          <div class="filter-block compact">
+            <span class="status-dot"></span>
+            <span>API 자동 연동 준비 화면</span>
+          </div>
+        </aside>
+
+        <div class="product-area">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">추천 상품</p>
+              <h2>지금 보기 좋은 상품</h2>
+            </div>
+            <span id="resultCount" class="result-count">0개</span>
+          </div>
+
+          <div id="productGrid" class="product-grid" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-tabs" aria-label="모바일 메뉴">
+      <a href="#top">홈</a>
+      <a href="#categories">검색</a>
+      <a href="#products">상품</a>
+      <a href="#policy">고지</a>
+    </nav>
+
+    <template id="productTemplate">
+      <article class="product-card">
+        <a class="product-image" href="#" target="_blank" rel="nofollow sponsored noopener">
+          <span class="product-badge"></span>
+        </a>
+        <div class="product-content">
+          <div class="product-meta">
+            <span class="product-category"></span>
+            <span class="product-score"></span>
+          </div>
+          <h3></h3>
+          <p class="product-summary"></p>
+          <div class="tag-row"></div>
+          <div class="product-actions">
+            <span class="price-note">가격은 쿠팡에서 확인</span>
+            <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">
+              쿠팡에서 보기
+            </a>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

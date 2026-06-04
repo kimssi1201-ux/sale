@@ -39,6 +39,7 @@ const state = {
 };
 
 const featuredProduct = products[0];
+const featuredProductId = featuredProduct.id;
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
@@ -82,14 +83,14 @@ function matchesProduct(product) {
 }
 
 function renderProducts() {
-  const visibleProducts = products.filter(matchesProduct);
+  const visibleProducts = products.filter((product) => product.id !== featuredProductId).filter(matchesProduct);
   grid.innerHTML = "";
   resultCount.textContent = `${visibleProducts.length}개`;
 
   if (visibleProducts.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "조건에 맞는 상품이 없습니다.";
+    empty.textContent = "함께 볼 상품을 추가하면 여기에 표시됩니다.";
     grid.append(empty);
     return;
   }

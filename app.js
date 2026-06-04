@@ -3,7 +3,7 @@ const products = [
     id: "philips-lint-remover",
     name: "필립스 보풀제거기 GC-026 블루",
     category: "생활가전",
-    badge: "대표 추천",
+    badge: "생활가전",
     review: "39,981개 상품평",
     priceLabel: "와우쿠폰할인",
     price: "9,720원",
@@ -58,7 +58,6 @@ function setLink(selector, url, label) {
 }
 
 function renderHero(product) {
-  setText("#heroBadge", product.badge);
   setText("#heroName", product.name);
   setText("#heroSummary", product.summary);
   setText("#heroSalePrice", product.price);

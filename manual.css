@@ -117,7 +117,11 @@
   white-space: nowrap;
 }
 
-.price-board .sale-price-value {
+.price-board div:first-child strong {
+  color: #171b22;
+}
+
+.price-board div .sale-price-value {
   color: #db4f35;
 }
 

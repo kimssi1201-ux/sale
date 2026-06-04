@@ -1,8 +1,8 @@
 /* Product-specific overrides can stay here when new Coupang links are added. */
 
 .store-hero {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
   gap: 0;
   padding: 0;
   overflow: hidden;
@@ -13,21 +13,21 @@
 .hero-media {
   order: 1;
   width: 100%;
-  min-height: 300px;
+  min-height: 512px;
   border: 0;
-  border-bottom: 1px solid #d7ddd5;
+  border-right: 1px solid #d7ddd5;
   border-radius: 0;
   background: #fff;
 }
 
 .hero-media img {
-  max-height: 280px;
+  max-height: 360px;
   padding: 24px;
 }
 
 .hero-copy {
   order: 2;
-  padding: 18px;
+  padding: 28px 22px 22px;
 }
 
 .hero-copy h1 {
@@ -50,7 +50,7 @@
 .summary-highlight {
   color: var(--coral-dark);
   font-weight: 900;
-  background: linear-gradient(180deg, transparent 58%, rgba(219, 79, 53, 0.16) 58%);
+  background: linear-gradient(180deg, transparent 54%, rgba(255, 218, 74, 0.58) 54%);
   border-radius: 3px;
   padding: 0 2px;
 }
@@ -148,12 +148,16 @@
 
 @media (max-width: 720px) {
   .store-hero {
+    display: flex;
+    flex-direction: column;
     width: calc(100% - 12px);
     margin-top: 8px;
   }
 
   .hero-media {
     min-height: 238px;
+    border-right: 0;
+    border-bottom: 1px solid #d7ddd5;
   }
 
   .hero-media img {

@@ -82,8 +82,13 @@
 }
 
 .price-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
   width: 100%;
+  max-width: none;
   margin-top: 18px;
+  overflow: hidden;
   border: 1px solid #d7ddd5;
   border-radius: 8px;
   background: #d7ddd5;
@@ -96,17 +101,20 @@
 }
 
 .price-board span {
+  display: block;
   color: #68707b;
   font-size: 13px;
   font-weight: 900;
 }
 
 .price-board strong {
+  display: block;
   margin-top: 7px;
   color: #171b22;
   font-size: 22px;
   line-height: 1.05;
   font-weight: 950;
+  white-space: nowrap;
 }
 
 .price-board div:first-child strong {

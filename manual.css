@@ -1,1 +1,30 @@
 /* Product-specific overrides can stay here when new Coupang links are added. */
+
+.product-summary {
+  color: #3d4752;
+}
+
+.summary-highlight {
+  color: var(--coral-dark);
+  font-weight: 900;
+  background: linear-gradient(180deg, transparent 58%, rgba(219, 79, 53, 0.16) 58%);
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.benefit-list {
+  gap: 10px;
+  margin: 2px 0 0;
+  padding: 2px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.benefit-list li {
+  padding-left: 20px;
+  color: #202932;
+  font-weight: 900;
+}
+
+.benefit-list li::before {
+  background: #b66a16;
+}

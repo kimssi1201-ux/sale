@@ -9,7 +9,7 @@
       content="생활용품과 소형가전을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./manual.css?v=price-board-fixed-20260604" />
+    <link rel="stylesheet" href="./manual.css?v=price-four-board-20260604" />
   </head>
   <body>
     <header class="site-header">
@@ -45,12 +45,16 @@
 
           <div class="price-board" aria-label="상품 가격 정보">
             <div>
-              <span>쿠폰가</span>
-              <strong id="heroSalePrice">9,720원</strong>
+              <span>정가</span>
+              <strong id="heroOriginalPrice">25,000원</strong>
             </div>
             <div>
-              <span>정가 대비</span>
+              <span>할인율</span>
               <strong id="heroDiscount">61%</strong>
+            </div>
+            <div>
+              <span>할인가</span>
+              <strong id="heroSalePrice" class="sale-price-value">9,720원</strong>
             </div>
             <div>
               <span>상품평</span>
@@ -154,12 +158,16 @@
           <div class="card-bottom">
             <div class="price-board card-price-board" aria-label="상품 가격 정보">
               <div>
-                <span class="card-price-label"></span>
-                <strong class="card-price-value"></strong>
+                <span>정가</span>
+                <strong class="card-original-price-value"></strong>
               </div>
               <div>
                 <span class="card-discount-label"></span>
                 <strong class="card-discount-value"></strong>
+              </div>
+              <div>
+                <span>할인가</span>
+                <strong class="card-sale-price-value sale-price-value"></strong>
               </div>
               <div>
                 <span class="card-review-label"></span>

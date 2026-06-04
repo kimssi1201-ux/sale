@@ -692,6 +692,23 @@ img {
 }
 
 @media (max-width: 720px) {
+  body {
+    font-size: 16px;
+  }
+
+  .site-header {
+    min-height: 58px;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .brand-copy strong {
+    font-size: 18px;
+  }
+
   .header-cta {
     display: none;
   }
@@ -706,25 +723,58 @@ img {
 
   .notice-bar {
     padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.45;
   }
 
   .store-hero {
-    gap: 22px;
+    gap: 16px;
     margin-top: 12px;
-    padding: 22px;
+    padding: 16px;
   }
 
   .hero-copy h1 {
-    font-size: 38px;
+    font-size: 30px;
+    line-height: 1.16;
   }
 
   .hero-copy p {
-    font-size: 17px;
+    font-size: 15.5px;
+    line-height: 1.62;
   }
 
-  .price-board,
+  .price-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .quick-strip {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .price-board div {
+    min-height: 64px;
+    padding: 10px;
+  }
+
+  .price-board span {
+    font-size: 12px;
+  }
+
+  .price-board strong {
+    font-size: 19px;
+  }
+
+  .quick-strip div {
+    padding: 10px;
+  }
+
+  .quick-strip strong {
+    font-size: 14px;
+  }
+
+  .quick-strip span {
+    font-size: 12px;
+    line-height: 1.35;
   }
 
   .hero-actions,
@@ -740,30 +790,90 @@ img {
     width: 100%;
   }
 
+  .primary-shop-link {
+    min-height: 50px;
+  }
+
+  .shop-toolbar {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .search-box input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
   .category-tabs {
     justify-content: flex-start;
   }
 
   .category-tab {
     flex: 1 1 auto;
+    min-height: 38px;
+    padding: 0 10px;
+    font-size: 14px;
   }
 
   .hero-media {
-    min-height: 310px;
+    min-height: 230px;
   }
 
   .hero-media img,
   .product-photo {
-    padding: 20px;
+    padding: 16px;
+  }
+
+  .hero-media img {
+    max-height: 230px;
+  }
+
+  .product-media {
+    min-height: 230px;
+  }
+
+  .product-photo {
+    max-height: 220px;
   }
 
   .product-content {
-    padding: 18px;
+    gap: 12px;
+    padding: 16px;
   }
 
-  .product-card h3,
+  .section-head h2 {
+    font-size: 24px;
+  }
+
+  .kicker,
+  .result-count {
+    font-size: 13px;
+  }
+
+  .product-meta {
+    font-size: 13.5px;
+  }
+
+  .product-card h3 {
+    font-size: 22px;
+  }
+
+  .product-summary {
+    font-size: 16px;
+    line-height: 1.66;
+  }
+
+  .benefit-list li {
+    font-size: 15px;
+  }
+
   .price-value {
-    font-size: 25px;
+    font-size: 24px;
+  }
+
+  .buy-link {
+    min-height: 46px;
+    font-size: 16px;
   }
 
   .mobile-tabs {

@@ -28,3 +28,54 @@
 .benefit-list li::before {
   background: #b66a16;
 }
+
+.price-board {
+  width: 100%;
+  margin-top: 18px;
+  border: 1px solid #d7ddd5;
+  border-radius: 8px;
+  background: #d7ddd5;
+}
+
+.price-board div {
+  min-height: 68px;
+  padding: 11px 14px;
+  background: #fbfcfa;
+}
+
+.price-board span {
+  color: #68707b;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.price-board strong {
+  margin-top: 7px;
+  color: #171b22;
+  font-size: 22px;
+  line-height: 1.05;
+  font-weight: 950;
+}
+
+.price-board div:first-child strong {
+  color: #db4f35;
+}
+
+@media (max-width: 720px) {
+  .price-board {
+    margin-top: 16px;
+  }
+
+  .price-board div {
+    min-height: 68px;
+    padding: 10px 8px;
+  }
+
+  .price-board span {
+    font-size: 12px;
+  }
+
+  .price-board strong {
+    font-size: 20px;
+  }
+}

@@ -1,14 +1,35 @@
 const products = [
   {
-    id: "laundry-detergent",
+    id: "philips-lint-remover",
+    name: "필립스 보풀제거기 GC-026 블루",
+    category: "생활가전",
+    badge: "대표 추천",
+    review: "39,981개 상품평",
+    priceLabel: "와우쿠폰할인",
+    price: "9,720원",
+    discount: "61%",
+    productUrl: "https://www.coupang.com/vp/products/4947594003?itemId=6529631478",
+    imageUrl:
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/590703716526441-30a6e6a6-012c-485f-ac94-65ca652f640e.jpg",
+    summary:
+      "옷에 생긴 보풀이 신경 쓰일 때 바로 정리하기 좋은 필립스 GC-026 보풀제거기입니다. 건전지식이라 콘센트 위치를 신경 쓰지 않아도 되고, 3중날 구조로 니트와 기본 의류 보풀을 빠르게 다듬기 좋습니다. 1개 구성, 블루 색상이며 가격과 쿠폰은 쿠팡 상품 페이지에서 최종 확인하세요.",
+    benefits: ["3중날로 촘촘한 보풀 정리", "건전지식이라 자리 이동이 편함", "보풀함 분리로 관리가 간단함"]
+  },
+  {
+    id: "touch-laundry-detergent",
     name: "터치 라이트 고농축 세탁세제 라벤더 2.5L 4개",
     category: "생활용품",
-    imageUrl: "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/6481/a19cda8a3902ae9970a9b2e53df0e3ab397eccc492871845a329d9f8e166.jpg",
-    productUrl: "https://link.coupang.com/a/eiK4wyCzls",
     badge: "생활용품",
-    score: "추천도 92",
-    tags: ["세탁세제", "라벤더", "대용량"],
-    copy: "쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.\n\n터치 라이트 고농축 세탁세제 라벤더 2.5L 4개\n핵심 정보: 고농축 액체세제, 라벤더향, 2.5L 대용량 4개 구성으로 매일 세탁하는 집에서 넉넉하게 두고 쓰기 좋은 생활용품입니다.\n장점 1. 한 번에 여러 개를 준비해 세제 재구매 부담을 줄이기 좋습니다.\n장점 2. 액체 타입이라 평소 빨래할 때 바로 쓰기 편합니다.\n장점 3. 라벤더향으로 세탁 후 산뜻한 느낌을 기대할 수 있습니다.\n상품 링크: https://link.coupang.com/a/eiK4wyCzls\n세제는 떨어지면 바로 불편합니다. 미리 챙겨두세요.\n상품 링크: https://link.coupang.com/a/eiK4wyCzls\n#세탁세제 #액체세제 #라벤더세제 #생활용품 #쿠팡추천"
+    review: "대용량 구성",
+    priceLabel: "가격 확인",
+    price: "쿠팡 페이지",
+    discount: "4개 구성",
+    productUrl: "https://link.coupang.com/a/eiK4wyCzls",
+    imageUrl:
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/6481/a19cda8a3902ae9970a9b2e53df0e3ab397eccc492871845a329d9f8e166.jpg",
+    summary:
+      "매일 쓰는 세탁세제를 넉넉하게 준비하고 싶을 때 보기 좋은 2.5L 4개 구성입니다. 라벤더향 액체세제라 평소 세탁에 바로 쓰기 좋고, 대용량이라 자주 구매하는 번거로움을 줄일 수 있습니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.",
+    benefits: ["2.5L 4개 대용량", "액체 타입으로 사용이 간편함", "라벤더향 생활 세제"]
   }
 ];
 
@@ -17,17 +38,47 @@ const state = {
   query: ""
 };
 
+const featuredProduct = products[0];
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
 const searchInput = document.querySelector("#search");
 const tabs = [...document.querySelectorAll(".category-tab")];
 
-function matchesProduct(product) {
-  const text = `${product.name} ${product.category} ${product.copy} ${product.tags.join(" ")}`;
-  const matchesCategory = state.category === "전체" || product.category === state.category;
-  const matchesQuery = !state.query || text.toLowerCase().includes(state.query.toLowerCase());
+function setText(selector, value) {
+  const element = document.querySelector(selector);
+  if (element) element.textContent = value;
+}
 
+function setLink(selector, url, label) {
+  const element = document.querySelector(selector);
+  if (!element) return;
+  element.href = url;
+  if (label) element.setAttribute("aria-label", label);
+}
+
+function renderHero(product) {
+  setText("#heroBadge", product.badge);
+  setText("#heroName", product.name);
+  setText("#heroSummary", product.summary);
+  setText("#heroSalePrice", product.price);
+  setText("#heroDiscount", product.discount);
+  setText("#heroReview", product.review.replace(" 상품평", ""));
+  setText("#heroMediaLabel", product.category);
+  setLink("#heroBuy", product.productUrl, `${product.name} 쿠팡에서 확인`);
+  setLink("#heroImageLink", product.productUrl, `${product.name} 쿠팡 페이지로 이동`);
+
+  const heroImage = document.querySelector("#heroImage");
+  if (heroImage) {
+    heroImage.src = product.imageUrl;
+    heroImage.alt = product.name;
+  }
+}
+
+function matchesProduct(product) {
+  const haystack = `${product.name} ${product.category} ${product.summary} ${product.benefits.join(" ")}`.toLowerCase();
+  const matchesCategory = state.category === "전체" || product.category === state.category;
+  const matchesQuery = !state.query || haystack.includes(state.query.toLowerCase());
   return matchesCategory && matchesQuery;
 }
 
@@ -46,41 +97,36 @@ function renderProducts() {
 
   visibleProducts.forEach((product) => {
     const card = template.content.firstElementChild.cloneNode(true);
-    const image = card.querySelector(".product-image");
+    const media = card.querySelector(".product-media");
+    const photo = card.querySelector(".product-photo");
     const badge = card.querySelector(".product-badge");
     const category = card.querySelector(".product-category");
-    const score = card.querySelector(".product-score");
+    const review = card.querySelector(".product-review");
     const title = card.querySelector("h3");
     const summary = card.querySelector(".product-summary");
-    const tagRow = card.querySelector(".tag-row");
-    const buyLinks = card.querySelectorAll("a");
+    const benefitList = card.querySelector(".benefit-list");
+    const priceLabel = card.querySelector(".price-label");
+    const priceValue = card.querySelector(".price-value");
+    const buyLink = card.querySelector(".buy-link");
 
-    if (product.imageUrl) {
-      const photo = document.createElement("img");
-      photo.className = "product-photo";
-      photo.src = product.imageUrl;
-      photo.alt = `${product.name} 제품 이미지`;
-      photo.loading = "lazy";
-      image.prepend(photo);
-    }
-
-    image.setAttribute("aria-label", `${product.name} 상품 이미지`);
+    media.href = product.productUrl;
+    media.setAttribute("aria-label", `${product.name} 상품 페이지로 이동`);
+    photo.src = product.imageUrl;
+    photo.alt = product.name;
     badge.textContent = product.badge;
     category.textContent = product.category;
-    score.textContent = product.score;
+    review.textContent = product.review;
     title.textContent = product.name;
-    summary.textContent = product.copy;
+    summary.textContent = product.summary;
+    priceLabel.textContent = product.priceLabel;
+    priceValue.textContent = product.price;
+    buyLink.href = product.productUrl;
+    buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
 
-    product.tags.slice(0, 3).forEach((tag) => {
-      const pill = document.createElement("span");
-      pill.className = "tag";
-      pill.textContent = tag;
-      tagRow.append(pill);
-    });
-
-    buyLinks.forEach((link) => {
-      link.href = product.productUrl;
-      link.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
+    product.benefits.forEach((benefit) => {
+      const item = document.createElement("li");
+      item.textContent = benefit;
+      benefitList.append(item);
     });
 
     grid.append(card);
@@ -100,4 +146,5 @@ searchInput.addEventListener("input", (event) => {
   renderProducts();
 });
 
+renderHero(featuredProduct);
 renderProducts();

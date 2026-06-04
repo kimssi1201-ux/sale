@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>픽앤샵 | 수동 링크 상품 큐레이션</title>
+    <title>픽앤샵 스토어 | 생활용품 추천</title>
     <meta
       name="description"
-      content="제공받은 상품 링크와 이미지, 짧은 구매유도글로 운영하는 큐레이션 예시 화면입니다."
+      content="생활용품 추천 상품을 쇼핑몰처럼 둘러보고 쿠팡에서 구매할 수 있는 큐레이션 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./manual.css" />
@@ -17,17 +17,18 @@
         <span class="brand-mark">P</span>
         <span>
           <strong>픽앤샵</strong>
-          <small>수동 링크 큐레이션</small>
+          <small>생활용품 쇼핑 큐레이션</small>
         </span>
       </a>
 
       <nav class="main-nav" aria-label="주요 메뉴">
-        <a href="#products">오늘의 추천</a>
-        <a href="#categories">카테고리</a>
-        <a href="#policy">운영 고지</a>
+        <a href="#products">베스트</a>
+        <a href="#categories">생활용품</a>
+        <a href="#deals">구매 포인트</a>
+        <a href="#policy">고지</a>
       </nav>
 
-      <a class="header-cta" href="#products">상품 보기</a>
+      <a class="header-cta" href="#products">바로 보기</a>
     </header>
 
     <main id="top">
@@ -37,29 +38,44 @@
         <span>결제와 배송은 쿠팡에서 진행됩니다.</span>
       </section>
 
-      <section class="hero-band" aria-label="추천 상품 홈">
+      <section class="hero-band mall-hero" aria-label="추천 상품 홈">
         <div class="hero-copy">
-          <p class="eyebrow">직접 고른 상품 링크만 정리</p>
-          <h1>내가 주는 링크와 이미지 한 장으로 상품을 보기 좋게 보여줍니다.</h1>
+          <p class="eyebrow">오늘의 생활용품 베스트</p>
+          <h1>터치 라이트 고농축 세탁세제 라벤더 2.5L 4개</h1>
           <p class="hero-text">
-            자동 수집 없이 상품 링크, 제품 이미지, 짧은 구매유도글만 넣어 운영합니다.
-            가격과 배송 조건은 쿠팡 상품 페이지에서 확인하도록 연결합니다.
+            대용량 4개 구성의 라벤더향 액체세제입니다. 매일 세탁하는 집에서 넉넉하게 두고 쓰기 좋고,
+            가격과 배송 조건은 쿠팡 상품 페이지에서 바로 확인할 수 있습니다.
           </p>
+          <div class="hero-actions">
+            <a class="primary-shop-link" href="https://link.coupang.com/a/eiK4wyCzls" target="_blank" rel="nofollow sponsored noopener">쿠팡에서 가격 확인</a>
+            <span class="shipping-note">결제와 배송은 쿠팡에서 진행됩니다.</span>
+          </div>
         </div>
 
-        <div class="hero-panel" aria-label="추천 요약">
-          <div>
-            <span class="metric">1</span>
-            <span class="metric-label">등록 상품</span>
+        <div class="hero-product" aria-label="대표 상품">
+          <a class="hero-product-image" href="https://link.coupang.com/a/eiK4wyCzls" target="_blank" rel="nofollow sponsored noopener">
+            <img src="https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/6481/a19cda8a3902ae9970a9b2e53df0e3ab397eccc492871845a329d9f8e166.jpg" alt="터치 라이트 고농축 세탁세제 라벤더 2.5L 4개" />
+          </a>
+          <div class="hero-product-info">
+            <span class="deal-badge">생활용품 추천</span>
+            <strong>고농축 액체세제</strong>
+            <span>라벤더향 · 2.5L · 4개</span>
           </div>
-          <div>
-            <span class="metric">8</span>
-            <span class="metric-label">카테고리</span>
-          </div>
-          <div>
-            <span class="metric">1분</span>
-            <span class="metric-label">복사 글</span>
-          </div>
+        </div>
+      </section>
+
+      <section class="deal-strip" id="deals" aria-label="구매 포인트">
+        <div>
+          <strong>대용량 구성</strong>
+          <span>2.5L 4개로 넉넉하게 준비</span>
+        </div>
+        <div>
+          <strong>액체 타입</strong>
+          <span>평소 빨래에 바로 쓰기 편한 형태</span>
+        </div>
+        <div>
+          <strong>라벤더향</strong>
+          <span>세탁 후 산뜻한 향 기대</span>
         </div>
       </section>
 
@@ -86,7 +102,7 @@
       <section class="content-layout" id="products" aria-label="추천 상품 목록">
         <aside class="filter-panel" aria-label="상품 필터">
           <div class="filter-block">
-            <h2>필터</h2>
+            <h2>쇼핑 옵션</h2>
             <label>
               <input type="checkbox" name="filter" value="오늘추천" checked />
               오늘 추천
@@ -102,22 +118,22 @@
           </div>
 
           <div class="filter-block">
-            <h2>가격 표시</h2>
-            <p>제공받은 상품 링크로 연결</p>
-            <p class="muted">가격과 배송 조건은 쿠팡에서 직접 확인하도록 안내합니다.</p>
+            <h2>구매 안내</h2>
+            <p>쿠팡 상품 페이지에서 가격 확인</p>
+            <p class="muted">할인, 배송, 재고는 쿠팡에서 확인됩니다.</p>
           </div>
 
           <div class="filter-block compact">
             <span class="status-dot"></span>
-            <span>수동 링크 등록 화면</span>
+            <span>쿠팡 구매 페이지 연결</span>
           </div>
         </aside>
 
         <div class="product-area">
           <div class="section-head">
             <div>
-              <p class="eyebrow">추천 상품</p>
-              <h2>지금 보기 좋은 상품</h2>
+              <p class="eyebrow">베스트 상품</p>
+              <h2>생활용품 추천</h2>
             </div>
             <span id="resultCount" class="result-count">0개</span>
           </div>
@@ -148,9 +164,9 @@
           <p class="product-summary"></p>
           <div class="tag-row"></div>
           <div class="product-actions">
-            <span class="price-note">링크로 가격 확인</span>
+            <span class="price-note">쿠팡에서 가격 확인</span>
             <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">
-              쿠팡에서 보기
+              구매 페이지로 이동
             </a>
           </div>
         </div>

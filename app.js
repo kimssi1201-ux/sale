@@ -5,6 +5,7 @@ const products = [
     category: "생활가전",
     badge: "생활가전",
     review: "39,981개 상품평",
+    originalPrice: "25,000원",
     priceLabel: "와우쿠폰할인",
     price: "9,720원",
     discount: "61%",
@@ -22,6 +23,7 @@ const products = [
     category: "생활용품",
     badge: "생활용품",
     review: "대용량 구성",
+    originalPrice: "쿠팡 확인",
     priceLabel: "가격 확인",
     price: "쿠팡 페이지",
     discount: "4개 구성",
@@ -103,6 +105,7 @@ function renderHero(product) {
   const heroSummary = document.querySelector("#heroSummary");
 
   setText("#heroName", product.name);
+  setText("#heroOriginalPrice", product.originalPrice);
   setText("#heroSalePrice", product.price);
   setText("#heroDiscount", product.discount);
   setText("#heroReview", product.review.replace(" 상품평", ""));
@@ -148,10 +151,10 @@ function renderProducts() {
     const title = card.querySelector("h3");
     const summary = card.querySelector(".product-summary");
     const benefitList = card.querySelector(".benefit-list");
-    const priceLabel = card.querySelector(".card-price-label");
-    const priceValue = card.querySelector(".card-price-value");
+    const originalPriceValue = card.querySelector(".card-original-price-value");
     const discountLabel = card.querySelector(".card-discount-label");
     const discountValue = card.querySelector(".card-discount-value");
+    const salePriceValue = card.querySelector(".card-sale-price-value");
     const reviewLabel = card.querySelector(".card-review-label");
     const reviewValue = card.querySelector(".card-review-value");
     const buyLink = card.querySelector(".buy-link");
@@ -165,11 +168,11 @@ function renderProducts() {
     review.textContent = product.review;
     title.textContent = product.name;
     renderHighlightedText(summary, product.summary, product.highlightTerms);
-    priceLabel.textContent = product.priceLabel;
-    priceValue.textContent = product.price;
-    discountLabel.textContent = product.discount.includes("%") ? "정가 대비" : "구성";
+    originalPriceValue.textContent = product.originalPrice;
+    discountLabel.textContent = "할인율";
     discountValue.textContent = product.discount;
-    reviewLabel.textContent = product.review.includes("상품평") ? "상품평" : "정보";
+    salePriceValue.textContent = product.price;
+    reviewLabel.textContent = "상품평";
     reviewValue.textContent = product.review.replace(" 상품평", "");
     buyLink.href = product.productUrl;
     buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);

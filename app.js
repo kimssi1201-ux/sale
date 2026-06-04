@@ -148,8 +148,12 @@ function renderProducts() {
     const title = card.querySelector("h3");
     const summary = card.querySelector(".product-summary");
     const benefitList = card.querySelector(".benefit-list");
-    const priceLabel = card.querySelector(".price-label");
-    const priceValue = card.querySelector(".price-value");
+    const priceLabel = card.querySelector(".card-price-label");
+    const priceValue = card.querySelector(".card-price-value");
+    const discountLabel = card.querySelector(".card-discount-label");
+    const discountValue = card.querySelector(".card-discount-value");
+    const reviewLabel = card.querySelector(".card-review-label");
+    const reviewValue = card.querySelector(".card-review-value");
     const buyLink = card.querySelector(".buy-link");
 
     media.href = product.productUrl;
@@ -163,6 +167,10 @@ function renderProducts() {
     renderHighlightedText(summary, product.summary, product.highlightTerms);
     priceLabel.textContent = product.priceLabel;
     priceValue.textContent = product.price;
+    discountLabel.textContent = product.discount.includes("%") ? "정가 대비" : "구성";
+    discountValue.textContent = product.discount;
+    reviewLabel.textContent = product.review.includes("상품평") ? "상품평" : "정보";
+    reviewValue.textContent = product.review.replace(" 상품평", "");
     buyLink.href = product.productUrl;
     buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
 

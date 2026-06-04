@@ -1,119 +1,55 @@
-const products = [
-  {
-    id: "philips-lint-remover",
-    name: "필립스 보풀제거기 GC-026 블루",
-    category: "생활가전",
-    badge: "생활가전",
-    review: "39,981개 상품평",
-    originalPrice: "25,000원",
-    priceLabel: "와우쿠폰할인",
-    price: "9,720원",
-    discount: "61%",
-    productUrl: "https://www.coupang.com/vp/products/4947594003?itemId=6529631478",
-    imageUrl:
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/590703716526441-30a6e6a6-012c-485f-ac94-65ca652f640e.jpg",
-    summary:
-      "옷에 생긴 보풀이 신경 쓰일 때 바로 정리하기 좋은 필립스 GC-026 보풀제거기입니다. 건전지식이라 콘센트 위치를 신경 쓰지 않아도 되고, 3중날 구조로 니트와 기본 의류 보풀을 빠르게 다듬기 좋습니다. 1개 구성, 블루 색상이며 가격과 쿠폰은 쿠팡 상품 페이지에서 최종 확인하세요.",
-    highlightTerms: ["필립스 GC-026", "보풀제거기", "건전지식", "3중날", "가격과 쿠폰"],
-    benefits: ["3중날로 촘촘한 보풀 정리", "건전지식이라 자리 이동이 편함", "보풀함 분리로 관리가 간단함"]
-  },
-  {
-    id: "touch-laundry-detergent",
-    name: "터치 라이트 고농축 세탁세제 라벤더 2.5L 4개",
-    category: "생활용품",
-    badge: "생활용품",
-    review: "14,422개 상품평",
-    originalPrice: "25,000원",
-    priceLabel: "할인가",
-    price: "14,630원",
-    discount: "41%",
-    productUrl: "https://link.coupang.com/a/eiK4wyCzls",
-    imageUrl:
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/6481/a19cda8a3902ae9970a9b2e53df0e3ab397eccc492871845a329d9f8e166.jpg",
-    summary:
-      "매일 쓰는 세탁세제를 넉넉하게 준비하고 싶을 때 보기 좋은 2.5L 4개 구성입니다. 라벤더향 액체세제라 평소 세탁에 바로 쓰기 좋고, 대용량이라 자주 구매하는 번거로움을 줄일 수 있습니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.",
-    highlightTerms: ["매일 쓰는 세탁세제", "2.5L 4개", "라벤더향 액체세제", "대용량", "실제 가격과 배송 조건"],
-    benefits: ["2.5L 4개 대용량", "액체 타입으로 사용이 간편함", "라벤더향 생활 세제"]
-  },
-  {
-    id: "alchanhae-naksaewoo-stirfry",
-    name: "알찬해 바로바로 낙새우 볶음 (냉동), 450g, 1개",
-    category: "식품",
-    badge: "냉동식품",
-    review: "15,442개 상품평",
-    originalPrice: "19,900원",
-    priceLabel: "할인가",
-    price: "13,990원",
-    discount: "29%",
-    productUrl: "https://link.coupang.com/a/ejkoMPS3zM",
-    imageUrl:
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2023/04/18/16/6/462ffd56-cfe9-4a43-a678-32926da90591.jpg",
-    summary:
-      "매콤한 해물볶음을 간편하게 준비하고 싶을 때 보기 좋은 알찬해 바로바로 낙새우 볶음입니다. 450g 1개 냉동 구성으로 해동 후 팬에 볶기만 하면 되고, 낙지와 새우가 들어간 양념 해물요리라 밥반찬이나 술안주로 활용하기 좋습니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.",
-    highlightTerms: ["매콤한 해물볶음", "450g 1개", "해동 후 팬에 볶기", "밥반찬이나 술안주", "실제 가격과 배송 조건"],
-    benefits: ["해동 후 볶기만 하면 되는 간편 조리", "낙지와 새우가 들어간 매콤한 구성", "냉동 보관으로 필요할 때 바로 사용"]
-  },
-  {
-    id: "lg-200l-freezer",
-    name: "LG전자 냉동고 200L 방문설치",
-    category: "생활가전",
-    badge: "대형가전",
-    review: "2,130개 상품평",
-    originalPrice: "650,000원",
-    priceLabel: "할인가",
-    price: "494,100원",
-    discount: "23%",
-    productUrl: "https://link.coupang.com/a/ejn96wCjOS",
-    imageUrl:
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/67ba/bd935a4cc6809b89124dfc6ed7a0c60cd0d12e2e08fe3e8d95d1c0417d06.jpg",
-    summary:
-      "냉동식품이나 대용량 식재료를 넉넉하게 보관하고 싶을 때 보기 좋은 LG전자 200L 냉동고입니다. 1도어 구조와 방문설치 지원으로 가정이나 사무실, 매장 보조 냉동고로 활용하기 좋고, 600 x 1383 x 629mm 사이즈라 설치 공간을 미리 확인해 선택하면 좋습니다. 실제 가격과 설치 일정은 쿠팡 상품 페이지에서 확인하세요.",
-    highlightTerms: ["LG전자 200L 냉동고", "1도어 구조", "방문설치 지원", "보조 냉동고", "실제 가격과 설치 일정"],
-    benefits: ["200L 용량으로 냉동 보관 공간 확보", "방문설치 지원으로 설치 부담 감소", "가정과 매장 보조 냉동고로 활용"]
-  }
-];
-
 const state = {
+  products: [],
   category: "전체",
-  query: ""
+  query: "",
+  sort: "latest",
+  visibleCount: 6
 };
 
-const featuredProduct = products[0];
-const featuredProductId = featuredProduct.id;
+const PAGE_SIZE = 6;
+
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
 const searchInput = document.querySelector("#search");
-const tabs = [...document.querySelectorAll(".category-tab")];
+const categoryTabs = document.querySelector("#categoryTabs");
+const sortSelect = document.querySelector("#sort");
+const loadMoreButton = document.querySelector("#loadMore");
+
+function parseNumber(value = "") {
+  const number = String(value).replace(/[^\d]/g, "");
+  return number ? Number(number) : 0;
+}
 
 function setText(selector, value) {
   const element = document.querySelector(selector);
-  if (element) element.textContent = value;
+  if (element) element.textContent = value || "";
 }
 
 function setLink(selector, url, label) {
   const element = document.querySelector(selector);
   if (!element) return;
-  element.href = url;
+  element.href = url || "#";
   if (label) element.setAttribute("aria-label", label);
 }
 
 function renderHighlightedText(element, text, terms = []) {
+  const safeText = text || "";
   element.textContent = "";
 
   const highlightTerms = [...terms].filter(Boolean).sort((a, b) => b.length - a.length);
   if (highlightTerms.length === 0) {
-    element.textContent = text;
+    element.textContent = safeText;
     return;
   }
 
   let cursor = 0;
-  while (cursor < text.length) {
+  while (cursor < safeText.length) {
     let nextIndex = -1;
     let nextTerm = "";
 
     highlightTerms.forEach((term) => {
-      const index = text.indexOf(term, cursor);
+      const index = safeText.indexOf(term, cursor);
       if (index !== -1 && (nextIndex === -1 || index < nextIndex)) {
         nextIndex = index;
         nextTerm = term;
@@ -121,12 +57,12 @@ function renderHighlightedText(element, text, terms = []) {
     });
 
     if (nextIndex === -1) {
-      element.append(document.createTextNode(text.slice(cursor)));
+      element.append(document.createTextNode(safeText.slice(cursor)));
       break;
     }
 
     if (nextIndex > cursor) {
-      element.append(document.createTextNode(text.slice(cursor, nextIndex)));
+      element.append(document.createTextNode(safeText.slice(cursor, nextIndex)));
     }
 
     const highlight = document.createElement("span");
@@ -138,6 +74,8 @@ function renderHighlightedText(element, text, terms = []) {
 }
 
 function renderHero(product) {
+  if (!product) return;
+
   const heroSummary = document.querySelector("#heroSummary");
 
   setText("#heroName", product.name);
@@ -157,84 +95,154 @@ function renderHero(product) {
   }
 }
 
+function renderCategories() {
+  if (!categoryTabs) return;
+
+  const categories = ["전체", ...new Set(state.products.map((product) => product.category).filter(Boolean))];
+  categoryTabs.innerHTML = "";
+
+  categories.forEach((category) => {
+    const button = document.createElement("button");
+    button.className = "category-tab";
+    button.type = "button";
+    button.dataset.category = category;
+    button.textContent = category;
+    button.classList.toggle("is-active", state.category === category);
+    button.addEventListener("click", () => {
+      state.category = category;
+      state.visibleCount = PAGE_SIZE;
+      renderProducts();
+    });
+    categoryTabs.append(button);
+  });
+}
+
 function matchesProduct(product) {
-  const haystack = `${product.name} ${product.category} ${product.summary} ${product.benefits.join(" ")}`.toLowerCase();
+  const haystack = `${product.name} ${product.category} ${product.badge} ${product.summary} ${product.benefits.join(" ")}`.toLowerCase();
   const matchesCategory = state.category === "전체" || product.category === state.category;
   const matchesQuery = !state.query || haystack.includes(state.query.toLowerCase());
   return matchesCategory && matchesQuery;
 }
 
+function sortProducts(products) {
+  return [...products].sort((a, b) => {
+    if (state.sort === "price-low") return parseNumber(a.price) - parseNumber(b.price);
+    if (state.sort === "discount-high") return parseNumber(b.discount) - parseNumber(a.discount);
+    if (state.sort === "review-high") return parseNumber(b.review) - parseNumber(a.review);
+    return state.products.indexOf(b) - state.products.indexOf(a);
+  });
+}
+
+function createProductCard(product) {
+  const card = template.content.firstElementChild.cloneNode(true);
+  const media = card.querySelector(".product-media");
+  const photo = card.querySelector(".product-photo");
+  const badge = card.querySelector(".product-badge");
+  const category = card.querySelector(".product-category");
+  const review = card.querySelector(".product-review");
+  const title = card.querySelector("h3");
+  const summary = card.querySelector(".product-summary");
+  const benefitList = card.querySelector(".benefit-list");
+  const originalPriceValue = card.querySelector(".card-original-price-value");
+  const discountLabel = card.querySelector(".card-discount-label");
+  const discountValue = card.querySelector(".card-discount-value");
+  const salePriceValue = card.querySelector(".card-sale-price-value");
+  const reviewLabel = card.querySelector(".card-review-label");
+  const reviewValue = card.querySelector(".card-review-value");
+  const buyLink = card.querySelector(".buy-link");
+
+  media.href = product.productUrl;
+  media.setAttribute("aria-label", `${product.name} 상품 페이지로 이동`);
+  photo.src = product.imageUrl;
+  photo.alt = product.name;
+  badge.textContent = product.badge;
+  category.textContent = product.category;
+  review.textContent = product.review;
+  title.textContent = product.name;
+  renderHighlightedText(summary, product.summary, product.highlightTerms);
+  originalPriceValue.textContent = product.originalPrice;
+  discountLabel.textContent = "할인율";
+  discountValue.textContent = product.discount;
+  salePriceValue.textContent = product.price;
+  reviewLabel.textContent = "상품평";
+  reviewValue.textContent = product.review.replace(" 상품평", "");
+  buyLink.href = product.productUrl;
+  buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
+
+  product.benefits.forEach((benefit) => {
+    const item = document.createElement("li");
+    item.textContent = benefit;
+    benefitList.append(item);
+  });
+
+  return card;
+}
+
 function renderProducts() {
-  const visibleProducts = products.filter((product) => product.id !== featuredProductId).filter(matchesProduct);
+  const featuredProduct = state.products[0];
+  const featuredProductId = featuredProduct?.id;
+  const filteredProducts = state.products
+    .filter((product) => product.id !== featuredProductId)
+    .filter(matchesProduct);
+  const sortedProducts = sortProducts(filteredProducts);
+  const visibleProducts = sortedProducts.slice(0, state.visibleCount);
+
   grid.innerHTML = "";
-  resultCount.textContent = `${visibleProducts.length}개`;
+  resultCount.textContent = `${filteredProducts.length}개`;
+  renderCategories();
 
   if (visibleProducts.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "함께 볼 상품을 추가하면 여기에 표시됩니다.";
+    empty.textContent = "조건에 맞는 상품이 없습니다.";
     grid.append(empty);
-    return;
+  } else {
+    visibleProducts.forEach((product) => grid.append(createProductCard(product)));
   }
 
-  visibleProducts.forEach((product) => {
-    const card = template.content.firstElementChild.cloneNode(true);
-    const media = card.querySelector(".product-media");
-    const photo = card.querySelector(".product-photo");
-    const badge = card.querySelector(".product-badge");
-    const category = card.querySelector(".product-category");
-    const review = card.querySelector(".product-review");
-    const title = card.querySelector("h3");
-    const summary = card.querySelector(".product-summary");
-    const benefitList = card.querySelector(".benefit-list");
-    const originalPriceValue = card.querySelector(".card-original-price-value");
-    const discountLabel = card.querySelector(".card-discount-label");
-    const discountValue = card.querySelector(".card-discount-value");
-    const salePriceValue = card.querySelector(".card-sale-price-value");
-    const reviewLabel = card.querySelector(".card-review-label");
-    const reviewValue = card.querySelector(".card-review-value");
-    const buyLink = card.querySelector(".buy-link");
-
-    media.href = product.productUrl;
-    media.setAttribute("aria-label", `${product.name} 상품 페이지로 이동`);
-    photo.src = product.imageUrl;
-    photo.alt = product.name;
-    badge.textContent = product.badge;
-    category.textContent = product.category;
-    review.textContent = product.review;
-    title.textContent = product.name;
-    renderHighlightedText(summary, product.summary, product.highlightTerms);
-    originalPriceValue.textContent = product.originalPrice;
-    discountLabel.textContent = "할인율";
-    discountValue.textContent = product.discount;
-    salePriceValue.textContent = product.price;
-    reviewLabel.textContent = "상품평";
-    reviewValue.textContent = product.review.replace(" 상품평", "");
-    buyLink.href = product.productUrl;
-    buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
-
-    product.benefits.forEach((benefit) => {
-      const item = document.createElement("li");
-      item.textContent = benefit;
-      benefitList.append(item);
-    });
-
-    grid.append(card);
-  });
+  if (loadMoreButton) {
+    const hasMore = state.visibleCount < sortedProducts.length;
+    loadMoreButton.hidden = !hasMore;
+    loadMoreButton.textContent = `더보기 (${Math.min(PAGE_SIZE, sortedProducts.length - state.visibleCount)}개)`;
+  }
 }
 
-tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    state.category = tab.dataset.category;
-    tabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+async function loadProducts() {
+  try {
+    const response = await fetch(`./products.json?v=${Date.now()}`);
+    if (!response.ok) throw new Error("products.json load failed");
+    state.products = await response.json();
+    renderHero(state.products[0]);
+    renderCategories();
     renderProducts();
-  });
-});
+  } catch (error) {
+    grid.innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "상품 데이터를 불러오지 못했습니다.";
+    grid.append(empty);
+  }
+}
 
 searchInput.addEventListener("input", (event) => {
   state.query = event.target.value.trim();
+  state.visibleCount = PAGE_SIZE;
   renderProducts();
 });
 
-renderHero(featuredProduct);
-renderProducts();
+if (sortSelect) {
+  sortSelect.addEventListener("change", (event) => {
+    state.sort = event.target.value;
+    state.visibleCount = PAGE_SIZE;
+    renderProducts();
+  });
+}
+
+if (loadMoreButton) {
+  loadMoreButton.addEventListener("click", () => {
+    state.visibleCount += PAGE_SIZE;
+    renderProducts();
+  });
+}
+
+loadProducts();

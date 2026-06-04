@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>픽앤샵 | 추천 상품 큐레이션</title>
+    <title>픽앤샵 | 수동 링크 상품 큐레이션</title>
     <meta
       name="description"
-      content="쿠팡파트너스 링크를 쇼핑몰처럼 정리하는 추천 상품 큐레이션 예시 화면입니다."
+      content="제공받은 상품 링크와 이미지, 짧은 구매유도글로 운영하는 큐레이션 예시 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./manual.css" />
   </head>
   <body>
     <header class="site-header">
@@ -16,7 +17,7 @@
         <span class="brand-mark">P</span>
         <span>
           <strong>픽앤샵</strong>
-          <small>추천 상품 큐레이션</small>
+          <small>수동 링크 큐레이션</small>
         </span>
       </a>
 
@@ -38,18 +39,18 @@
 
       <section class="hero-band" aria-label="추천 상품 홈">
         <div class="hero-copy">
-          <p class="eyebrow">오늘 업데이트된 추천 링크</p>
-          <h1>많은 쿠팡파트너스 링크를 한 화면에서 보기 좋게 정리합니다.</h1>
+          <p class="eyebrow">직접 고른 상품 링크만 정리</p>
+          <h1>내가 주는 링크와 이미지 한 장으로 상품을 보기 좋게 보여줍니다.</h1>
           <p class="hero-text">
-            가격을 과장해서 보여주기보다 카테고리, 용도, 추천 이유를 먼저 보여주고
-            구매는 쿠팡 상품 페이지에서 확인하도록 연결합니다.
+            자동 수집 없이 상품 링크, 제품 이미지, 짧은 구매유도글만 넣어 운영합니다.
+            가격과 배송 조건은 쿠팡 상품 페이지에서 확인하도록 연결합니다.
           </p>
         </div>
 
         <div class="hero-panel" aria-label="추천 요약">
           <div>
             <span class="metric">24</span>
-            <span class="metric-label">오늘 추천</span>
+            <span class="metric-label">등록 상품</span>
           </div>
           <div>
             <span class="metric">8</span>
@@ -57,7 +58,7 @@
           </div>
           <div>
             <span class="metric">1분</span>
-            <span class="metric-label">둘러보기</span>
+            <span class="metric-label">복사 글</span>
           </div>
         </div>
       </section>
@@ -101,13 +102,13 @@
 
           <div class="filter-block">
             <h2>가격 표시</h2>
-            <p>가격은 쿠팡에서 확인</p>
-            <p class="muted">상품 가격과 배송 조건은 수시로 바뀔 수 있습니다.</p>
+            <p>제공받은 상품 링크로 연결</p>
+            <p class="muted">가격과 배송 조건은 쿠팡에서 직접 확인하도록 안내합니다.</p>
           </div>
 
           <div class="filter-block compact">
             <span class="status-dot"></span>
-            <span>API 자동 연동 준비 화면</span>
+            <span>수동 링크 등록 화면</span>
           </div>
         </aside>
 
@@ -146,7 +147,7 @@
           <p class="product-summary"></p>
           <div class="tag-row"></div>
           <div class="product-actions">
-            <span class="price-note">가격은 쿠팡에서 확인</span>
+            <span class="price-note">링크로 가격 확인</span>
             <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">
               쿠팡에서 보기
             </a>

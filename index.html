@@ -3,171 +3,194 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>픽앤샵 스토어 | 생활용품 추천</title>
+    <title>픽앤세일 | 생활용품 특가 큐레이션</title>
     <meta
       name="description"
-      content="생활용품 추천 상품을 쇼핑몰처럼 둘러보고 쿠팡에서 구매할 수 있는 큐레이션 화면입니다."
+      content="생활용품과 소형가전을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./manual.css" />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#top" aria-label="픽앤샵 홈">
+      <a class="brand" href="#top" aria-label="픽앤세일 홈">
         <span class="brand-mark">P</span>
-        <span>
-          <strong>픽앤샵</strong>
-          <small>생활용품 쇼핑 큐레이션</small>
+        <span class="brand-copy">
+          <strong>픽앤세일</strong>
+          <small>생활용품 특가 큐레이션</small>
         </span>
       </a>
 
       <nav class="main-nav" aria-label="주요 메뉴">
-        <a href="#products">베스트</a>
-        <a href="#categories">생활용품</a>
-        <a href="#deals">구매 포인트</a>
-        <a href="#policy">고지</a>
+        <a href="#products">상품</a>
+        <a href="#deal">구매 포인트</a>
+        <a href="#notice">고지</a>
       </nav>
 
-      <a class="header-cta" href="#products">바로 보기</a>
+      <a class="header-cta" href="#products">상품 보기</a>
     </header>
 
     <main id="top">
-      <section class="notice-strip" id="policy" aria-label="파트너스 고지">
+      <section class="notice-bar" id="notice" aria-label="파트너스 고지">
         <strong>파트너스 고지</strong>
         <span>쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.</span>
-        <span>결제와 배송은 쿠팡에서 진행됩니다.</span>
+        <span>가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 최종 확인하세요.</span>
       </section>
 
-      <section class="hero-band mall-hero" aria-label="추천 상품 홈">
+      <section class="store-hero" aria-label="대표 추천 상품">
         <div class="hero-copy">
-          <p class="eyebrow">오늘의 생활용품 베스트</p>
-          <h1>터치 라이트 고농축 세탁세제 라벤더 2.5L 4개</h1>
-          <p class="hero-text">
-            대용량 4개 구성의 라벤더향 액체세제입니다. 매일 세탁하는 집에서 넉넉하게 두고 쓰기 좋고,
-            가격과 배송 조건은 쿠팡 상품 페이지에서 바로 확인할 수 있습니다.
+          <span class="kicker" id="heroBadge">오늘의 빠른픽</span>
+          <h1 id="heroName">필립스 보풀제거기 GC-026 블루</h1>
+          <p id="heroSummary">
+            옷에 올라온 보풀이 눈에 띌 때 바로 정리하기 좋은 건전지식 보풀제거기입니다.
           </p>
+
+          <div class="price-board" aria-label="대표 상품 가격 정보">
+            <div>
+              <span>쿠폰가</span>
+              <strong id="heroSalePrice">9,720원</strong>
+            </div>
+            <div>
+              <span>정가 대비</span>
+              <strong id="heroDiscount">61%</strong>
+            </div>
+            <div>
+              <span>상품평</span>
+              <strong id="heroReview">39,981개</strong>
+            </div>
+          </div>
+
           <div class="hero-actions">
-            <a class="primary-shop-link" href="https://link.coupang.com/a/eiK4wyCzls" target="_blank" rel="nofollow sponsored noopener">쿠팡에서 가격 확인</a>
-            <span class="shipping-note">결제와 배송은 쿠팡에서 진행됩니다.</span>
+            <a
+              class="primary-shop-link"
+              id="heroBuy"
+              href="https://www.coupang.com/vp/products/4947594003?itemId=6529631478"
+              target="_blank"
+              rel="nofollow sponsored noopener"
+            >
+              쿠팡에서 확인
+            </a>
+            <a class="secondary-link" href="#deal">구매 포인트</a>
           </div>
         </div>
 
-        <div class="hero-product" aria-label="대표 상품">
-          <a class="hero-product-image" href="https://link.coupang.com/a/eiK4wyCzls" target="_blank" rel="nofollow sponsored noopener">
-            <img src="https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/6481/a19cda8a3902ae9970a9b2e53df0e3ab397eccc492871845a329d9f8e166.jpg" alt="터치 라이트 고농축 세탁세제 라벤더 2.5L 4개" />
-          </a>
-          <div class="hero-product-info">
-            <span class="deal-badge">생활용품 추천</span>
-            <strong>고농축 액체세제</strong>
-            <span>라벤더향 · 2.5L · 4개</span>
-          </div>
+        <a
+          class="hero-media"
+          id="heroImageLink"
+          href="https://www.coupang.com/vp/products/4947594003?itemId=6529631478"
+          target="_blank"
+          rel="nofollow sponsored noopener"
+          aria-label="대표 상품 쿠팡 페이지로 이동"
+        >
+          <span class="media-label" id="heroMediaLabel">생활가전 베스트</span>
+          <img
+            id="heroImage"
+            src="https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/590703716526441-30a6e6a6-012c-485f-ac94-65ca652f640e.jpg"
+            alt="필립스 보풀제거기 GC-026 블루"
+          />
+        </a>
+      </section>
+
+      <section class="quick-strip" aria-label="쇼핑 핵심 정보">
+        <div>
+          <strong>무료배송</strong>
+          <span>상품 페이지 기준</span>
+        </div>
+        <div>
+          <strong>무료반품</strong>
+          <span>와우회원 기준</span>
+        </div>
+        <div>
+          <strong>빠른 확인</strong>
+          <span>가격과 쿠폰은 쿠팡에서 확인</span>
         </div>
       </section>
 
-      <section class="deal-strip" id="deals" aria-label="구매 포인트">
-        <div>
-          <strong>대용량 구성</strong>
-          <span>2.5L 4개로 넉넉하게 준비</span>
-        </div>
-        <div>
-          <strong>액체 타입</strong>
-          <span>평소 빨래에 바로 쓰기 편한 형태</span>
-        </div>
-        <div>
-          <strong>라벤더향</strong>
-          <span>세탁 후 산뜻한 향 기대</span>
-        </div>
-      </section>
-
-      <section class="toolbar-band" id="categories" aria-label="상품 검색과 카테고리">
+      <section class="shop-toolbar" aria-label="상품 검색과 카테고리">
         <div class="search-box">
-          <label for="search">검색</label>
-          <input id="search" type="search" placeholder="세탁세제, 생활용품, 라벤더" autocomplete="off" />
+          <label for="search">상품 검색</label>
+          <input id="search" type="search" placeholder="보풀제거기, 세제, 생활용품" autocomplete="off" />
         </div>
 
-        <div class="category-tabs" aria-label="카테고리 필터">
+        <div class="category-tabs" aria-label="카테고리 선택">
           <button class="category-tab is-active" type="button" data-category="전체">전체</button>
-          <button class="category-tab" type="button" data-category="생활용품">생활용품</button>
           <button class="category-tab" type="button" data-category="생활가전">생활가전</button>
-          <button class="category-tab" type="button" data-category="주방">주방</button>
-          <button class="category-tab" type="button" data-category="디지털">디지털</button>
-          <button class="category-tab" type="button" data-category="반려">반려</button>
-          <button class="category-tab" type="button" data-category="육아">육아</button>
-          <button class="category-tab" type="button" data-category="캠핑">캠핑</button>
-          <button class="category-tab" type="button" data-category="뷰티">뷰티</button>
-          <button class="category-tab" type="button" data-category="식품">식품</button>
+          <button class="category-tab" type="button" data-category="생활용품">생활용품</button>
         </div>
+      </section>
+
+      <section class="deal-focus" id="deal" aria-label="대표 상품 구매 포인트">
+        <div>
+          <p class="kicker">구매 포인트</p>
+          <h2>필요할 때 바로 쓰는 옷 관리템</h2>
+          <p>
+            건전지식이라 콘센트 위치를 신경 쓰지 않아도 되고, 3중날 구조로 니트와 기본 의류의 보풀을 빠르게 정리하기 좋습니다.
+            보풀함을 분리해 비우는 방식이라 사용 후 관리도 간단합니다.
+          </p>
+        </div>
+        <ul class="point-list">
+          <li>3중날 보풀 제거망</li>
+          <li>건전지식 전원</li>
+          <li>가정용 1개 구성</li>
+          <li>GC-026 블루 모델</li>
+        </ul>
       </section>
 
       <section class="content-layout" id="products" aria-label="추천 상품 목록">
-        <aside class="filter-panel" aria-label="상품 필터">
-          <div class="filter-block">
-            <h2>쇼핑 옵션</h2>
-            <label>
-              <input type="checkbox" name="filter" value="오늘추천" checked />
-              오늘 추천
-            </label>
-            <label>
-              <input type="checkbox" name="filter" value="후기중심" />
-              후기 중심
-            </label>
-            <label>
-              <input type="checkbox" name="filter" value="선물추천" />
-              선물 추천
-            </label>
+        <aside class="side-panel" aria-label="상품 기준">
+          <div class="side-block">
+            <span class="side-label">오늘 기준</span>
+            <strong>가격은 고정하지 않습니다</strong>
+            <p>쿠폰, 배송, 판매자는 자주 바뀌므로 상품 페이지에서 최종 확인하는 흐름으로 구성했습니다.</p>
           </div>
-
-          <div class="filter-block">
-            <h2>구매 안내</h2>
-            <p>쿠팡 상품 페이지에서 가격 확인</p>
-            <p class="muted">할인, 배송, 재고는 쿠팡에서 확인됩니다.</p>
-          </div>
-
-          <div class="filter-block compact">
-            <span class="status-dot"></span>
-            <span>쿠팡 구매 페이지 연결</span>
+          <div class="side-block">
+            <span class="side-label">운영 방식</span>
+            <strong>수동 링크 등록</strong>
+            <p>API 없이 사용자가 준 쿠팡 링크와 상품 이미지, 짧은 구매 문구만 넣으면 카드가 추가됩니다.</p>
           </div>
         </aside>
 
-        <div class="product-area">
+        <section class="product-area" aria-label="상품 카드">
           <div class="section-head">
             <div>
-              <p class="eyebrow">베스트 상품</p>
-              <h2>생활용품 추천</h2>
+              <p class="kicker">등록 상품</p>
+              <h2>바로 살펴볼 상품</h2>
             </div>
             <span id="resultCount" class="result-count">0개</span>
           </div>
 
           <div id="productGrid" class="product-grid" aria-live="polite"></div>
-        </div>
+        </section>
       </section>
     </main>
 
     <nav class="mobile-tabs" aria-label="모바일 메뉴">
       <a href="#top">홈</a>
-      <a href="#categories">검색</a>
+      <a href="#deal">포인트</a>
       <a href="#products">상품</a>
-      <a href="#policy">고지</a>
+      <a href="#notice">고지</a>
     </nav>
 
     <template id="productTemplate">
       <article class="product-card">
-        <a class="product-image" href="#" target="_blank" rel="nofollow sponsored noopener">
+        <a class="product-media" href="#" target="_blank" rel="nofollow sponsored noopener">
           <span class="product-badge"></span>
+          <img class="product-photo" src="" alt="" loading="lazy" />
         </a>
         <div class="product-content">
           <div class="product-meta">
             <span class="product-category"></span>
-            <span class="product-score"></span>
+            <span class="product-review"></span>
           </div>
           <h3></h3>
           <p class="product-summary"></p>
-          <div class="tag-row"></div>
-          <div class="product-actions">
-            <span class="price-note">쿠팡에서 가격 확인</span>
-            <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">
-              구매 페이지로 이동
-            </a>
+          <ul class="benefit-list"></ul>
+          <div class="card-bottom">
+            <div class="price-stack">
+              <span class="price-label"></span>
+              <strong class="price-value"></strong>
+            </div>
+            <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">쿠팡에서 보기</a>
           </div>
         </div>
       </article>

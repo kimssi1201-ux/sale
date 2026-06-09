@@ -69,11 +69,16 @@ async function createHmac(method, uri, accessKey, secretKey) {
 }
 
 async function callCoupang(requestOptions, env) {
+  const result = await fetchCoupangData(requestOptions, env);
+  return jsonResponse(result, result.ok ? 200 : result.status);
+}
+
+async function fetchCoupangData(requestOptions, env) {
   const accessKey = getSecret(env, "COUPANG_ACCESS_KEY");
   const secretKey = getSecret(env, "COUPANG_SECRET_KEY");
 
   if (!accessKey || !secretKey) {
-    return jsonResponse({ ok: false, message: "COUPANG_ACCESS_KEY / COUPANG_SECRET_KEY 환경변수를 먼저 설정하세요." }, 500);
+    return { ok: false, status: 500, message: "COUPANG_ACCESS_KEY / COUPANG_SECRET_KEY 환경변수를 먼저 설정하세요." };
   }
 
   const authorization = await createHmac(requestOptions.method, requestOptions.uri, accessKey, secretKey);
@@ -94,7 +99,7 @@ async function callCoupang(requestOptions, env) {
     data = { raw: text };
   }
 
-  return jsonResponse({ ok: response.ok, status: response.status, data }, response.ok ? 200 : response.status);
+  return { ok: response.ok, status: response.status, data };
 }
 
 function buildSearchUri(params) {
@@ -112,6 +117,15 @@ function buildSearchUri(params) {
   return `${API_PREFIX}/products/search?${query.toString()}`;
 }
 
+function buildPublicSearchParams(url) {
+  const keyword = (url.searchParams.get("keyword") || "").trim().slice(0, 50);
+  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 12), 1), 12);
+  const params = new URLSearchParams();
+  params.set("keyword", keyword);
+  params.set("limit", String(limit));
+  return { keyword, limit, params };
+}
+
 function normalizeSearchItem(item, keyword = "") {
   const price = Number(item.productPrice || 0);
   const priceText = price ? `${price.toLocaleString("ko-KR")}원` : "쿠팡 확인";
@@ -119,7 +133,7 @@ function normalizeSearchItem(item, keyword = "") {
   const safeCategory = item.categoryName || "추천상품";
 
   return {
-    id: `coupang-${item.productId || Date.now()}`,
+    id: `coupang-${item.productId || "item"}-${item.rank || "0"}`,
     name: safeName,
     category: safeCategory,
     badge: item.isRocket ? "로켓배송" : safeCategory,
@@ -136,16 +150,48 @@ function normalizeSearchItem(item, keyword = "") {
   };
 }
 
+async function publicSearch(request, env) {
+  const url = new URL(request.url);
+  const { keyword, limit, params } = buildPublicSearchParams(url);
+
+  if (keyword.length < 2) {
+    return jsonResponse({ ok: false, message: "검색어는 2글자 이상 입력하세요." }, 400);
+  }
+
+  const cacheKey = new Request(`${url.origin}${url.pathname}?action=public-search&keyword=${encodeURIComponent(keyword)}&limit=${limit}`);
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  const cached = cache ? await cache.match(cacheKey) : null;
+  if (cached) return cached;
+
+  const result = await fetchCoupangData({ method: "GET", uri: buildSearchUri(params) }, env);
+  const products = result.data?.data?.productData || [];
+  const response = jsonResponse({
+    ok: result.ok,
+    status: result.status,
+    landingUrl: result.data?.data?.landingUrl || "",
+    message: result.data?.rMessage || result.message || "",
+    normalizedProducts: products.map((item) => normalizeSearchItem(item, keyword))
+  }, result.ok ? 200 : result.status);
+
+  response.headers.set("cache-control", result.ok ? "public, max-age=300" : "no-store");
+  if (cache && result.ok) await cache.put(cacheKey, response.clone());
+  return response;
+}
+
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const action = url.searchParams.get("action") || "search";
 
-  if (action === "health") {
-    return jsonResponse(getEnvHealth(env));
+  if (action === "public-search") {
+    return publicSearch(request, env);
   }
 
   const admin = assertAdmin(request, env);
   if (!admin.ok) return jsonResponse({ ok: false, message: admin.message }, admin.status);
+
+  if (action === "health") {
+    return jsonResponse(getEnvHealth(env));
+  }
 
   if (action !== "search") {
     return jsonResponse({ ok: false, message: "GET은 action=search만 지원합니다." }, 400);

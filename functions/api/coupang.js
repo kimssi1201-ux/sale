@@ -119,7 +119,7 @@ function buildSearchUri(params) {
 
 function buildPublicSearchParams(url) {
   const keyword = (url.searchParams.get("keyword") || "").trim().slice(0, 50);
-  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 12), 1), 12);
+  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 10), 1), 10);
   const params = new URLSearchParams();
   params.set("keyword", keyword);
   params.set("limit", String(limit));

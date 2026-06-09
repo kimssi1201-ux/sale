@@ -280,6 +280,23 @@
         <div id="fixedPicksGrid" class="fixed-picks-grid"></div>
       </section>
 
+      <section class="content-layout" id="products" aria-label="검색 결과와 추천 상품 목록">
+        <section class="product-area" aria-label="상품 카드">
+          <div class="section-head">
+            <div>
+              <p class="kicker" id="productKicker">검색 결과</p>
+              <h2 id="productTitle">추천 상품</h2>
+            </div>
+            <span id="resultCount" class="result-count">0개</span>
+          </div>
+
+          <div id="productGrid" class="product-grid" aria-live="polite"></div>
+          <div class="catalog-actions">
+            <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
+          </div>
+        </section>
+      </section>
+
       <section class="store-hero" aria-label="상품 소개">
         <div class="hero-copy">
           <h1 id="heroName">듀플렉스 저소음 1등급 제습기 12L</h1>
@@ -350,23 +367,6 @@
           <span>가격과 쿠폰은 쿠팡에서 확인</span>
         </div>
       </section>
-
-      <section class="content-layout" id="products" aria-label="추천 상품 목록">
-        <section class="product-area" aria-label="상품 카드">
-          <div class="section-head">
-            <div>
-              <p class="kicker">함께 볼 상품</p>
-              <h2>6월 추천 상품</h2>
-            </div>
-            <span id="resultCount" class="result-count">0개</span>
-          </div>
-
-          <div id="productGrid" class="product-grid" aria-live="polite"></div>
-          <div class="catalog-actions">
-            <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
-          </div>
-        </section>
-      </section>
     </main>
 
     <nav class="mobile-tabs" aria-label="모바일 메뉴">
@@ -414,6 +414,6 @@
       </article>
     </template>
 
-  <script src="./app.js?v=top-categories-20260609"></script>
+  <script src="./app.js?v=search-under-picks-20260609"></script>
   </body>
 </html>

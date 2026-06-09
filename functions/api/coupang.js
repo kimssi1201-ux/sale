@@ -119,35 +119,69 @@ function buildSearchUri(params) {
 
 function buildPublicSearchParams(url) {
   const keyword = (url.searchParams.get("keyword") || "").trim().slice(0, 50);
-  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 10), 1), 10);
+  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 15), 1), 15);
   const params = new URLSearchParams();
   params.set("keyword", keyword);
-  params.set("limit", String(limit));
+  params.set("limit", String(Math.min(limit + 5, 20)));
   return { keyword, limit, params };
 }
 
 function normalizeSearchItem(item, keyword = "") {
   const price = Number(item.productPrice || 0);
-  const priceText = price ? `${price.toLocaleString("ko-KR")}원` : "쿠팡 확인";
+  const priceText = price ? `${price.toLocaleString("ko-KR")}원` : "";
   const safeName = item.productName || "쿠팡 추천 상품";
   const safeCategory = item.categoryName || "추천상품";
+  const benefits = [
+    priceText ? `가격: ${priceText}` : "",
+    safeCategory ? `카테고리: ${safeCategory}` : "",
+    "쿠팡 링크"
+  ].filter(Boolean);
 
   return {
-    id: `coupang-${item.productId || "item"}-${item.rank || "0"}`,
+    id: `coupang-${item.productId || item.rank || "item"}`,
+    productId: item.productId || "",
     name: safeName,
     category: safeCategory,
     badge: item.isRocket ? "로켓배송" : safeCategory,
-    review: "쿠팡 확인",
-    originalPrice: "쿠팡 확인",
-    priceLabel: "API 가격",
+    review: "",
+    originalPrice: "",
+    priceLabel: "가격",
     price: priceText,
-    discount: "쿠팡 확인",
+    discount: "",
     productUrl: item.productUrl || "",
     imageUrl: item.productImage || "",
-    summary: `${safeName} 상품입니다. API 검색 결과 기준 가격과 이미지를 자동으로 불러왔으며, 실제 쿠폰과 배송 조건은 쿠팡 상품 페이지에서 최종 확인하세요.`,
-    highlightTerms: [keyword, safeCategory, "API 검색 결과", "쿠팡 상품 페이지"].filter(Boolean),
-    benefits: ["상품명과 이미지 자동 확인", "파트너스 상품 링크 자동 적용", "가격은 쿠팡 API 기준으로 빠르게 확인"]
+    summary: [safeCategory, priceText].filter(Boolean).join(" · "),
+    highlightTerms: [keyword, safeCategory, priceText].filter(Boolean),
+    benefits
   };
+}
+
+function getProductKey(product) {
+  try {
+    const url = new URL(product.productUrl || product.link || "https://example.invalid");
+    const pageKey = url.searchParams.get("pageKey");
+    const itemId = url.searchParams.get("itemId");
+    const vendorItemId = url.searchParams.get("vendorItemId");
+    if (pageKey) return [pageKey, itemId, vendorItemId].filter(Boolean).join(":");
+  } catch {
+    // Fall back to stable fields below.
+  }
+
+  return [
+    product.productId || product.id || "",
+    String(product.name || product.title || "").toLowerCase().replace(/\s+/g, " ").trim(),
+    product.price || ""
+  ].filter(Boolean).join("|");
+}
+
+function dedupeProducts(products) {
+  const seen = new Set();
+  return products.filter((product) => {
+    const key = getProductKey(product);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 async function publicSearch(request, env) {
@@ -165,7 +199,7 @@ async function publicSearch(request, env) {
 
   const result = await fetchCoupangData({ method: "GET", uri: buildSearchUri(params) }, env);
   const products = result.data?.data?.productData || [];
-  const normalizedProducts = products.map((item) => normalizeSearchItem(item, keyword));
+  const normalizedProducts = dedupeProducts(products.map((item) => normalizeSearchItem(item, keyword))).slice(0, limit);
   const response = jsonResponse({
     ok: result.ok,
     status: result.status,

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>픽앤세일 API 관리</title>
+    <style>
+      :root {
+        color: #151922;
+        background: #f5f6f3;
+        font-family: Arial, "Noto Sans KR", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+      }
+
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin: 0 0 18px;
+        font-size: 28px;
+      }
+
+      section {
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 1px solid #d7ddd5;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: #596270;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      input,
+      select,
+      button,
+      textarea {
+        min-height: 44px;
+        border: 1px solid #d7ddd5;
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      input,
+      select,
+      textarea {
+        padding: 0 12px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 220px;
+        padding: 12px;
+        line-height: 1.5;
+      }
+
+      button {
+        padding: 0 16px;
+        background: #e84f35;
+        color: #fff;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 180px 160px;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .result-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .result-card {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 14px;
+        padding: 12px;
+        border: 1px solid #e1e5df;
+        border-radius: 8px;
+      }
+
+      .result-card img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+      }
+
+      .result-card h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .muted {
+        color: #6b7280;
+        font-size: 13px;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          padding: 12px;
+        }
+
+        .grid,
+        .result-card {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>픽앤세일 API 관리</h1>
+
+      <section class="stack">
+        <label>
+          관리자 토큰
+          <input id="adminToken" type="password" placeholder="Cloudflare COUPANG_ADMIN_TOKEN" autocomplete="off" />
+        </label>
+        <p class="muted">토큰은 브라우저 sessionStorage에만 저장됩니다. Access Key와 Secret Key는 Cloudflare 환경변수에만 넣으세요.</p>
+      </section>
+
+      <section class="stack">
+        <div class="grid">
+          <label>
+            상품 검색어
+            <input id="keyword" type="search" placeholder="예: 냉감 바지" />
+          </label>
+          <label>
+            개수
+            <select id="limit">
+              <option value="5">5개</option>
+              <option value="10" selected>10개</option>
+              <option value="20">20개</option>
+            </select>
+          </label>
+          <button id="searchButton" type="button">검색</button>
+        </div>
+        <div id="searchResults" class="result-list"></div>
+      </section>
+
+      <section class="stack">
+        <div class="grid">
+          <label>
+            쿠팡 URL
+            <input id="coupangUrl" type="url" placeholder="https://www.coupang.com/..." />
+          </label>
+          <span></span>
+          <button id="deeplinkButton" type="button">딥링크 생성</button>
+        </div>
+        <textarea id="deeplinkOutput" readonly placeholder="딥링크 결과가 여기에 표시됩니다."></textarea>
+      </section>
+    </main>
+
+    <script>
+      const tokenInput = document.querySelector("#adminToken");
+      const keywordInput = document.querySelector("#keyword");
+      const limitSelect = document.querySelector("#limit");
+      const results = document.querySelector("#searchResults");
+      const coupangUrlInput = document.querySelector("#coupangUrl");
+      const deeplinkOutput = document.querySelector("#deeplinkOutput");
+
+      tokenInput.value = sessionStorage.getItem("picknsaleAdminToken") || "";
+      tokenInput.addEventListener("input", () => {
+        sessionStorage.setItem("picknsaleAdminToken", tokenInput.value);
+      });
+
+      function getHeaders() {
+        return {
+          "content-type": "application/json",
+          "x-admin-token": tokenInput.value
+        };
+      }
+
+      function renderProduct(product) {
+        const article = document.createElement("article");
+        article.className = "result-card";
+        article.innerHTML = `
+          <img src="${product.imageUrl}" alt="" />
+          <div>
+            <h2>${product.name}</h2>
+            <p><strong>${product.price}</strong> · ${product.category}</p>
+            <p class="muted">${product.productUrl}</p>
+            <button type="button">JSON 복사</button>
+          </div>
+        `;
+        article.querySelector("button").addEventListener("click", async () => {
+          await navigator.clipboard.writeText(JSON.stringify(product, null, 2));
+          article.querySelector("button").textContent = "복사됨";
+        });
+        return article;
+      }
+
+      document.querySelector("#searchButton").addEventListener("click", async () => {
+        results.textContent = "검색 중...";
+        const params = new URLSearchParams({
+          action: "search",
+          keyword: keywordInput.value,
+          limit: limitSelect.value
+        });
+        const response = await fetch(`/api/coupang?${params}`, { headers: getHeaders() });
+        const payload = await response.json();
+        results.innerHTML = "";
+
+        if (!response.ok || !payload.ok) {
+          results.textContent = payload.message || payload.data?.message || "검색에 실패했습니다.";
+          return;
+        }
+
+        payload.normalizedProducts.forEach((product) => results.append(renderProduct(product)));
+      });
+
+      document.querySelector("#deeplinkButton").addEventListener("click", async () => {
+        deeplinkOutput.value = "생성 중...";
+        const response = await fetch("/api/coupang", {
+          method: "POST",
+          headers: getHeaders(),
+          body: JSON.stringify({ action: "deeplink", url: coupangUrlInput.value })
+        });
+        const payload = await response.json();
+        deeplinkOutput.value = JSON.stringify(payload, null, 2);
+      });
+    </script>
+  </body>
+</html>

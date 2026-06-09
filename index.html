@@ -8,7 +8,7 @@
       name="description"
       content="6월 장마, 더위, 습기 대비 상품을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
-    <link rel="stylesheet" href="./styles.css?v=top-notice-20260609" />
+    <link rel="stylesheet" href="./styles.css?v=notice-center-20260609" />
     <link rel="stylesheet" href="./manual.css?v=top-categories-grid-20260609" />
     <style>
       :root {
@@ -19,12 +19,20 @@
         position: sticky;
         top: 0;
         z-index: 30;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
         justify-content: center;
         gap: 6px 14px;
         min-height: var(--notice-bar-height);
         padding: 8px 24px;
+        text-align: center;
         background: #fff4d6;
         box-shadow: 0 4px 14px rgba(23, 27, 34, 0.06);
+      }
+
+      .notice-bar span {
+        text-align: center;
       }
 
       .site-header {

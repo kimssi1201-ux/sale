@@ -48,6 +48,7 @@
 }
 
 .shop-toolbar {
+  display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px);
   align-items: end;
   gap: 14px;

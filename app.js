@@ -166,6 +166,36 @@ function updateSearchStatus(message = "", tone = "") {
   searchStatus.dataset.tone = tone;
 }
 
+function scrollSliderTrack(track, direction) {
+  if (!track) return;
+  const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
+  if (maxScroll === 0) return;
+
+  const distance = Math.max(Math.round(track.clientWidth * 0.88), 280);
+  const nextLeft = Math.min(Math.max(track.scrollLeft + direction * distance, 0), maxScroll);
+  track.scrollLeft = nextLeft;
+}
+
+function createSlideControls(track, label) {
+  const controls = document.createElement("div");
+  controls.className = "slide-controls";
+
+  [
+    { direction: -1, text: "<", label: `${label} 이전 상품` },
+    { direction: 1, text: ">", label: `${label} 다음 상품` }
+  ].forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "slide-button";
+    button.textContent = item.text;
+    button.setAttribute("aria-label", item.label);
+    button.addEventListener("click", () => scrollSliderTrack(track, item.direction));
+    controls.append(button);
+  });
+
+  return controls;
+}
+
 function createFixedPickCard(product) {
   const card = document.createElement("a");
   card.className = "fixed-pick-card";
@@ -198,6 +228,12 @@ function renderFixedPicks() {
   if (!fixedPicksGrid) return;
   fixedPicksGrid.innerHTML = "";
   getFixedProducts().forEach((product) => fixedPicksGrid.append(createFixedPickCard(product)));
+
+  const head = document.querySelector(".fixed-picks-head");
+  if (head) {
+    head.querySelector(".slide-controls")?.remove();
+    head.append(createSlideControls(fixedPicksGrid, "6월 추천제품"));
+  }
 }
 
 function createCategorySlideCard(product) {
@@ -246,6 +282,10 @@ function renderCategoryShowcase() {
     rail.className = "category-rail";
     rail.dataset.category = category;
 
+    const track = document.createElement("div");
+    track.className = "category-rail-track";
+    products.forEach((product) => track.append(createCategorySlideCard(product)));
+
     const head = document.createElement("div");
     head.className = "category-rail-head";
     const titleWrap = document.createElement("div");
@@ -253,11 +293,10 @@ function renderCategoryShowcase() {
       createTextElement("span", "", "카테고리"),
       createTextElement("strong", "", category)
     );
-    head.append(titleWrap, createTextElement("em", "", `${products.length}개`));
-
-    const track = document.createElement("div");
-    track.className = "category-rail-track";
-    products.forEach((product) => track.append(createCategorySlideCard(product)));
+    const meta = document.createElement("div");
+    meta.className = "category-rail-meta";
+    meta.append(createTextElement("em", "", `${products.length}개`), createSlideControls(track, category));
+    head.append(titleWrap, meta);
 
     rail.append(head, track);
     categorySliderSections.append(rail);
@@ -440,7 +479,7 @@ function normalizeRemoteProduct(product, index, keyword) {
     title,
     category,
     badge: product.badge || category,
-    image: product.image || product.imageUrl || product.productImage || "",
+    image: product.image || product.imageUrl || product.image || "",
     link: product.link || product.productUrl || "#",
     originalPrice: product.originalPrice || product.basePrice || "쿠팡 확인",
     discount: product.discount || product.discountRate || "",
@@ -449,7 +488,7 @@ function normalizeRemoteProduct(product, index, keyword) {
     summary: product.summary || `${title} 상품입니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
     benefits: product.benefits || [
       "쿠팡 상품 페이지에서 실시간 가격 확인",
-      "배송 조건과 쿠폰 적용 여부 확인 가능",
+      "배송 조건과 쿠폰 적요 여부 확인 가능",
       "관심 상품을 바로 비교하기 좋음"
     ],
     keywords
@@ -465,7 +504,7 @@ function normalizeHomeRecommendationProduct(product, index, group) {
     id: `home-${group.keyword}-${normalized.id || index}`,
     category: group.category,
     badge: group.badge || group.category,
-    summary: product.summary || `${group.category}를 미리 준비할 때 비교해보기 좋은 쿠팡 상품입니다. 실제 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
+    summary: product.summary || `${group.category|를 미리 준비할 때 비교해보기 좋은 쿠팡 상품 입니다. 실제 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
     benefits: product.benefits || [
       `${group.category} 준비용으로 비교하기 좋음`,
       "쿠팡 상품 페이지에서 실시간 가격 확인",

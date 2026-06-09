@@ -74,13 +74,23 @@
         width: min(1180px, calc(100% - 40px));
         margin: 0 auto 18px;
         padding: 16px;
+        overflow: hidden;
         border: 1px solid #ead58f;
         border-radius: 8px;
         background: #fff8d8;
       }
 
       .fixed-picks-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
         margin-bottom: 12px;
+      }
+
+      .fixed-picks-head > div,
+      .category-rail-head > div {
+        min-width: 0;
       }
 
       .fixed-picks-head strong,
@@ -249,6 +259,9 @@
         grid-template-columns: none;
         grid-auto-flow: column;
         grid-auto-columns: minmax(210px, 250px);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
         gap: 12px;
         overflow-x: auto;
         overflow-y: hidden;
@@ -256,6 +269,38 @@
         scroll-padding-inline: 2px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
+      }
+
+      .slide-controls {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .slide-button {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border: 1px solid #d49a22;
+        border-radius: 50%;
+        color: #7a460e;
+        background: #fff;
+        box-shadow: 0 6px 14px rgba(122, 70, 14, 0.1);
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 950;
+        cursor: pointer;
+      }
+
+      .slide-button:hover {
+        color: #fff;
+        background: #b66a16;
+      }
+
+      .slide-button:active {
+        transform: translateY(1px);
       }
 
       .fixed-pick-card {
@@ -307,6 +352,7 @@
 
       .category-rail {
         padding: 14px;
+        overflow: hidden;
         border: 1px solid #ead58f;
         border-radius: 8px;
         background: #fff9dc;
@@ -342,10 +388,20 @@
         font-weight: 900;
       }
 
+      .category-rail-meta {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 10px;
+      }
+
       .category-rail-track {
         display: grid;
         grid-auto-flow: column;
         grid-auto-columns: minmax(176px, 210px);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
         gap: 10px;
         overflow-x: auto;
         overflow-y: hidden;
@@ -439,6 +495,25 @@
       }
 
       @media (max-width: 720px) {
+        .fixed-picks-head,
+        .category-rail-head {
+          align-items: center;
+        }
+
+        .slide-controls {
+          gap: 6px;
+        }
+
+        .slide-button {
+          width: 38px;
+          height: 38px;
+          font-size: 20px;
+        }
+
+        .category-rail-meta em {
+          display: none;
+        }
+
         .fixed-picks-grid {
           grid-auto-columns: minmax(166px, 72vw);
         }
@@ -539,7 +614,7 @@
       </section>
 
       <section class="content-layout" id="products" aria-label="검색 결과와 추천 상품 목록">
-        <section class="product-area" aria-label="상품 카드">
+        <section class="product-area" aria-label="상품 치드">
           <div class="section-head">
             <div>
               <p class="kicker" id="productKicker">검색 결과</p>
@@ -595,6 +670,6 @@
       </article>
     </template>
 
-  <script src="./app.js?v=category-slider-search15-20260609"></script>
+  <script src="./app.js?v=slider-buttons-20260609"></script>
   </body>
 </html>

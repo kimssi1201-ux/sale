@@ -35,10 +35,28 @@ body { padding-top: var(--notice-bar-height) !important; }
 .notice-bar strong,
 .notice-extra { display: none !important; }
 .notice-bar span { max-width: min(100%, 980px); text-align: center !important; }
-.site-header { top: var(--notice-bar-height) !important; }
+.site-header {
+  position: static !important;
+  top: auto !important;
+  z-index: 1 !important;
+  min-height: 48px !important;
+  padding: 0 18px !important;
+  background: #fff !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+.brand { min-width: 0 !important; gap: 8px !important; }
+.brand-mark { width: 30px !important; height: 30px !important; border-radius: 7px !important; }
+.brand-copy strong { font-size: 16px !important; line-height: 1.1 !important; }
+.brand-copy small { display: none !important; }
+.main-nav,
+.header-cta { display: none !important; }
 @media (max-width: 720px) {
   :root { --notice-bar-height: 60px; }
   .notice-bar { padding: 7px 12px !important; font-size: 12.5px !important; }
+  .site-header { min-height: 42px !important; padding: 0 12px !important; }
+  .brand-mark { width: 26px !important; height: 26px !important; }
+  .brand-copy strong { font-size: 15px !important; }
 }
 </style>`;
   const injection = [

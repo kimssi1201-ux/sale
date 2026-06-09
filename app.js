@@ -133,6 +133,10 @@ function sortCategoryNames(categories) {
   });
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+}
+
 function highlightedText(text = "", words = []) {
   const fragment = document.createDocumentFragment();
   const safeText = String(text);
@@ -143,7 +147,7 @@ function highlightedText(text = "", words = []) {
     return fragment;
   }
 
-  const pattern = new RegExp(`(${highlights.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+  const pattern = new RegExp("(" + highlights.map(escapeRegExp).join("|") + ")", "gi");
   safeText.split(pattern).forEach((part) => {
     if (!part) return;
     const matched = highlights.some((word) => word.toLowerCase() === part.toLowerCase());
@@ -479,7 +483,7 @@ function normalizeRemoteProduct(product, index, keyword) {
     title,
     category,
     badge: product.badge || category,
-    image: product.image || product.imageUrl || product.image || "",
+    image: product.image || product.imageUrl || product.productImage || "",
     link: product.link || product.productUrl || "#",
     originalPrice: product.originalPrice || product.basePrice || "쿠팡 확인",
     discount: product.discount || product.discountRate || "",
@@ -488,7 +492,7 @@ function normalizeRemoteProduct(product, index, keyword) {
     summary: product.summary || `${title} 상품입니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
     benefits: product.benefits || [
       "쿠팡 상품 페이지에서 실시간 가격 확인",
-      "배송 조건과 쿠폰 적요 여부 확인 가능",
+      "배송 조건과 쿠폰 적용 여부 확인 가능",
       "관심 상품을 바로 비교하기 좋음"
     ],
     keywords
@@ -504,7 +508,7 @@ function normalizeHomeRecommendationProduct(product, index, group) {
     id: `home-${group.keyword}-${normalized.id || index}`,
     category: group.category,
     badge: group.badge || group.category,
-    summary: product.summary || `${group.category|를 미리 준비할 때 비교해보기 좋은 쿠팡 상품 입니다. 실제 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
+    summary: product.summary || `${group.category}를 미리 준비할 때 비교해보기 좋은 쿠팡 상품입니다. 실제 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
     benefits: product.benefits || [
       `${group.category} 준비용으로 비교하기 좋음`,
       "쿠팡 상품 페이지에서 실시간 가격 확인",

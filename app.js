@@ -19,7 +19,19 @@ const FIXED_PICK_IDS = [
   "june-portable-fan",
   "june-sunscreen",
   "june-uv-umbrella",
-  "june-car-sunshade"
+  "june-car-sunshade",
+  "june-summer-blanket",
+  "june-mosquito-repeller",
+  "june-ice-box",
+  "june-cooler-bag",
+  "june-rain-boots",
+  "june-raincoat",
+  "june-cooling-sleeves",
+  "june-aqua-shoes",
+  "june-stand-fan",
+  "june-aircon-filter",
+  "june-pool-tube",
+  "june-camping-tarp"
 ];
 const FIXED_PICK_ID_SET = new Set(FIXED_PICK_IDS);
 const CATEGORY_ORDER = [
@@ -33,7 +45,9 @@ const CATEGORY_ORDER = [
   "가전디지털",
   "홈인테리어",
   "자동차용품",
-  "패션잡화"
+  "패션잡화",
+  "스포츠/레저",
+  "완구/취미"
 ];
 
 const grid = document.querySelector("#productGrid");
@@ -242,13 +256,13 @@ function updateProductHeading(total) {
   }
 
   if (state.category !== "전체") {
-    productKicker.textContent = "카테고리 상품";
-    productTitle.textContent = `${state.category} 상품 ${total}개`;
+    productKicker.textContent = "검색 결과";
+    productTitle.textContent = state.query.length >= 2 ? `${state.category} 검색 결과` : "검색 결과";
     return;
   }
 
   productKicker.textContent = "검색 결과";
-  productTitle.textContent = "추천 상품";
+  productTitle.textContent = "검색 결과";
 }
 
 function createProductCard(product) {
@@ -297,20 +311,11 @@ function createProductCard(product) {
 }
 
 function renderProducts() {
-  const featuredProduct = state.products[0];
-  const featuredProductId = featuredProduct?.id;
   const isRemoteSearch = state.query.length >= 2;
-  const hideFixedPicksInDefaultList = state.query.length === 0 && state.category === "전체";
-  const localProducts = isRemoteSearch
-    ? []
-    : state.products
-      .filter((product) => product.id !== featuredProductId)
-      .filter((product) => !hideFixedPicksInDefaultList || !FIXED_PICK_ID_SET.has(product.id))
-      .filter(matchesProduct);
   const remoteProducts = isRemoteSearch
     ? state.remoteProducts.filter((product) => state.category === "전체" || product.category === state.category)
     : [];
-  const filteredProducts = [...localProducts, ...remoteProducts];
+  const filteredProducts = [...remoteProducts];
   const sortedProducts = sortProducts(filteredProducts);
   const visibleProducts = sortedProducts.slice(0, state.visibleCount);
 
@@ -322,7 +327,15 @@ function renderProducts() {
   if (visibleProducts.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = state.remoteLoading ? "쿠팡 상품을 검색 중입니다." : "조건에 맞는 상품이 없습니다.";
+    if (state.remoteLoading) {
+      empty.textContent = "쿠팡 상품을 검색 중입니다.";
+    } else if (state.query.length === 0) {
+      empty.textContent = "검색어를 입력하면 결과가 여기에 표시됩니다.";
+    } else if (state.query.length < 2) {
+      empty.textContent = "검색어를 2글자 이상 입력하세요.";
+    } else {
+      empty.textContent = "조건에 맞는 검색 결과가 없습니다.";
+    }
     grid.append(empty);
   } else {
     visibleProducts.forEach((product) => grid.append(createProductCard(product)));

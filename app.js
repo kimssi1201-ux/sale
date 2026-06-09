@@ -11,12 +11,23 @@ const state = {
 
 const PAGE_SIZE = 7;
 const SEARCH_DEBOUNCE_MS = 420;
+const FIXED_PICK_IDS = [
+  "june-dehumidifier",
+  "june-moisture-absorber",
+  "june-circulator",
+  "june-cooling-pad",
+  "june-portable-fan",
+  "june-sunscreen",
+  "june-uv-umbrella",
+  "june-car-sunshade"
+];
 
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
 const searchInput = document.querySelector("#search");
 const searchStatus = document.querySelector("#searchStatus");
+const fixedPicksGrid = document.querySelector("#fixedPicksGrid");
 const categoryTabs = document.querySelector("#categoryTabs");
 const sortSelect = document.querySelector("#sort");
 const loadMoreButton = document.querySelector("#loadMore");
@@ -107,6 +118,51 @@ function updateSearchStatus(message = "", tone = "") {
   searchStatus.textContent = message;
   searchStatus.hidden = !message;
   searchStatus.dataset.tone = tone;
+}
+
+function createFixedPickCard(product) {
+  const card = document.createElement("a");
+  card.className = "fixed-pick-card";
+  card.href = product.productUrl;
+  card.target = "_blank";
+  card.rel = "nofollow sponsored noopener";
+  card.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
+
+  const imageWrap = document.createElement("span");
+  imageWrap.className = "fixed-pick-image";
+
+  const image = document.createElement("img");
+  image.src = product.imageUrl;
+  image.alt = product.name;
+  image.loading = "eager";
+  imageWrap.append(image);
+
+  const content = document.createElement("span");
+  content.className = "fixed-pick-copy";
+
+  const badge = document.createElement("span");
+  badge.className = "fixed-pick-badge";
+  badge.textContent = product.badge;
+
+  const name = document.createElement("strong");
+  name.textContent = product.name;
+
+  const price = document.createElement("span");
+  price.className = "fixed-pick-price";
+  price.textContent = product.price;
+
+  content.append(badge, name, price);
+  card.append(imageWrap, content);
+  return card;
+}
+
+function renderFixedPicks() {
+  if (!fixedPicksGrid) return;
+
+  const productsById = new Map(state.products.map((product) => [product.id, product]));
+  const fixedProducts = FIXED_PICK_IDS.map((id) => productsById.get(id)).filter(Boolean);
+  fixedPicksGrid.innerHTML = "";
+  fixedProducts.forEach((product) => fixedPicksGrid.append(createFixedPickCard(product)));
 }
 
 function renderCategories() {
@@ -318,6 +374,7 @@ async function loadProducts() {
     if (!response.ok) throw new Error("products.json load failed");
     state.products = await response.json();
     renderHero(state.products[0]);
+    renderFixedPicks();
     renderCategories();
     renderProducts();
   } catch (error) {

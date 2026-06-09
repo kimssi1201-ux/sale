@@ -1,6 +1,10 @@
 (function () {
   var root = document.documentElement;
   var CHECK = "\ucfe0\ud321\uc5d0\uc11c \ud655\uc778";
+  var pending = false;
+  var runs = 0;
+  var observer = null;
+
   root.setAttribute("data-price-review-accuracy-loaded", "1");
 
   function clean(value) {
@@ -13,7 +17,11 @@
 
   function hasReviewCount(value) {
     var text = clean(value);
-    return /\d/.test(text) && /(\uac1c|\uac74|\uc0c1\ud488\ud3c9|\ub9ac\ubdf0|\ud3c9)/.test(text);
+    return (
+      /\d/.test(text) &&
+      !/\ud655\uc778/.test(text) &&
+      /(\uac1c|\uac74|\uc0c1\ud488\ud3c9|\ub9ac\ubdf0|\ud3c9)/.test(text)
+    );
   }
 
   function setText(element, text) {
@@ -25,7 +33,8 @@
     if (!board || card.querySelector(".price-accuracy-note")) return;
     var note = document.createElement("p");
     note.className = "price-accuracy-note";
-    note.textContent = "\uac00\uaca9\uc740 \ucfe0\ud321 API \uae30\uc900\uc774\uba70, \uc0c1\ud488\ud3c9 \uc218\ub294 \ucfe0\ud321 \uc0c1\ud488 \ud398\uc774\uc9c0\uc5d0\uc11c \ud655\uc778\ub429\ub2c8\ub2e4.";
+    note.textContent =
+      "\uac00\uaca9\uc740 \ucfe0\ud321 API \uae30\uc900\uc774\uba70, \uc0c1\ud488\ud3c9 \uc218\ub294 \ucfe0\ud321 \uc0c1\ud488 \ud398\uc774\uc9c0\uc5d0\uc11c \ud655\uc778\ub429\ub2c8\ub2e4.";
     board.insertAdjacentElement("afterend", note);
   }
 
@@ -35,21 +44,23 @@
     var discountLabel = card.querySelector(".card-discount-label");
     var discountValue = card.querySelector(".card-discount-value");
     var saleValue = card.querySelector(".card-sale-price-value");
+    var saleLabel = saleValue && saleValue.previousElementSibling;
     var reviewLabel = card.querySelector(".card-review-label");
     var reviewValue = card.querySelector(".card-review-value");
     var reviewChip = card.querySelector(".product-review");
 
     setText(labels[0], "\uc815\uac00");
     setText(discountLabel, "\ud560\uc778\uc728");
-    setText(labels[2], "API \uac00\uaca9");
+    setText(saleLabel || labels[2], "API \uac00\uaca9");
     setText(reviewLabel, "\uc0c1\ud488\ud3c9");
 
     if (originalValue && !hasWon(originalValue.textContent)) setText(originalValue, CHECK);
     if (discountValue && !/%/.test(clean(discountValue.textContent))) setText(discountValue, CHECK);
     if (saleValue && !hasWon(saleValue.textContent)) setText(saleValue, CHECK);
-
     if (reviewValue && !hasReviewCount(reviewValue.textContent)) setText(reviewValue, CHECK);
-    if (reviewChip && !hasReviewCount(reviewChip.textContent)) setText(reviewChip, "\uc0c1\ud488\ud3c9 " + CHECK);
+    if (reviewChip && !hasReviewCount(reviewChip.textContent)) {
+      setText(reviewChip, "\uc0c1\ud488\ud3c9 " + CHECK);
+    }
 
     ensureNote(card);
   }
@@ -78,20 +89,49 @@
     document.head.appendChild(style);
   }
 
-  var runs = 0;
-  function tick() {
+  function run() {
+    pending = false;
     try {
       installStyle();
       normalizeSort();
       Array.prototype.slice.call(document.querySelectorAll(".product-card")).forEach(normalizeCard);
-      root.setAttribute("data-price-review-accuracy-runs", String(runs + 1));
+      runs += 1;
+      root.setAttribute("data-price-review-accuracy-runs", String(runs));
       root.removeAttribute("data-price-review-accuracy-error");
     } catch (error) {
-      root.setAttribute("data-price-review-accuracy-error", error && error.message ? error.message : "error");
+      root.setAttribute(
+        "data-price-review-accuracy-error",
+        error && error.message ? error.message : "error"
+      );
     }
-    runs += 1;
-    if (runs < 180) window.setTimeout(tick, runs < 25 ? 280 : 1000);
   }
 
-  window.setTimeout(tick, 220);
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    (window.requestAnimationFrame || window.setTimeout)(run, 0);
+  }
+
+  function startObserver() {
+    if (observer || !document.body || !window.MutationObserver) return;
+    observer = new MutationObserver(schedule);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+
+  function start() {
+    run();
+    startObserver();
+    var loops = 0;
+    var timer = window.setInterval(function () {
+      run();
+      loops += 1;
+      if (loops > 120) window.clearInterval(timer);
+    }, 1000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
 })();

@@ -205,7 +205,9 @@ function renderProducts() {
   const localProducts = state.products
     .filter((product) => product.id !== featuredProductId)
     .filter(matchesProduct);
-  const remoteProducts = state.query.length >= 2 ? state.remoteProducts.filter(matchesProduct) : [];
+  const remoteProducts = state.query.length >= 2
+    ? state.remoteProducts.filter((product) => state.category === "전체" || product.category === state.category)
+    : [];
   const filteredProducts = [...localProducts, ...remoteProducts];
   const sortedProducts = sortProducts(filteredProducts);
   const visibleProducts = sortedProducts.slice(0, state.visibleCount);

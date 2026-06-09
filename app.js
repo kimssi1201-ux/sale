@@ -103,6 +103,22 @@ function createTextElement(tagName, className, text) {
   return element;
 }
 
+function getProductTitle(product) {
+  return product.title || product.name || product.productName || "";
+}
+
+function getProductImage(product) {
+  return product.image || product.imageUrl || product.productImage || "";
+}
+
+function getProductLink(product) {
+  return product.link || product.productUrl || "#";
+}
+
+function getProductReviews(product) {
+  return product.reviews || product.review || product.reviewCount || "";
+}
+
 function isSearchMode() {
   return state.query.length > 0;
 }
@@ -201,9 +217,10 @@ function createSlideControls(track, label) {
 }
 
 function createFixedPickCard(product) {
+  const title = getProductTitle(product);
   const card = document.createElement("a");
   card.className = "fixed-pick-card";
-  card.href = product.link || "#";
+  card.href = getProductLink(product);
   card.target = "_blank";
   card.rel = "nofollow sponsored noopener";
 
@@ -211,16 +228,16 @@ function createFixedPickCard(product) {
   imageBox.className = "fixed-pick-image";
 
   const image = document.createElement("img");
-  image.src = product.image;
-  image.alt = product.title;
-  image.loading = "lazy";
+  image.src = getProductImage(product);
+  image.alt = title;
+  image.loading = "eager";
   imageBox.append(image);
 
   const copy = document.createElement("span");
   copy.className = "fixed-pick-copy";
   copy.append(
     createTextElement("span", "fixed-pick-badge", product.category || "추천"),
-    createTextElement("strong", "", product.title),
+    createTextElement("strong", "", title),
     createTextElement("span", "fixed-pick-price", product.price || "쿠팡에서 확인")
   );
 
@@ -241,22 +258,23 @@ function renderFixedPicks() {
 }
 
 function createCategorySlideCard(product) {
+  const productTitle = getProductTitle(product);
   const card = document.createElement("a");
   card.className = "category-slide-card";
-  card.href = product.link || "#";
+  card.href = getProductLink(product);
   card.target = "_blank";
   card.rel = "nofollow sponsored noopener";
 
   const imageBox = document.createElement("span");
   imageBox.className = "category-slide-image";
   const image = document.createElement("img");
-  image.src = product.image;
-  image.alt = product.title;
-  image.loading = "lazy";
+  image.src = getProductImage(product);
+  image.alt = productTitle;
+  image.loading = "eager";
   imageBox.append(image);
 
   const badge = createTextElement("span", "category-slide-badge", product.category || "추천");
-  const title = createTextElement("strong", "category-slide-title", product.title);
+  const title = createTextElement("strong", "category-slide-title", productTitle);
   const price = createTextElement("span", "category-slide-price", product.price || "쿠팡에서 확인");
   const action = createTextElement("span", "category-slide-action", "쿠팡에서 보기");
 
@@ -378,6 +396,9 @@ function fillPriceBoard(card, product) {
 }
 
 function createProductCard(product) {
+  const productTitle = getProductTitle(product);
+  const productLink = getProductLink(product);
+  const productReviews = getProductReviews(product);
   const node = template.content.cloneNode(true);
   const card = node.querySelector(".product-card");
   const media = node.querySelector(".product-media");
@@ -392,16 +413,16 @@ function createProductCard(product) {
   const words = product.keywords || [];
 
   if (card) card.dataset.productId = product.id || "";
-  media.href = product.link || "#";
-  link.href = product.link || "#";
-  image.src = product.image;
-  image.alt = product.title;
+  media.href = productLink;
+  link.href = productLink;
+  image.src = getProductImage(product);
+  image.alt = productTitle;
   badge.textContent = product.badge || product.category || "추천";
   category.textContent = product.category || "추천";
   review.textContent = product.reviews ? `${product.reviews} 상품평` : "쿠팡 상품";
 
   title.textContent = "";
-  title.append(highlightedText(product.title, words));
+  title.append(highlightedText(productTitle, words));
   summary.textContent = "";
   summary.append(highlightedText(product.summary || "쿠팡 상품 페이지에서 실제 가격과 배송 조건을 확인하세요.", words));
 

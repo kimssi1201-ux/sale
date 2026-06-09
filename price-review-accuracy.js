@@ -65,11 +65,12 @@
     if (price) parts.push('\ud604\uc7ac API \uac00\uaca9 <span class="verified-mark">' + escapeHtml(price) + "</span>");
     if (badge) parts.push('\ubc30\uc1a1 \ubc43\uc9c0 <span class="verified-mark">' + escapeHtml(badge) + "</span>");
 
-    summary.innerHTML = parts.length
+    var next = parts.length
       ? "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4. " +
         parts.join(", ") +
         "\uc785\ub2c8\ub2e4."
       : "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uae30\ubcf8 \uc0c1\ud488 \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4.";
+    if (summary.innerHTML !== next) summary.innerHTML = next;
   }
 
   function ensureFacts(card, category, price, badge) {
@@ -82,6 +83,9 @@
     if (badge) facts.push("\ud655\uc778\ub41c \ubc30\uc1a1 \ubc43\uc9c0: " + badge);
     facts.push("\ucfe0\ud321 \uc0c1\ud488 \ub9c1\ud06c \uc5f0\uacb0\ub428");
 
+    var key = facts.join("|");
+    if (list.getAttribute("data-verified-facts") === key) return;
+    list.setAttribute("data-verified-facts", key);
     list.innerHTML = "";
     facts.slice(0, 4).forEach(function (fact) {
       var item = document.createElement("li");

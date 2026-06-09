@@ -8,9 +8,29 @@
       name="description"
       content="6월 장마, 더위, 습기 대비 상품을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=top-notice-20260609" />
     <link rel="stylesheet" href="./manual.css?v=top-categories-grid-20260609" />
     <style>
+      :root {
+        --notice-bar-height: 42px;
+      }
+
+      .notice-bar {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        justify-content: center;
+        gap: 6px 14px;
+        min-height: var(--notice-bar-height);
+        padding: 8px 24px;
+        background: #fff4d6;
+        box-shadow: 0 4px 14px rgba(23, 27, 34, 0.06);
+      }
+
+      .site-header {
+        top: var(--notice-bar-height);
+      }
+
       .search-status {
         min-height: 22px;
         margin: -2px 0 0;
@@ -137,12 +157,31 @@
       }
 
       @media (max-width: 980px) {
+        .notice-extra {
+          display: none;
+        }
+
         .fixed-picks-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
       @media (max-width: 720px) {
+        :root {
+          --notice-bar-height: 54px;
+        }
+
+        .notice-bar {
+          padding: 7px 12px;
+          font-size: 12.5px;
+          line-height: 1.35;
+          text-align: center;
+        }
+
+        .notice-extra {
+          display: none;
+        }
+
         .fixed-picks {
           width: calc(100% - 24px);
           padding: 12px;
@@ -185,6 +224,12 @@
     </style>
   </head>
   <body>
+    <section class="notice-bar" id="notice" aria-label="파트너스 고지">
+      <strong>파트너스 고지</strong>
+      <span>쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.</span>
+      <span class="notice-extra">가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 최종 확인하세요.</span>
+    </section>
+
     <header class="site-header">
       <a class="brand" href="#top" aria-label="픽앤세일 홈">
         <span class="brand-mark">P</span>
@@ -233,12 +278,6 @@
           </div>
         </div>
         <div id="fixedPicksGrid" class="fixed-picks-grid"></div>
-      </section>
-
-      <section class="notice-bar" id="notice" aria-label="파트너스 고지">
-        <strong>파트너스 고지</strong>
-        <span>쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.</span>
-        <span>가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 최종 확인하세요.</span>
       </section>
 
       <section class="store-hero" aria-label="상품 소개">

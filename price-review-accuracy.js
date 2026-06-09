@@ -84,7 +84,16 @@
     facts.push("\ucfe0\ud321 \uc0c1\ud488 \ub9c1\ud06c \uc5f0\uacb0\ub428");
 
     var key = facts.join("|");
-    if (list.getAttribute("data-verified-facts") === key) return;
+    var current = Array.prototype.slice
+      .call(list.querySelectorAll("li"))
+      .map(function (item) {
+        return clean(item.textContent);
+      })
+      .join("|");
+    if (current === key) {
+      list.setAttribute("data-verified-facts", key);
+      return;
+    }
     list.setAttribute("data-verified-facts", key);
     list.innerHTML = "";
     facts.slice(0, 4).forEach(function (fact) {

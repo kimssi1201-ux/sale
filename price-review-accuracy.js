@@ -1,11 +1,11 @@
 (function () {
   var root = document.documentElement;
-  var CHECK = "\ucfe0\ud321\uc5d0\uc11c \ud655\uc778";
   var pending = false;
   var runs = 0;
   var observer = null;
 
   root.setAttribute("data-price-review-accuracy-loaded", "1");
+  root.setAttribute("data-verified-only-loaded", "1");
 
   function clean(value) {
     return String(value || "").replace(/\s+/g, " ").trim();
@@ -13,6 +13,10 @@
 
   function hasWon(value) {
     return /\d[\d,]*\s*\uc6d0/.test(clean(value));
+  }
+
+  function hasPercent(value) {
+    return /\d+\s*%/.test(clean(value));
   }
 
   function hasReviewCount(value) {
@@ -28,18 +32,67 @@
     if (element && clean(element.textContent) !== text) element.textContent = text;
   }
 
-  function ensureNote(card) {
-    var board = card.querySelector(".card-price-board");
-    if (!board || card.querySelector(".price-accuracy-note")) return;
-    var note = document.createElement("p");
-    note.className = "price-accuracy-note";
-    note.textContent =
-      "\uac00\uaca9\uc740 \ucfe0\ud321 API \uae30\uc900\uc774\uba70, \uc0c1\ud488\ud3c9 \uc218\ub294 \ucfe0\ud321 \uc0c1\ud488 \ud398\uc774\uc9c0\uc5d0\uc11c \ud655\uc778\ub429\ub2c8\ub2e4.";
-    board.insertAdjacentElement("afterend", note);
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function cellOf(element) {
+    return element ? element.closest(".card-price-board > div") || element.closest("div") : null;
+  }
+
+  function setCellVisible(element, visible) {
+    var cell = cellOf(element);
+    if (!cell) return 0;
+    cell.hidden = !visible;
+    cell.classList.toggle("is-unverified", !visible);
+    return visible ? 1 : 0;
+  }
+
+  function verifiedBadge(card) {
+    var badge = clean(card.querySelector(".product-badge")?.textContent);
+    return /(\ub85c\ucf13|\ubb34\ub8cc\ubc30\uc1a1|\ub85c\ucf13\ubc30\uc1a1)/.test(badge) ? badge : "";
+  }
+
+  function ensureSummary(card, category, price, badge) {
+    var summary = card.querySelector(".product-summary");
+    if (!summary) return;
+
+    var parts = [];
+    if (category) parts.push('\uce74\ud14c\uace0\ub9ac <span class="verified-mark">' + escapeHtml(category) + "</span>");
+    if (price) parts.push('\ud604\uc7ac API \uac00\uaca9 <span class="verified-mark">' + escapeHtml(price) + "</span>");
+    if (badge) parts.push('\ubc30\uc1a1 \ubc43\uc9c0 <span class="verified-mark">' + escapeHtml(badge) + "</span>");
+
+    summary.innerHTML = parts.length
+      ? "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4. " +
+        parts.join(", ") +
+        "\uc785\ub2c8\ub2e4."
+      : "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uae30\ubcf8 \uc0c1\ud488 \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4.";
+  }
+
+  function ensureFacts(card, category, price, badge) {
+    var list = card.querySelector(".benefit-list");
+    if (!list) return;
+
+    var facts = [];
+    if (price) facts.push("\ud655\uc778\ub41c \uac00\uaca9: " + price);
+    if (category) facts.push("\ud655\uc778\ub41c \uce74\ud14c\uace0\ub9ac: " + category);
+    if (badge) facts.push("\ud655\uc778\ub41c \ubc30\uc1a1 \ubc43\uc9c0: " + badge);
+    facts.push("\ucfe0\ud321 \uc0c1\ud488 \ub9c1\ud06c \uc5f0\uacb0\ub428");
+
+    list.innerHTML = "";
+    facts.slice(0, 4).forEach(function (fact) {
+      var item = document.createElement("li");
+      item.textContent = fact;
+      list.appendChild(item);
+    });
   }
 
   function normalizeCard(card) {
     var labels = card.querySelectorAll(".card-price-board > div > span");
+    var board = card.querySelector(".card-price-board");
     var originalValue = card.querySelector(".card-original-price-value");
     var discountLabel = card.querySelector(".card-discount-label");
     var discountValue = card.querySelector(".card-discount-value");
@@ -48,21 +101,38 @@
     var reviewLabel = card.querySelector(".card-review-label");
     var reviewValue = card.querySelector(".card-review-value");
     var reviewChip = card.querySelector(".product-review");
+    var category = clean(card.querySelector(".product-category")?.textContent);
+    var price = hasWon(saleValue && saleValue.textContent) ? clean(saleValue.textContent) : "";
+    var badge = verifiedBadge(card);
 
     setText(labels[0], "\uc815\uac00");
     setText(discountLabel, "\ud560\uc778\uc728");
     setText(saleLabel || labels[2], "API \uac00\uaca9");
     setText(reviewLabel, "\uc0c1\ud488\ud3c9");
 
-    if (originalValue && !hasWon(originalValue.textContent)) setText(originalValue, CHECK);
-    if (discountValue && !/%/.test(clean(discountValue.textContent))) setText(discountValue, CHECK);
-    if (saleValue && !hasWon(saleValue.textContent)) setText(saleValue, CHECK);
-    if (reviewValue && !hasReviewCount(reviewValue.textContent)) setText(reviewValue, CHECK);
-    if (reviewChip && !hasReviewCount(reviewChip.textContent)) {
-      setText(reviewChip, "\uc0c1\ud488\ud3c9 " + CHECK);
+    var visibleCells = 0;
+    visibleCells += setCellVisible(originalValue, hasWon(originalValue && originalValue.textContent));
+    visibleCells += setCellVisible(discountValue, hasPercent(discountValue && discountValue.textContent));
+    visibleCells += setCellVisible(saleValue, !!price);
+    visibleCells += setCellVisible(reviewValue, hasReviewCount(reviewValue && reviewValue.textContent));
+
+    if (board) {
+      board.hidden = visibleCells === 0;
+      board.style.setProperty("--verified-price-cols", String(Math.max(1, visibleCells)));
     }
 
-    ensureNote(card);
+    if (reviewChip) {
+      var reviewText = clean(reviewChip.textContent);
+      var showReview = hasReviewCount(reviewText);
+      reviewChip.hidden = !showReview;
+      if (showReview && !/\uc0c1\ud488\ud3c9/.test(reviewText)) {
+        setText(reviewChip, reviewText + " \uc0c1\ud488\ud3c9");
+      }
+    }
+
+    card.querySelector(".price-accuracy-note")?.remove();
+    ensureSummary(card, category, price, badge);
+    ensureFacts(card, category, price, badge);
   }
 
   function normalizeSort() {
@@ -79,12 +149,14 @@
   }
 
   function installStyle() {
-    if (document.getElementById("price-review-accuracy-style")) return;
+    if (document.getElementById("verified-only-style")) return;
     var style = document.createElement("style");
-    style.id = "price-review-accuracy-style";
+    style.id = "verified-only-style";
     style.textContent = [
-      ".price-accuracy-note{margin:8px 0 0;color:#6b7280;font-size:13px;font-weight:800;line-height:1.45;}",
-      ".product-review{color:#5b6470;}"
+      ".card-price-board{grid-template-columns:repeat(var(--verified-price-cols,1),minmax(0,1fr))!important;}",
+      ".card-price-board [hidden],.product-review[hidden]{display:none!important;}",
+      ".product-summary .verified-mark{color:#d9432d;font-weight:950;background:linear-gradient(180deg,transparent 58%,rgba(255,218,74,.58) 58%);}",
+      ".benefit-list li::before{background:#0f766e!important;}"
     ].join("");
     document.head.appendChild(style);
   }
@@ -97,12 +169,13 @@
       Array.prototype.slice.call(document.querySelectorAll(".product-card")).forEach(normalizeCard);
       runs += 1;
       root.setAttribute("data-price-review-accuracy-runs", String(runs));
+      root.setAttribute("data-verified-only-runs", String(runs));
       root.removeAttribute("data-price-review-accuracy-error");
+      root.removeAttribute("data-verified-only-error");
     } catch (error) {
-      root.setAttribute(
-        "data-price-review-accuracy-error",
-        error && error.message ? error.message : "error"
-      );
+      var message = error && error.message ? error.message : "error";
+      root.setAttribute("data-price-review-accuracy-error", message);
+      root.setAttribute("data-verified-only-error", message);
     }
   }
 

@@ -7,7 +7,10 @@ export async function onRequest(context) {
   }
 
   const html = await response.text();
-  const injection = '<script src="/category-cleanup.js?v=category-cleanup-keywords-6160a81"></script>';
+  const injection = [
+    '<script src="/category-cleanup.js?v=category-cleanup-keywords-6160a81"></script>',
+    '<script src="/top-category-cleanup.js?v=top-category-tabs-20260610"></script>'
+  ].join("");
   const bodyClose = "</body>";
   const nextHtml = html.includes(bodyClose) ? html.replace(bodyClose, `${injection}${bodyClose}`) : `${html}${injection}`;
   const headers = new Headers(response.headers);

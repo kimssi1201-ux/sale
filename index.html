@@ -10,6 +10,179 @@
     />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./manual.css?v=scale-catalog-20260604" />
+    <style>
+      .search-status {
+        min-height: 22px;
+        margin: -2px 0 0;
+        color: #68707b;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .search-status[data-tone="success"] {
+        color: #075e58;
+      }
+
+      .search-status[data-tone="error"] {
+        color: #bd3e28;
+      }
+
+      .fixed-picks {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto 18px;
+        padding: 16px;
+        border: 1px solid #ead58f;
+        border-radius: 8px;
+        background: #fff8d8;
+      }
+
+      .fixed-picks-head {
+        margin-bottom: 12px;
+      }
+
+      .fixed-picks-head strong,
+      .fixed-picks-head span {
+        display: block;
+      }
+
+      .fixed-picks-head strong {
+        color: #7a460e;
+        font-size: 22px;
+        line-height: 1.25;
+        font-weight: 950;
+      }
+
+      .fixed-picks-head span {
+        margin-top: 3px;
+        color: #6f5a2d;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .fixed-picks-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .fixed-pick-card {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+        min-height: 112px;
+        padding: 10px;
+        border: 1px solid #ead58f;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .fixed-pick-card:hover {
+        border-color: #d49a22;
+        box-shadow: 0 10px 24px rgba(122, 70, 14, 0.12);
+      }
+
+      .fixed-pick-image {
+        display: grid;
+        place-items: center;
+        width: 86px;
+        height: 86px;
+        border-radius: 8px;
+        background: #fffdf3;
+      }
+
+      .fixed-pick-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 6px;
+      }
+
+      .fixed-pick-copy {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .fixed-pick-badge {
+        display: inline-flex;
+        width: fit-content;
+        min-height: 24px;
+        align-items: center;
+        border-radius: 8px;
+        padding: 0 8px;
+        color: #7a460e;
+        background: #fff2b6;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .fixed-pick-copy strong {
+        display: -webkit-box;
+        overflow: hidden;
+        color: #171b22;
+        font-size: 16px;
+        line-height: 1.32;
+        font-weight: 950;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow-wrap: anywhere;
+      }
+
+      .fixed-pick-price {
+        color: #bd3e28;
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+
+      @media (max-width: 980px) {
+        .fixed-picks-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .fixed-picks {
+          width: calc(100% - 24px);
+          padding: 12px;
+        }
+
+        .fixed-picks-head strong {
+          font-size: 20px;
+        }
+
+        .fixed-picks-head span {
+          font-size: 13.5px;
+          line-height: 1.45;
+        }
+
+        .fixed-picks-grid {
+          gap: 8px;
+        }
+
+        .fixed-pick-card {
+          grid-template-columns: 1fr;
+          align-content: start;
+          min-height: 190px;
+          gap: 8px;
+        }
+
+        .fixed-pick-image {
+          width: 100%;
+          height: 104px;
+        }
+
+        .fixed-pick-copy strong {
+          min-height: 42px;
+          font-size: 15px;
+        }
+
+        .fixed-pick-price {
+          font-size: 17px;
+        }
+      }
+    </style>
   </head>
   <body>
     <header class="site-header">

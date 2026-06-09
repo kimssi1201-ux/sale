@@ -22,6 +22,19 @@ const FIXED_PICK_IDS = [
   "june-car-sunshade"
 ];
 const FIXED_PICK_ID_SET = new Set(FIXED_PICK_IDS);
+const CATEGORY_ORDER = [
+  "전체",
+  "6월 추천",
+  "생활가전",
+  "생활용품",
+  "식품",
+  "패션",
+  "뷰티",
+  "가전디지털",
+  "홈인테리어",
+  "자동차용품",
+  "패션잡화"
+];
 
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
@@ -170,7 +183,12 @@ function renderCategories() {
   if (!categoryTabs) return;
 
   const categoryProducts = [...state.products, ...state.remoteProducts];
-  const categories = ["전체", ...new Set(categoryProducts.map((product) => product.category).filter(Boolean))];
+  const categorySet = new Set(categoryProducts.map((product) => product.category).filter(Boolean));
+  const orderedCategories = CATEGORY_ORDER.filter((category) => category === "전체" || categorySet.has(category));
+  const extraCategories = [...categorySet]
+    .filter((category) => !CATEGORY_ORDER.includes(category))
+    .sort((a, b) => a.localeCompare(b, "ko"));
+  const categories = [...orderedCategories, ...extraCategories];
   categoryTabs.innerHTML = "";
 
   categories.forEach((category) => {
@@ -180,6 +198,7 @@ function renderCategories() {
     button.dataset.category = category;
     button.textContent = category;
     button.classList.toggle("is-active", state.category === category);
+    button.setAttribute("aria-pressed", String(state.category === category));
     button.addEventListener("click", () => {
       state.category = category;
       state.visibleCount = PAGE_SIZE;

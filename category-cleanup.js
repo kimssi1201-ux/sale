@@ -3,45 +3,76 @@
   if (root.getAttribute("data-category-cleanup-loaded") === "1") return;
   root.setAttribute("data-category-cleanup-loaded", "1");
 
+  const category = {
+    rainHumidity: "\uc7a5\ub9c8\u00b7\uc2b5\uae30\uad00\ub9ac",
+    coolingAppliance: "\ub354\uc704\u00b7\ub0c9\ubc29\uac00\uc804",
+    coolBedding: "\ub0c9\uac10\u00b7\uc5ec\ub984\uce68\uad6c",
+    waterPlay: "\ubb3c\ub180\uc774\u00b7\uc218\uc601",
+    campingPicnic: "\ucea0\ud551\u00b7\ud53c\ud06c\ub2c9",
+    carSummer: "\ucc28\ub7c9\u00b7\uc5ec\ub984\uad00\ub9ac",
+    sunUv: "\ud587\ube5b\u00b7\uc790\uc678\uc120",
+    rainGoods: "\uc6b0\ube44\u00b7\ub808\uc778\uc6a9\ud488",
+    mosquito: "\ud574\ucda9\u00b7\ubaa8\uae30\ub300\ube44",
+    fallback: "\uc0dd\ud65c\uc6a9\ud488"
+  };
+
   const order = [
-    "장마·습기관리",
-    "더위·냉방가전",
-    "냉감·여름침구",
-    "물놀이·수영",
-    "캠핑·피크닉",
-    "차량·여름관리",
-    "햇빛·자외선",
-    "우비·레인용품",
-    "해충·모기대비"
+    category.rainHumidity,
+    category.coolingAppliance,
+    category.coolBedding,
+    category.waterPlay,
+    category.campingPicnic,
+    category.carSummer,
+    category.sunUv,
+    category.rainGoods,
+    category.mosquito
   ];
 
   const rules = [
-    ["장마·습기관리", ["제습기", "제습제", "습기", "물먹", "방습", "결로", "곰팡이"]],
-    ["더위·냉방가전", ["선풍기", "써큘레이터", "서큘레이터", "순환팬", "냉풍기", "냉방", "bldc"]],
-    ["냉감·여름침구", ["냉감", "쿨매트", "쿨 매트", "여름이불", "여름 이불", "차렵", "침구", "패드", "토퍼"]],
-    ["물놀이·수영", ["아쿠아슈즈", "아쿠아 슈즈", "물놀이", "튜브", "수영", "워터파크", "비치", "래쉬가드", "풀장", "수경"]],
-    ["캠핑·피크닉", ["캠핑", "타프", "아이스박스", "쿨러", "쿨러백", "보냉", "피크닉", "차박", "그늘막", "텐트", "아웃도어"]],
-    ["차량·여름관리", ["차량", "자동차", "햇빛가리개", "썬쉐이드", "선쉐이드", "썬브렐라", "에어컨 필터", "불스원"]],
-    ["우비·레인용품", ["우산", "장우산", "우비", "레인부츠", "장화", "방수", "레인코트", "비옷"]],
-    ["햇빛·자외선", ["선크림", "썬크림", "선블럭", "선 블럭", "자외선", "쿨토시", "토시", "양산", "uv", "spf"]],
-    ["해충·모기대비", ["모기", "해충", "벌레", "퇴치기", "살충", "방충", "홈매트"]]
+    [category.rainHumidity, [
+      "\uc81c\uc2b5\uae30", "\uc81c\uc2b5\uc81c", "\uc2b5\uae30", "\ubb3c\uba39", "\ubc29\uc2b5", "\uacb0\ub85c", "\uacf0\ud321\uc774"
+    ]],
+    [category.coolingAppliance, [
+      "\uc120\ud48d\uae30", "\uc368\ud058\ub808\uc774\ud130", "\uc11c\ud058\ub808\uc774\ud130", "\uc21c\ud658\ud32c", "\ub0c9\ud48d\uae30", "\ub0c9\ubc29", "bldc"
+    ]],
+    [category.coolBedding, [
+      "\ub0c9\uac10", "\ucfe8\ub9e4\ud2b8", "\ucfe8 \ub9e4\ud2b8", "\uc5ec\ub984\uc774\ubd88", "\uc5ec\ub984 \uc774\ubd88", "\ucc28\ub835", "\uce68\uad6c", "\ud328\ub4dc", "\ud1a0\ud37c"
+    ]],
+    [category.waterPlay, [
+      "\uc544\ucfe0\uc544\uc288\uc988", "\uc544\ucfe0\uc544 \uc288\uc988", "\ubb3c\ub180\uc774", "\ud29c\ube0c", "\uc218\uc601", "\uc6cc\ud130\ud30c\ud06c", "\ube44\uce58", "\ub798\uc26c\uac00\ub4dc", "\ud480\uc7a5", "\uc218\uacbd"
+    ]],
+    [category.campingPicnic, [
+      "\ucea0\ud551", "\ud0c0\ud504", "\uc544\uc774\uc2a4\ubc15\uc2a4", "\ucfe8\ub7ec", "\ucfe8\ub7ec\ubc31", "\ubcf4\ub0c9", "\ud53c\ud06c\ub2c9", "\ucc28\ubc15", "\uadf8\ub298\ub9c9", "\ud150\ud2b8", "\uc544\uc6c3\ub3c4\uc5b4"
+    ]],
+    [category.carSummer, [
+      "\ucc28\ub7c9", "\uc790\ub3d9\ucc28", "\ud587\ube5b\uac00\ub9ac\uac1c", "\uc36c\uc250\uc774\ub4dc", "\uc120\uc250\uc774\ub4dc", "\ucee4\ubc84", "\uc5d0\uc5b4\ucee8\ud544\ud130", "\ubd88\uc2a4\uc6d0"
+    ]],
+    [category.sunUv, [
+      "\ud587\ube5b", "\uc790\uc678\uc120", "\uc120\ud06c\ub9bc", "\uc36c\ud06c\ub9bc", "\uc120\ube14\ub85d", "\uc36c\ube14\ub85d", "\ucfe8\ud1a0\uc2dc", "\ud314\ud1a0\uc2dc", "\uc591\uc0b0", "uv", "spf"
+    ]],
+    [category.rainGoods, [
+      "\uc6b0\ube44", "\uc6b0\uc0b0", "\uc7a5\ud654", "\ub808\uc778\ubd80\uce20", "\ubc29\uc218", "\ub808\uc778\ucf54\ud2b8", "\ube44\uc637"
+    ]],
+    [category.mosquito, [
+      "\ud574\ucda9", "\ubaa8\uae30", "\ubc8c\ub808", "\ud1f4\uce58\uae30", "\ud1f4\uce58", "\ubc29\ucda9", "\uc0b4\ucda9", "\ub9e4\ud2b8"
+    ]]
   ];
 
   const normalize = (value) => String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
 
   function classify(text) {
     const value = normalize(text);
-    let bestCategory = "홈·생활";
+    let bestCategory = category.fallback;
     let bestScore = 0;
 
-    rules.forEach(([category, keywords]) => {
+    rules.forEach(([name, keywords]) => {
       const score = keywords.reduce((total, keyword) => {
         const word = normalize(keyword);
         return value.includes(word) ? total + word.length : total;
       }, 0);
 
       if (score > bestScore) {
-        bestCategory = category;
+        bestCategory = name;
         bestScore = score;
       }
     });
@@ -49,13 +80,15 @@
     return bestCategory;
   }
 
-  function cardTitle(card) {
-    return (
-      card.querySelector(".category-slide-title")?.textContent ||
-      card.querySelector(".fixed-pick-copy strong")?.textContent ||
-      card.querySelector("h3")?.textContent ||
-      ""
-    ).trim();
+  function cardText(card) {
+    return [
+      card.querySelector(".category-slide-title")?.textContent,
+      card.querySelector(".fixed-pick-copy strong")?.textContent,
+      card.querySelector(".product-title")?.textContent,
+      card.querySelector("h3")?.textContent,
+      card.querySelector("strong")?.textContent,
+      card.querySelector("img")?.alt
+    ].filter(Boolean).join(" ");
   }
 
   function makeSlideControls(track, label) {
@@ -63,14 +96,14 @@
     controls.className = "slide-controls";
 
     [
-      [-1, "<", label + " 이전 상품"],
-      [1, ">", label + " 다음 상품"]
+      [-1, "<", "previous products"],
+      [1, ">", "next products"]
     ].forEach(([direction, text, ariaLabel]) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "slide-button";
       button.textContent = text;
-      button.setAttribute("aria-label", ariaLabel);
+      button.setAttribute("aria-label", label + " " + ariaLabel);
       button.addEventListener("click", () => {
         const distance = Math.max(Math.round(track.clientWidth * 0.88), 280);
         track.scrollBy({ left: direction * distance, behavior: "smooth" });
@@ -81,17 +114,17 @@
     return controls;
   }
 
-  function makeRail(category, cards) {
+  function makeRail(name, cards) {
     const rail = document.createElement("section");
     rail.className = "category-rail";
-    rail.dataset.category = category;
+    rail.dataset.category = name;
 
     const track = document.createElement("div");
     track.className = "category-rail-track";
 
     cards.forEach((card) => {
       const badge = card.querySelector(".category-slide-badge");
-      if (badge) badge.textContent = category;
+      if (badge) badge.textContent = name;
       track.append(card);
     });
 
@@ -99,16 +132,17 @@
     head.className = "category-rail-head";
 
     const titleWrap = document.createElement("div");
-    titleWrap.innerHTML = "<span>카테고리</span>";
+    const label = document.createElement("span");
+    label.textContent = "\uce74\ud14c\uace0\ub9ac";
     const title = document.createElement("strong");
-    title.textContent = category;
-    titleWrap.append(title);
+    title.textContent = name;
+    titleWrap.append(label, title);
 
     const meta = document.createElement("div");
     meta.className = "category-rail-meta";
     const count = document.createElement("em");
-    count.textContent = cards.length + "개";
-    meta.append(count, makeSlideControls(track, category));
+    count.textContent = cards.length + "\uac1c";
+    meta.append(count, makeSlideControls(track, name));
 
     head.append(titleWrap, meta);
     rail.append(head, track);
@@ -117,19 +151,19 @@
 
   function normalizeFixedCards() {
     document.querySelectorAll(".fixed-pick-card").forEach((card) => {
-      const category = classify(cardTitle(card));
+      const name = classify(cardText(card));
       const badge = card.querySelector(".fixed-pick-badge");
-      if (badge) badge.textContent = category;
+      if (badge) badge.textContent = name;
     });
   }
 
   function normalizeProductCards() {
     document.querySelectorAll(".product-card").forEach((card) => {
-      const category = classify(cardTitle(card));
+      const name = classify(cardText(card));
       const categoryLabel = card.querySelector(".product-category");
       const badge = card.querySelector(".product-badge");
-      if (categoryLabel) categoryLabel.textContent = category;
-      if (badge) badge.textContent = category;
+      if (categoryLabel) categoryLabel.textContent = name;
+      if (badge) badge.textContent = name;
     });
   }
 
@@ -143,23 +177,26 @@
     const cards = [...sections.querySelectorAll(".category-slide-card")];
     if (!cards.length) return;
 
-    const signature = cards.map((card) => card.href + "|" + cardTitle(card)).join("||");
+    const signature = cards.map((card) => {
+      const rail = card.closest(".category-rail");
+      return [rail?.dataset.category || "", card.href, cardText(card)].join("|");
+    }).join("||");
     if (signature === lastSignature) return;
     lastSignature = signature;
 
     const grouped = new Map();
     cards.forEach((card) => {
-      const category = classify(cardTitle(card));
-      if (!grouped.has(category)) grouped.set(category, []);
-      grouped.get(category).push(card);
+      const name = classify(cardText(card));
+      if (!grouped.has(name)) grouped.set(name, []);
+      grouped.get(name).push(card);
     });
 
     busy = true;
     sections.innerHTML = "";
 
     [...order, ...grouped.keys()]
-      .filter((category, index, list) => list.indexOf(category) === index && grouped.has(category))
-      .forEach((category) => sections.append(makeRail(category, grouped.get(category))));
+      .filter((name, index, list) => list.indexOf(name) === index && grouped.has(name))
+      .forEach((name) => sections.append(makeRail(name, grouped.get(name))));
 
     busy = false;
   }

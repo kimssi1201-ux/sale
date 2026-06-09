@@ -7,7 +7,7 @@ export async function onRequest(context) {
   }
 
   const html = await response.text();
-  const injection = '<script src="/category-cleanup.js?v=category-cleanup-a0922b3"></script>';
+  const injection = '<script src="/category-cleanup.js?v=category-cleanup-timeout-5e0960b"></script>';
   const bodyClose = "</body>";
   const nextHtml = html.includes(bodyClose) ? html.replace(bodyClose, `${injection}${bodyClose}`) : `${html}${injection}`;
   const headers = new Headers(response.headers);

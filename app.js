@@ -257,7 +257,7 @@ async function searchRemoteProducts(query) {
     const params = new URLSearchParams({
       action: "public-search",
       keyword: query,
-      limit: "12"
+      limit: "10"
     });
     const response = await fetch(`/api/coupang?${params}`, {
       signal: currentController.signal

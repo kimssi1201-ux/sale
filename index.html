@@ -31,6 +31,10 @@
         top: var(--notice-bar-height);
       }
 
+      .mobile-tabs {
+        display: none !important;
+      }
+
       .search-status {
         min-height: 22px;
         margin: -2px 0 0;
@@ -368,12 +372,6 @@
         </div>
       </section>
     </main>
-
-    <nav class="mobile-tabs" aria-label="모바일 메뉴">
-      <a href="#top">홈</a>
-      <a href="#products">상품</a>
-      <a href="#notice">고지</a>
-    </nav>
 
     <template id="productTemplate">
       <article class="product-card">

@@ -126,11 +126,62 @@ function buildPublicSearchParams(url) {
   return { keyword, limit, params };
 }
 
+function isAllowedCoupangImageUrl(value) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return (
+      url.protocol === "https:" &&
+      (host === "ads-partners.coupang.com" || host.endsWith(".coupangcdn.com"))
+    );
+  } catch {
+    return false;
+  }
+}
+
+function getImageProxyUrl(value) {
+  if (!value || !isAllowedCoupangImageUrl(value)) return "";
+  return `/api/coupang?action=image&src=${encodeURIComponent(value)}`;
+}
+
+async function proxyCoupangImage(request) {
+  const url = new URL(request.url);
+  const source = url.searchParams.get("src") || "";
+
+  if (!isAllowedCoupangImageUrl(source)) {
+    return new Response("invalid image", {
+      status: 400,
+      headers: { "cache-control": "no-store" }
+    });
+  }
+
+  const upstream = await fetch(source, {
+    redirect: "follow",
+    headers: { "user-agent": "Mozilla/5.0" },
+    cf: { cacheEverything: true, cacheTtl: 86400 }
+  });
+
+  if (!upstream.ok || !upstream.body) {
+    return new Response("image unavailable", {
+      status: upstream.status || 502,
+      headers: { "cache-control": "no-store" }
+    });
+  }
+
+  const headers = new Headers();
+  headers.set("content-type", upstream.headers.get("content-type") || "image/jpeg");
+  headers.set("cache-control", "public, max-age=86400");
+  headers.set("access-control-allow-origin", "*");
+  return new Response(upstream.body, { status: 200, headers });
+}
+
 function normalizeSearchItem(item, keyword = "") {
   const price = Number(item.productPrice || 0);
   const priceText = price ? `${price.toLocaleString("ko-KR")}원` : "";
   const safeName = item.productName || "쿠팡 추천 상품";
   const safeCategory = item.categoryName || "추천상품";
+  const sourceImageUrl = item.productImage || "";
+  const imageUrl = getImageProxyUrl(sourceImageUrl);
   const benefits = [
     priceText ? `가격: ${priceText}` : "",
     safeCategory ? `카테고리: ${safeCategory}` : "",
@@ -149,7 +200,9 @@ function normalizeSearchItem(item, keyword = "") {
     price: priceText,
     discount: "",
     productUrl: item.productUrl || "",
-    imageUrl: item.productImage || "",
+    imageUrl,
+    productImage: imageUrl,
+    sourceImageUrl,
     summary: [safeCategory, priceText].filter(Boolean).join(" · "),
     highlightTerms: [keyword, safeCategory, priceText].filter(Boolean),
     benefits
@@ -192,7 +245,7 @@ async function publicSearch(request, env) {
     return jsonResponse({ ok: false, message: "검색어는 2글자 이상 입력하세요." }, 400);
   }
 
-  const cacheKey = new Request(`${url.origin}${url.pathname}?action=public-search&keyword=${encodeURIComponent(keyword)}&limit=${limit}`);
+  const cacheKey = new Request(`${url.origin}${url.pathname}?action=public-search&keyword=${encodeURIComponent(keyword)}&limit=${limit}&image=proxy1`);
   const cache = typeof caches !== "undefined" ? caches.default : null;
   const cached = cache ? await cache.match(cacheKey) : null;
   if (cached) return cached;
@@ -217,6 +270,10 @@ async function publicSearch(request, env) {
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const action = url.searchParams.get("action") || "search";
+
+  if (action === "image") {
+    return proxyCoupangImage(request);
+  }
 
   if (action === "public-search") {
     return publicSearch(request, env);

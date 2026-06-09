@@ -1,6 +1,7 @@
 const state = {
   products: [],
   remoteProducts: [],
+  categoryShowcaseProducts: [],
   category: "전체",
   query: "",
   sort: "latest",
@@ -10,7 +11,7 @@ const state = {
 };
 
 const PAGE_SIZE = 15;
-const SEARCH_FETCH_LIMIT = 15;
+const SEARCH_FETCH_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 420;
 const ALL_CATEGORY = "전체";
 const FIXED_PICK_IDS = [
@@ -36,9 +37,31 @@ const FIXED_PICK_IDS = [
   "june-camping-tarp"
 ];
 
+const HOME_RECOMMENDATION_GROUPS = [
+  { keyword: "제습기", category: "장마·습기", badge: "장마대비" },
+  { keyword: "제습제", category: "장마·습기", badge: "습기관리" },
+  { keyword: "선풍기", category: "여름가전", badge: "더위대비" },
+  { keyword: "써큘레이터", category: "여름가전", badge: "냉방보조" },
+  { keyword: "냉감패드", category: "여름침구", badge: "열대야대비" },
+  { keyword: "쿨매트", category: "여름침구", badge: "수면준비" },
+  { keyword: "아쿠아슈즈", category: "물놀이", badge: "물놀이" },
+  { keyword: "물놀이 튜브", category: "물놀이", badge: "가족나들이" },
+  { keyword: "캠핑 타프", category: "야외·캠핑", badge: "그늘막" },
+  { keyword: "아이스박스", category: "야외·캠핑", badge: "보냉준비" },
+  { keyword: "차량용 햇빛가리개", category: "차량관리", badge: "차량열기" },
+  { keyword: "선크림", category: "자외선대비", badge: "외출필수" }
+];
+
 const CATEGORY_ORDER = [
   ALL_CATEGORY,
   "6월 추천",
+  "장마·습기",
+  "여름가전",
+  "여름침구",
+  "물놀이",
+  "야외·캠핑",
+  "차량관리",
+  "자외선대비",
   "생활용품",
   "가전디지털",
   "홈인테리어",
@@ -204,7 +227,10 @@ function createCategorySlideCard(product) {
 function renderCategoryShowcase() {
   if (!categorySliderSections) return;
 
-  const grouped = getFixedProducts().reduce((map, product) => {
+  const sourceProducts = state.categoryShowcaseProducts.length
+    ? state.categoryShowcaseProducts
+    : getFixedProducts();
+  const grouped = sourceProducts.reduce((map, product) => {
     const category = product.category || "추천";
     if (!map.has(category)) map.set(category, []);
     map.get(category).push(product);
@@ -378,7 +404,7 @@ function renderProducts() {
   }
 
   if (state.query.length < 2) {
-    renderEmpty("검색어를 2글자 이상 입력하세요.", "입력하면 이 화면에서 검색 결과만 15개씩 보여드립니다.");
+    renderEmpty("검색어를 2글자 이상 입력하세요.", "입력하면 이 화면에서 검색 결과만 따로 보여드립니다.");
     return;
   }
 
@@ -428,6 +454,68 @@ function normalizeRemoteProduct(product, index, keyword) {
     ],
     keywords
   };
+}
+
+function normalizeHomeRecommendationProduct(product, index, group) {
+  const normalized = normalizeRemoteProduct(product, index, group.keyword);
+  const words = group.keyword.split(/\s+/).filter(Boolean);
+
+  return {
+    ...normalized,
+    id: `home-${group.keyword}-${normalized.id || index}`,
+    category: group.category,
+    badge: group.badge || group.category,
+    summary: product.summary || `${group.category}를 미리 준비할 때 비교해보기 좋은 쿠팡 상품입니다. 실제 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
+    benefits: product.benefits || [
+      `${group.category} 준비용으로 비교하기 좋음`,
+      "쿠팡 상품 페이지에서 실시간 가격 확인",
+      "필요한 옵션을 바로 보고 구매 가능"
+    ],
+    keywords: [...new Set([...words, group.category])]
+  };
+}
+
+async function fetchRecommendationGroup(group) {
+  const params = new URLSearchParams({
+    action: "public-search",
+    keyword: group.keyword,
+    limit: "10"
+  });
+  const response = await fetch(`/api/coupang?${params.toString()}`);
+  const payload = await response.json();
+
+  if (!response.ok || !payload.ok) {
+    throw new Error(payload.message || "recommendation search failed");
+  }
+
+  const items = payload.products || payload.normalizedProducts || [];
+  return items.map((product, index) => normalizeHomeRecommendationProduct(product, index, group));
+}
+
+async function loadCategoryRecommendations() {
+  if (!categorySliderSections) return;
+
+  const products = [];
+  const seen = new Set();
+
+  for (const group of HOME_RECOMMENDATION_GROUPS) {
+    try {
+      const groupProducts = await fetchRecommendationGroup(group);
+      groupProducts.forEach((product) => {
+        const key = product.link || product.id || product.title;
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        products.push(product);
+      });
+
+      if (products.length > 0) {
+        state.categoryShowcaseProducts = products;
+        renderCategoryShowcase();
+      }
+    } catch (error) {
+      // Keep the static picks visible when a recommendation keyword fails.
+    }
+  }
 }
 
 async function searchRemoteProducts(query) {
@@ -504,6 +592,7 @@ async function loadProducts() {
     renderCategoryShowcase();
     renderCategories();
     renderProducts();
+    loadCategoryRecommendations();
   } catch (error) {
     renderEmpty("상품 정보를 불러오지 못했습니다.", "잠시 후 다시 시도해주세요.");
   }

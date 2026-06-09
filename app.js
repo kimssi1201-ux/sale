@@ -4,12 +4,12 @@ const state = {
   category: "전체",
   query: "",
   sort: "latest",
-  visibleCount: 6,
+  visibleCount: 7,
   remoteLoading: false,
   remoteMessage: ""
 };
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 7;
 const SEARCH_DEBOUNCE_MS = 420;
 
 const grid = document.querySelector("#productGrid");

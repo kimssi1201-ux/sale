@@ -39,6 +39,8 @@ const CATEGORY_ORDER = [
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
+const productKicker = document.querySelector("#productKicker");
+const productTitle = document.querySelector("#productTitle");
 const searchInput = document.querySelector("#search");
 const searchStatus = document.querySelector("#searchStatus");
 const fixedPicksGrid = document.querySelector("#fixedPicksGrid");
@@ -230,6 +232,25 @@ function sortProducts(products) {
   });
 }
 
+function updateProductHeading(total) {
+  if (!productKicker || !productTitle) return;
+
+  if (state.query.length >= 2) {
+    productKicker.textContent = "검색 결과";
+    productTitle.textContent = `"${state.query}" 검색 결과`;
+    return;
+  }
+
+  if (state.category !== "전체") {
+    productKicker.textContent = "카테고리 상품";
+    productTitle.textContent = `${state.category} 상품 ${total}개`;
+    return;
+  }
+
+  productKicker.textContent = "검색 결과";
+  productTitle.textContent = "추천 상품";
+}
+
 function createProductCard(product) {
   const card = template.content.firstElementChild.cloneNode(true);
   const media = card.querySelector(".product-media");
@@ -278,12 +299,15 @@ function createProductCard(product) {
 function renderProducts() {
   const featuredProduct = state.products[0];
   const featuredProductId = featuredProduct?.id;
+  const isRemoteSearch = state.query.length >= 2;
   const hideFixedPicksInDefaultList = state.query.length === 0 && state.category === "전체";
-  const localProducts = state.products
-    .filter((product) => product.id !== featuredProductId)
-    .filter((product) => !hideFixedPicksInDefaultList || !FIXED_PICK_ID_SET.has(product.id))
-    .filter(matchesProduct);
-  const remoteProducts = state.query.length >= 2
+  const localProducts = isRemoteSearch
+    ? []
+    : state.products
+      .filter((product) => product.id !== featuredProductId)
+      .filter((product) => !hideFixedPicksInDefaultList || !FIXED_PICK_ID_SET.has(product.id))
+      .filter(matchesProduct);
+  const remoteProducts = isRemoteSearch
     ? state.remoteProducts.filter((product) => state.category === "전체" || product.category === state.category)
     : [];
   const filteredProducts = [...localProducts, ...remoteProducts];
@@ -292,6 +316,7 @@ function renderProducts() {
 
   grid.innerHTML = "";
   resultCount.textContent = `${filteredProducts.length}개`;
+  updateProductHeading(filteredProducts.length);
   renderCategories();
 
   if (visibleProducts.length === 0) {

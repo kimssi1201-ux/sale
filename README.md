@@ -33,7 +33,7 @@ Cloudflare Pages의 Settings > Environment variables에 아래 값을 넣습니�
 - `COUPANG_SECRET_KEY`: 쿠팡 파트너스 API Secret Key
 - `COUPANG_ADMIN_TOKEN`: `/admin.html`에서 사용할 임의의 관리자 비밀번호. 쿠팡에서 받는 값이 아니라 직접 정하는 값입니다.
 
-키는 코드나 GitHub에 직접 넣지 않습니다.
+키는 코드나 GitHub에 직접 넣지 않습니다. 변수 저장 후 Production 배포를 다시 실행해야 Pages Function에서 읽을 수 있습니다.
 
 ## API 관리 화면
 

@@ -21,6 +21,7 @@ const FIXED_PICK_IDS = [
   "june-uv-umbrella",
   "june-car-sunshade"
 ];
+const FIXED_PICK_ID_SET = new Set(FIXED_PICK_IDS);
 
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
@@ -258,8 +259,10 @@ function createProductCard(product) {
 function renderProducts() {
   const featuredProduct = state.products[0];
   const featuredProductId = featuredProduct?.id;
+  const hideFixedPicksInDefaultList = state.query.length === 0 && state.category === "전체";
   const localProducts = state.products
     .filter((product) => product.id !== featuredProductId)
+    .filter((product) => !hideFixedPicksInDefaultList || !FIXED_PICK_ID_SET.has(product.id))
     .filter(matchesProduct);
   const remoteProducts = state.query.length >= 2
     ? state.remoteProducts.filter((product) => state.category === "전체" || product.category === state.category)

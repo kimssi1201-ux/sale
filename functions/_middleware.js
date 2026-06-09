@@ -62,7 +62,8 @@ body { padding-top: var(--notice-bar-height) !important; }
 </style>`;
   const injection = [
     '<script src="/category-cleanup.js?v=category-cleanup-keywords-6160a81"></script>',
-    '<script src="/top-category-cleanup.js?v=top-category-tabs-20260610"></script>'
+    '<script src="/top-category-cleanup.js?v=top-category-tabs-20260610"></script>',
+    '<script src="/search-copy-cleanup.js?v=search-copy-20260610"></script>'
   ].join("");
   const bodyClose = "</body>";
   const noticePattern = /<section class="notice-bar" id="notice"[\s\S]*?<\/section>/;

@@ -62,14 +62,10 @@
 
     var parts = [];
     if (category) parts.push('\uce74\ud14c\uace0\ub9ac <span class="verified-mark">' + escapeHtml(category) + "</span>");
-    if (price) parts.push('\ud604\uc7ac API \uac00\uaca9 <span class="verified-mark">' + escapeHtml(price) + "</span>");
-    if (badge) parts.push('\ubc30\uc1a1 \ubc43\uc9c0 <span class="verified-mark">' + escapeHtml(badge) + "</span>");
+    if (price) parts.push('\uac00\uaca9 <span class="verified-mark">' + escapeHtml(price) + "</span>");
+    if (badge) parts.push('\ubc30\uc1a1 <span class="verified-mark">' + escapeHtml(badge) + "</span>");
 
-    var next = parts.length
-      ? "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4. " +
-        parts.join(", ") +
-        "\uc785\ub2c8\ub2e4."
-      : "\ucfe0\ud321 API\uc5d0\uc11c \ud655\uc778\ub41c \uae30\ubcf8 \uc0c1\ud488 \uc815\ubcf4\ub9cc \ud45c\uc2dc\ud569\ub2c8\ub2e4.";
+    var next = parts.join(" \u00b7 ");
     if (summary.innerHTML !== next) summary.innerHTML = next;
   }
 
@@ -78,10 +74,10 @@
     if (!list) return;
 
     var facts = [];
-    if (price) facts.push("\ud655\uc778\ub41c \uac00\uaca9: " + price);
-    if (category) facts.push("\ud655\uc778\ub41c \uce74\ud14c\uace0\ub9ac: " + category);
-    if (badge) facts.push("\ud655\uc778\ub41c \ubc30\uc1a1 \ubc43\uc9c0: " + badge);
-    facts.push("\ucfe0\ud321 \uc0c1\ud488 \ub9c1\ud06c \uc5f0\uacb0\ub428");
+    if (price) facts.push("\uac00\uaca9: " + price);
+    if (category) facts.push("\uce74\ud14c\uace0\ub9ac: " + category);
+    if (badge) facts.push("\ubc30\uc1a1: " + badge);
+    facts.push("\ucfe0\ud321 \ub9c1\ud06c");
 
     var key = facts.join("|");
     var current = Array.prototype.slice
@@ -120,7 +116,7 @@
 
     setText(labels[0], "\uc815\uac00");
     setText(discountLabel, "\ud560\uc778\uc728");
-    setText(saleLabel || labels[2], "API \uac00\uaca9");
+    setText(saleLabel || labels[2], "\uac00\uaca9");
     setText(reviewLabel, "\uc0c1\ud488\ud3c9");
 
     var visibleCells = 0;
@@ -153,7 +149,7 @@
     if (!sort) return;
     var option = sort.querySelector('option[value="review-high"]');
     if (!option) return;
-    option.textContent = "\uc0c1\ud488\ud3c9 \ub9ce\uc740\uc21c(\ucfe0\ud321 \ud655\uc778)";
+    option.hidden = true;
     option.disabled = true;
     if (sort.value === "review-high") {
       sort.value = "latest";

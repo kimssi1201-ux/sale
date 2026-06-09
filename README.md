@@ -1,6 +1,6 @@
 # 픽앤세일 쇼핑 큐레이션
 
-쿠팡 상품 링크를 수동으로 등록해서 쇼핑몰처럼 보여주는 정적 사이트입니다. API 없이 상품명, 이미지 1장, 구매 유도 문구, 쿠팡 링크만 넣어 운영하는 구조입니다.
+쿠팡 상품 링크를 쇼핑몰처럼 보여주는 정적 사이트입니다. 상품 데이터는 `products.json`에서 불러오며, 쿠팡 파트너스 API는 Cloudflare Pages Functions에서만 호출합니다.
 
 ## 파일
 
@@ -8,11 +8,13 @@
 - `styles.css`: 전체 쇼핑몰 디자인
 - `manual.css`: 상품별 추가 스타일
 - `app.js`: 상품 데이터와 카드 렌더링
-- `products.json`: 상품 데이터 백업용 예시
+- `products.json`: 상품 데이터
+- `admin.html`: 쿠팡 API 검색/딥링크 테스트 화면
+- `functions/api/coupang.js`: 쿠팡 파트너스 API 프록시
 
 ## 상품 추가 방식
 
-`app.js`의 `products` 배열에 상품을 추가합니다.
+`products.json` 배열에 상품을 추가합니다.
 
 - `name`: 상품명
 - `category`: 카테고리
@@ -22,3 +24,20 @@
 - `benefits`: 장점 3개
 
 가격, 쿠폰, 배송일은 자주 바뀌므로 화면에는 최종 확인 문구를 같이 노출합니다.
+
+## 쿠팡 API 설정
+
+Cloudflare Pages의 Settings > Environment variables에 아래 값을 넣습니다.
+
+- `COUPANG_ACCESS_KEY`: 쿠팡 파트너스 API Access Key
+- `COUPANG_SECRET_KEY`: 쿠팡 파트너스 API Secret Key
+- `COUPANG_ADMIN_TOKEN`: `/admin.html`에서 사용할 임의의 관리자 비밀번호
+
+키는 코드나 GitHub에 직접 넣지 않습니다.
+
+## API 관리 화면
+
+배포 후 `/admin.html`로 접속합니다.
+
+- 상품 검색: 키워드로 쿠팡 상품을 검색하고 `products.json`에 넣을 JSON을 복사합니다.
+- 딥링크 생성: 쿠팡 URL을 파트너스 딥링크로 변환합니다.

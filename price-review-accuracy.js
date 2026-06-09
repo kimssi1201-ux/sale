@@ -147,11 +147,13 @@
   function normalizeSort() {
     var sort = document.querySelector("#sort");
     if (!sort) return;
-    var option = sort.querySelector('option[value="review-high"]');
-    if (!option) return;
-    option.hidden = true;
-    option.disabled = true;
-    if (sort.value === "review-high") {
+    Array.prototype.slice
+      .call(sort.querySelectorAll('option[value="review-high"], option[value="discount-high"]'))
+      .forEach(function (option) {
+        option.hidden = true;
+        option.disabled = true;
+      });
+    if (sort.value === "review-high" || sort.value === "discount-high") {
       sort.value = "latest";
       sort.dispatchEvent(new Event("change", { bubbles: true }));
     }

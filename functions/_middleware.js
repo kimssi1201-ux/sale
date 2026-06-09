@@ -36,6 +36,7 @@ body { padding-top: var(--notice-bar-height) !important; }
 .notice-extra { display: none !important; }
 .notice-bar span { max-width: min(100%, 980px); text-align: center !important; }
 .site-header {
+  display: none !important;
   position: static !important;
   top: auto !important;
   z-index: 1 !important;
@@ -54,7 +55,7 @@ body { padding-top: var(--notice-bar-height) !important; }
 @media (max-width: 720px) {
   :root { --notice-bar-height: 60px; }
   .notice-bar { padding: 7px 12px !important; font-size: 12.5px !important; }
-  .site-header { min-height: 42px !important; padding: 0 12px !important; }
+  .site-header { display: none !important; min-height: 0 !important; padding: 0 !important; }
   .brand-mark { width: 26px !important; height: 26px !important; }
   .brand-copy strong { font-size: 15px !important; }
 }

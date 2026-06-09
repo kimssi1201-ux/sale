@@ -1,20 +1,27 @@
 const state = {
   products: [],
+  remoteProducts: [],
   category: "전체",
   query: "",
   sort: "latest",
-  visibleCount: 6
+  visibleCount: 6,
+  remoteLoading: false,
+  remoteMessage: ""
 };
 
 const PAGE_SIZE = 6;
+const SEARCH_DEBOUNCE_MS = 420;
 
 const grid = document.querySelector("#productGrid");
 const template = document.querySelector("#productTemplate");
 const resultCount = document.querySelector("#resultCount");
 const searchInput = document.querySelector("#search");
+const searchStatus = document.querySelector("#searchStatus");
 const categoryTabs = document.querySelector("#categoryTabs");
 const sortSelect = document.querySelector("#sort");
 const loadMoreButton = document.querySelector("#loadMore");
+let searchTimer = 0;
+let searchAbortController = null;
 
 function parseNumber(value = "") {
   const number = String(value).replace(/[^\d]/g, "");
@@ -95,10 +102,18 @@ function renderHero(product) {
   }
 }
 
+function updateSearchStatus(message = "", tone = "") {
+  if (!searchStatus) return;
+  searchStatus.textContent = message;
+  searchStatus.hidden = !message;
+  searchStatus.dataset.tone = tone;
+}
+
 function renderCategories() {
   if (!categoryTabs) return;
 
-  const categories = ["전체", ...new Set(state.products.map((product) => product.category).filter(Boolean))];
+  const categoryProducts = [...state.products, ...state.remoteProducts];
+  const categories = ["전체", ...new Set(categoryProducts.map((product) => product.category).filter(Boolean))];
   categoryTabs.innerHTML = "";
 
   categories.forEach((category) => {
@@ -118,10 +133,16 @@ function renderCategories() {
 }
 
 function matchesProduct(product) {
-  const haystack = `${product.name} ${product.category} ${product.badge} ${product.summary} ${product.benefits.join(" ")}`.toLowerCase();
+  const benefits = Array.isArray(product.benefits) ? product.benefits.join(" ") : "";
+  const haystack = `${product.name} ${product.category} ${product.badge} ${product.summary} ${benefits}`.toLowerCase();
   const matchesCategory = state.category === "전체" || product.category === state.category;
   const matchesQuery = !state.query || haystack.includes(state.query.toLowerCase());
   return matchesCategory && matchesQuery;
+}
+
+function getProductOrder(product) {
+  if (product.source === "api") return -state.remoteProducts.indexOf(product) - 1;
+  return state.products.indexOf(product);
 }
 
 function sortProducts(products) {
@@ -129,7 +150,7 @@ function sortProducts(products) {
     if (state.sort === "price-low") return parseNumber(a.price) - parseNumber(b.price);
     if (state.sort === "discount-high") return parseNumber(b.discount) - parseNumber(a.discount);
     if (state.sort === "review-high") return parseNumber(b.review) - parseNumber(a.review);
-    return state.products.indexOf(b) - state.products.indexOf(a);
+    return getProductOrder(b) - getProductOrder(a);
   });
 }
 
@@ -169,7 +190,7 @@ function createProductCard(product) {
   buyLink.href = product.productUrl;
   buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
 
-  product.benefits.forEach((benefit) => {
+  (product.benefits || []).forEach((benefit) => {
     const item = document.createElement("li");
     item.textContent = benefit;
     benefitList.append(item);
@@ -181,9 +202,11 @@ function createProductCard(product) {
 function renderProducts() {
   const featuredProduct = state.products[0];
   const featuredProductId = featuredProduct?.id;
-  const filteredProducts = state.products
+  const localProducts = state.products
     .filter((product) => product.id !== featuredProductId)
     .filter(matchesProduct);
+  const remoteProducts = state.query.length >= 2 ? state.remoteProducts.filter(matchesProduct) : [];
+  const filteredProducts = [...localProducts, ...remoteProducts];
   const sortedProducts = sortProducts(filteredProducts);
   const visibleProducts = sortedProducts.slice(0, state.visibleCount);
 
@@ -194,7 +217,7 @@ function renderProducts() {
   if (visibleProducts.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "조건에 맞는 상품이 없습니다.";
+    empty.textContent = state.remoteLoading ? "쿠팡 상품을 검색 중입니다." : "조건에 맞는 상품이 없습니다.";
     grid.append(empty);
   } else {
     visibleProducts.forEach((product) => grid.append(createProductCard(product)));
@@ -205,6 +228,86 @@ function renderProducts() {
     loadMoreButton.hidden = !hasMore;
     loadMoreButton.textContent = `더보기 (${Math.min(PAGE_SIZE, sortedProducts.length - state.visibleCount)}개)`;
   }
+}
+
+function normalizeRemoteProduct(product, index, query) {
+  return {
+    ...product,
+    id: `api-${query}-${index}-${product.id || "product"}`,
+    source: "api",
+    badge: product.badge || "쿠팡 검색",
+    review: product.review || "쿠팡 확인",
+    originalPrice: product.originalPrice || "쿠팡 확인",
+    discount: product.discount || "쿠팡 확인",
+    benefits: product.benefits || ["쿠팡 API 검색 결과", "상품 이미지와 가격 자동 확인", "쿠팡 상품 페이지에서 조건 최종 확인"]
+  };
+}
+
+async function searchRemoteProducts(query) {
+  if (searchAbortController) searchAbortController.abort();
+  searchAbortController = new AbortController();
+  const currentController = searchAbortController;
+
+  state.remoteLoading = true;
+  state.remoteMessage = "쿠팡 검색 중";
+  updateSearchStatus(state.remoteMessage, "loading");
+  renderProducts();
+
+  try {
+    const params = new URLSearchParams({
+      action: "public-search",
+      keyword: query,
+      limit: "12"
+    });
+    const response = await fetch(`/api/coupang?${params}`, {
+      signal: currentController.signal
+    });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.message || "remote search failed");
+    }
+
+    if (state.query !== query) return;
+
+    state.remoteProducts = (payload.normalizedProducts || []).map((product, index) =>
+      normalizeRemoteProduct(product, index, query)
+    );
+    state.remoteMessage = state.remoteProducts.length
+      ? `쿠팡 검색 결과 ${state.remoteProducts.length}개`
+      : "쿠팡 검색 결과가 없습니다.";
+    updateSearchStatus(state.remoteMessage, state.remoteProducts.length ? "success" : "empty");
+  } catch (error) {
+    if (error.name === "AbortError") return;
+    state.remoteProducts = [];
+    state.remoteMessage = "쿠팡 검색 결과를 불러오지 못했습니다.";
+    updateSearchStatus(state.remoteMessage, "error");
+  } finally {
+    if (currentController === searchAbortController) {
+      state.remoteLoading = false;
+      renderCategories();
+      renderProducts();
+    }
+  }
+}
+
+function scheduleRemoteSearch() {
+  clearTimeout(searchTimer);
+  if (searchAbortController) searchAbortController.abort();
+
+  const query = state.query;
+  state.remoteProducts = [];
+  state.remoteLoading = false;
+
+  if (query.length < 2) {
+    updateSearchStatus("");
+    renderProducts();
+    return;
+  }
+
+  state.remoteLoading = true;
+  updateSearchStatus("쿠팡 검색 준비 중", "loading");
+  renderProducts();
+  searchTimer = setTimeout(() => searchRemoteProducts(query), SEARCH_DEBOUNCE_MS);
 }
 
 async function loadProducts() {
@@ -226,8 +329,10 @@ async function loadProducts() {
 
 searchInput.addEventListener("input", (event) => {
   state.query = event.target.value.trim();
+  state.category = "전체";
   state.visibleCount = PAGE_SIZE;
   renderProducts();
+  scheduleRemoteSearch();
 });
 
 if (sortSelect) {

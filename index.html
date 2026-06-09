@@ -9,10 +9,16 @@
       content="6월 장마, 더위, 습기 대비 상품을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
     />
     <link rel="stylesheet" href="./styles.css?v=notice-center-20260609" />
-    <link rel="stylesheet" href="./manual.css?v=top-categories-grid-20260609" />
+    <link rel="stylesheet" href="./manual.css?v=category-slider-search15-20260609" />
     <style>
       :root {
         --notice-bar-height: 42px;
+      }
+
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
       }
 
       .notice-bar {
@@ -238,6 +244,231 @@
           font-size: 17px;
         }
       }
+
+      .fixed-picks-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(210px, 250px);
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 2px 2px 8px;
+        scroll-padding-inline: 2px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .fixed-pick-card {
+        grid-template-columns: 1fr;
+        align-content: start;
+        min-height: 230px;
+        scroll-snap-align: start;
+      }
+
+      .fixed-pick-image {
+        width: 100%;
+        height: 128px;
+      }
+
+      .category-showcase {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto 20px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .category-showcase-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .category-showcase-head strong {
+        display: block;
+        color: #171b22;
+        font-size: 23px;
+        line-height: 1.25;
+        font-weight: 950;
+      }
+
+      .category-showcase-head span {
+        display: block;
+        margin-top: 3px;
+        color: #68707b;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .category-slider-sections {
+        display: grid;
+        gap: 14px;
+      }
+
+      .category-rail {
+        padding: 14px;
+        border: 1px solid #ead58f;
+        border-radius: 8px;
+        background: #fff9dc;
+      }
+
+      .category-rail-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .category-rail-head span {
+        display: block;
+        color: #8a651d;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .category-rail-head strong {
+        display: block;
+        color: #171b22;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 950;
+      }
+
+      .category-rail-head em {
+        color: #a16a16;
+        font-style: normal;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .category-rail-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(176px, 210px);
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 6px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .category-slide-card {
+        display: grid;
+        gap: 8px;
+        min-height: 258px;
+        padding: 10px;
+        border: 1px solid #ead58f;
+        border-radius: 8px;
+        color: inherit;
+        text-decoration: none;
+        background: #fff;
+        scroll-snap-align: start;
+      }
+
+      .category-slide-card:hover {
+        border-color: #d49a22;
+        box-shadow: 0 10px 24px rgba(122, 70, 14, 0.12);
+      }
+
+      .category-slide-image {
+        display: grid;
+        place-items: center;
+        height: 122px;
+        border-radius: 8px;
+        background: #fffdf3;
+      }
+
+      .category-slide-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 8px;
+      }
+
+      .category-slide-badge {
+        width: fit-content;
+        min-height: 24px;
+        border-radius: 8px;
+        padding: 4px 8px;
+        color: #7a460e;
+        background: #fff2b6;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .category-slide-title {
+        display: -webkit-box;
+        overflow: hidden;
+        color: #171b22;
+        font-size: 15px;
+        line-height: 1.35;
+        font-weight: 950;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow-wrap: anywhere;
+      }
+
+      .category-slide-price {
+        color: #bd3e28;
+        font-size: 17px;
+        line-height: 1.15;
+        font-weight: 950;
+      }
+
+      .category-slide-action {
+        display: grid;
+        place-items: center;
+        min-height: 36px;
+        margin-top: auto;
+        border-radius: 8px;
+        color: #fff;
+        background: #e65139;
+        font-size: 14px;
+        font-weight: 950;
+      }
+
+      body.is-search-mode .fixed-picks,
+      body.is-search-mode .category-showcase {
+        display: none;
+      }
+
+      .content-layout[hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 720px) {
+        .fixed-picks-grid {
+          grid-auto-columns: minmax(166px, 72vw);
+        }
+
+        .category-showcase {
+          width: calc(100% - 24px);
+          margin-bottom: 16px;
+        }
+
+        .category-showcase-head strong {
+          font-size: 21px;
+        }
+
+        .category-showcase-head span {
+          font-size: 13.5px;
+          line-height: 1.45;
+        }
+
+        .category-rail {
+          padding: 12px;
+        }
+
+        .category-rail-track {
+          grid-auto-columns: minmax(154px, 68vw);
+        }
+
+        .category-slide-card {
+          min-height: 238px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -297,6 +528,16 @@
         <div id="fixedPicksGrid" class="fixed-picks-grid"></div>
       </section>
 
+      <section class="category-showcase" id="categoryShowcase" aria-label="카테고리별 추천 상품">
+        <div class="category-showcase-head">
+          <div>
+            <strong>카테고리별 추천 상품</strong>
+            <span>필요한 상품군을 옆으로 넘기면서 빠르게 둘러보세요.</span>
+          </div>
+        </div>
+        <div class="category-slider-sections" id="categorySliderSections"></div>
+      </section>
+
       <section class="content-layout" id="products" aria-label="검색 결과와 추천 상품 목록">
         <section class="product-area" aria-label="상품 카드">
           <div class="section-head">
@@ -354,6 +595,6 @@
       </article>
     </template>
 
-  <script src="./app.js?v=june-20-search-only-20260609"></script>
+  <script src="./app.js?v=category-slider-search15-20260609"></script>
   </body>
 </html>

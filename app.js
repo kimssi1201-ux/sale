@@ -4,13 +4,15 @@ const state = {
   category: "전체",
   query: "",
   sort: "latest",
-  visibleCount: 7,
+  visibleCount: 15,
   remoteLoading: false,
   remoteMessage: ""
 };
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 15;
+const SEARCH_FETCH_LIMIT = 15;
 const SEARCH_DEBOUNCE_MS = 420;
+const ALL_CATEGORY = "전체";
 const FIXED_PICK_IDS = [
   "june-dehumidifier",
   "june-moisture-absorber",
@@ -33,20 +35,17 @@ const FIXED_PICK_IDS = [
   "june-pool-tube",
   "june-camping-tarp"
 ];
-const FIXED_PICK_ID_SET = new Set(FIXED_PICK_IDS);
+
 const CATEGORY_ORDER = [
-  "전체",
+  ALL_CATEGORY,
   "6월 추천",
-  "생활가전",
   "생활용품",
-  "식품",
-  "패션",
-  "뷰티",
   "가전디지털",
   "홈인테리어",
-  "자동차용품",
-  "패션잡화",
   "스포츠/레저",
+  "패션잡화",
+  "자동차용품",
+  "뷰티",
   "완구/취미"
 ];
 
@@ -57,10 +56,15 @@ const productKicker = document.querySelector("#productKicker");
 const productTitle = document.querySelector("#productTitle");
 const searchInput = document.querySelector("#search");
 const searchStatus = document.querySelector("#searchStatus");
+const fixedPicksSection = document.querySelector(".fixed-picks");
 const fixedPicksGrid = document.querySelector("#fixedPicksGrid");
+const categoryShowcase = document.querySelector("#categoryShowcase");
+const categorySliderSections = document.querySelector("#categorySliderSections");
 const categoryTabs = document.querySelector("#categoryTabs");
 const sortSelect = document.querySelector("#sort");
 const loadMoreButton = document.querySelector("#loadMore");
+const contentLayout = document.querySelector(".content-layout");
+
 let searchTimer = 0;
 let searchAbortController = null;
 
@@ -69,78 +73,67 @@ function parseNumber(value = "") {
   return number ? Number(number) : 0;
 }
 
-function setText(selector, value) {
-  const element = document.querySelector(selector);
-  if (element) element.textContent = value || "";
+function createTextElement(tagName, className, text) {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  element.textContent = text;
+  return element;
 }
 
-function setLink(selector, url, label) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-  element.href = url || "#";
-  if (label) element.setAttribute("aria-label", label);
+function isSearchMode() {
+  return state.query.length > 0;
 }
 
-function renderHighlightedText(element, text, terms = []) {
-  const safeText = text || "";
-  element.textContent = "";
+function setSearchMode() {
+  const active = isSearchMode();
+  document.body.classList.toggle("is-search-mode", active);
+  if (fixedPicksSection) fixedPicksSection.hidden = active;
+  if (categoryShowcase) categoryShowcase.hidden = active;
+  if (contentLayout) contentLayout.hidden = !active;
+}
 
-  const highlightTerms = [...terms].filter(Boolean).sort((a, b) => b.length - a.length);
-  if (highlightTerms.length === 0) {
-    element.textContent = safeText;
-    return;
+function getFixedProducts() {
+  const productsById = new Map(state.products.map((product) => [product.id, product]));
+  return FIXED_PICK_IDS.map((id) => productsById.get(id)).filter(Boolean);
+}
+
+function getCategoryRank(category) {
+  const index = CATEGORY_ORDER.indexOf(category);
+  return index === -1 ? CATEGORY_ORDER.length : index;
+}
+
+function sortCategoryNames(categories) {
+  return [...categories].sort((left, right) => {
+    const rankDiff = getCategoryRank(left) - getCategoryRank(right);
+    if (rankDiff !== 0) return rankDiff;
+    return left.localeCompare(right, "ko");
+  });
+}
+
+function highlightedText(text = "", words = []) {
+  const fragment = document.createDocumentFragment();
+  const safeText = String(text);
+  const highlights = words.filter(Boolean).sort((a, b) => b.length - a.length);
+
+  if (highlights.length === 0) {
+    fragment.append(safeText);
+    return fragment;
   }
 
-  let cursor = 0;
-  while (cursor < safeText.length) {
-    let nextIndex = -1;
-    let nextTerm = "";
-
-    highlightTerms.forEach((term) => {
-      const index = safeText.indexOf(term, cursor);
-      if (index !== -1 && (nextIndex === -1 || index < nextIndex)) {
-        nextIndex = index;
-        nextTerm = term;
-      }
-    });
-
-    if (nextIndex === -1) {
-      element.append(document.createTextNode(safeText.slice(cursor)));
-      break;
+  const pattern = new RegExp(`(${highlights.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+  safeText.split(pattern).forEach((part) => {
+    if (!part) return;
+    const matched = highlights.some((word) => word.toLowerCase() === part.toLowerCase());
+    if (matched) {
+      const mark = document.createElement("mark");
+      mark.textContent = part;
+      fragment.append(mark);
+    } else {
+      fragment.append(part);
     }
+  });
 
-    if (nextIndex > cursor) {
-      element.append(document.createTextNode(safeText.slice(cursor, nextIndex)));
-    }
-
-    const highlight = document.createElement("span");
-    highlight.className = "summary-highlight";
-    highlight.textContent = nextTerm;
-    element.append(highlight);
-    cursor = nextIndex + nextTerm.length;
-  }
-}
-
-function renderHero(product) {
-  if (!product) return;
-
-  const heroSummary = document.querySelector("#heroSummary");
-
-  setText("#heroName", product.name);
-  setText("#heroOriginalPrice", product.originalPrice);
-  setText("#heroSalePrice", product.price);
-  setText("#heroDiscount", product.discount);
-  setText("#heroReview", product.review.replace(" 상품평", ""));
-  setText("#heroMediaLabel", product.category);
-  setLink("#heroBuy", product.productUrl, `${product.name} 쿠팡에서 확인`);
-  setLink("#heroImageLink", product.productUrl, `${product.name} 쿠팡 페이지로 이동`);
-  if (heroSummary) renderHighlightedText(heroSummary, product.summary, product.highlightTerms);
-
-  const heroImage = document.querySelector("#heroImage");
-  if (heroImage) {
-    heroImage.src = product.imageUrl;
-    heroImage.alt = product.name;
-  }
+  return fragment;
 }
 
 function updateSearchStatus(message = "", tone = "") {
@@ -153,68 +146,116 @@ function updateSearchStatus(message = "", tone = "") {
 function createFixedPickCard(product) {
   const card = document.createElement("a");
   card.className = "fixed-pick-card";
-  card.href = product.productUrl;
+  card.href = product.link || "#";
   card.target = "_blank";
   card.rel = "nofollow sponsored noopener";
-  card.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
 
-  const imageWrap = document.createElement("span");
-  imageWrap.className = "fixed-pick-image";
+  const imageBox = document.createElement("span");
+  imageBox.className = "fixed-pick-image";
 
   const image = document.createElement("img");
-  image.src = product.imageUrl;
-  image.alt = product.name;
-  image.loading = "eager";
-  imageWrap.append(image);
+  image.src = product.image;
+  image.alt = product.title;
+  image.loading = "lazy";
+  imageBox.append(image);
 
-  const content = document.createElement("span");
-  content.className = "fixed-pick-copy";
+  const copy = document.createElement("span");
+  copy.className = "fixed-pick-copy";
+  copy.append(
+    createTextElement("span", "fixed-pick-badge", product.category || "추천"),
+    createTextElement("strong", "", product.title),
+    createTextElement("span", "fixed-pick-price", product.price || "쿠팡에서 확인")
+  );
 
-  const badge = document.createElement("span");
-  badge.className = "fixed-pick-badge";
-  badge.textContent = product.badge;
-
-  const name = document.createElement("strong");
-  name.textContent = product.name;
-
-  const price = document.createElement("span");
-  price.className = "fixed-pick-price";
-  price.textContent = product.price;
-
-  content.append(badge, name, price);
-  card.append(imageWrap, content);
+  card.append(imageBox, copy);
   return card;
 }
 
 function renderFixedPicks() {
   if (!fixedPicksGrid) return;
-
-  const productsById = new Map(state.products.map((product) => [product.id, product]));
-  const fixedProducts = FIXED_PICK_IDS.map((id) => productsById.get(id)).filter(Boolean);
   fixedPicksGrid.innerHTML = "";
-  fixedProducts.forEach((product) => fixedPicksGrid.append(createFixedPickCard(product)));
+  getFixedProducts().forEach((product) => fixedPicksGrid.append(createFixedPickCard(product)));
+}
+
+function createCategorySlideCard(product) {
+  const card = document.createElement("a");
+  card.className = "category-slide-card";
+  card.href = product.link || "#";
+  card.target = "_blank";
+  card.rel = "nofollow sponsored noopener";
+
+  const imageBox = document.createElement("span");
+  imageBox.className = "category-slide-image";
+  const image = document.createElement("img");
+  image.src = product.image;
+  image.alt = product.title;
+  image.loading = "lazy";
+  imageBox.append(image);
+
+  const badge = createTextElement("span", "category-slide-badge", product.category || "추천");
+  const title = createTextElement("strong", "category-slide-title", product.title);
+  const price = createTextElement("span", "category-slide-price", product.price || "쿠팡에서 확인");
+  const action = createTextElement("span", "category-slide-action", "쿠팡에서 보기");
+
+  card.append(imageBox, badge, title, price, action);
+  return card;
+}
+
+function renderCategoryShowcase() {
+  if (!categorySliderSections) return;
+
+  const grouped = getFixedProducts().reduce((map, product) => {
+    const category = product.category || "추천";
+    if (!map.has(category)) map.set(category, []);
+    map.get(category).push(product);
+    return map;
+  }, new Map());
+
+  categorySliderSections.innerHTML = "";
+  sortCategoryNames(grouped.keys()).forEach((category) => {
+    const products = grouped.get(category);
+    if (!products || products.length === 0) return;
+
+    const rail = document.createElement("section");
+    rail.className = "category-rail";
+    rail.dataset.category = category;
+
+    const head = document.createElement("div");
+    head.className = "category-rail-head";
+    const titleWrap = document.createElement("div");
+    titleWrap.append(
+      createTextElement("span", "", "카테고리"),
+      createTextElement("strong", "", category)
+    );
+    head.append(titleWrap, createTextElement("em", "", `${products.length}개`));
+
+    const track = document.createElement("div");
+    track.className = "category-rail-track";
+    products.forEach((product) => track.append(createCategorySlideCard(product)));
+
+    rail.append(head, track);
+    categorySliderSections.append(rail);
+  });
+}
+
+function getCurrentCategoryProducts() {
+  return isSearchMode() ? state.remoteProducts : state.products;
 }
 
 function renderCategories() {
   if (!categoryTabs) return;
 
-  const categoryProducts = [...state.products, ...state.remoteProducts];
-  const categorySet = new Set(categoryProducts.map((product) => product.category).filter(Boolean));
-  const orderedCategories = CATEGORY_ORDER.filter((category) => category === "전체" || categorySet.has(category));
-  const extraCategories = [...categorySet]
-    .filter((category) => !CATEGORY_ORDER.includes(category))
-    .sort((a, b) => a.localeCompare(b, "ko"));
-  const categories = [...orderedCategories, ...extraCategories];
-  categoryTabs.innerHTML = "";
+  const categoryProducts = getCurrentCategoryProducts();
+  const categories = new Set(categoryProducts.map((product) => product.category).filter(Boolean));
+  const orderedCategories = [ALL_CATEGORY, ...sortCategoryNames(categories).filter((category) => category !== ALL_CATEGORY)];
 
-  categories.forEach((category) => {
+  categoryTabs.innerHTML = "";
+  orderedCategories.forEach((category) => {
     const button = document.createElement("button");
-    button.className = "category-tab";
     button.type = "button";
+    button.className = `category-tab${state.category === category ? " is-active" : ""}`;
     button.dataset.category = category;
     button.textContent = category;
-    button.classList.toggle("is-active", state.category === category);
-    button.setAttribute("aria-pressed", String(state.category === category));
     button.addEventListener("click", () => {
       state.category = category;
       state.visibleCount = PAGE_SIZE;
@@ -224,140 +265,168 @@ function renderCategories() {
   });
 }
 
-function matchesProduct(product) {
-  const benefits = Array.isArray(product.benefits) ? product.benefits.join(" ") : "";
-  const haystack = `${product.name} ${product.category} ${product.badge} ${product.summary} ${benefits}`.toLowerCase();
-  const matchesCategory = state.category === "전체" || product.category === state.category;
-  const matchesQuery = !state.query || haystack.includes(state.query.toLowerCase());
-  return matchesCategory && matchesQuery;
-}
-
-function getProductOrder(product) {
-  if (product.source === "api") return -state.remoteProducts.indexOf(product) - 1;
-  return state.products.indexOf(product);
-}
-
 function sortProducts(products) {
   return [...products].sort((a, b) => {
     if (state.sort === "price-low") return parseNumber(a.price) - parseNumber(b.price);
     if (state.sort === "discount-high") return parseNumber(b.discount) - parseNumber(a.discount);
-    if (state.sort === "review-high") return parseNumber(b.review) - parseNumber(a.review);
-    return getProductOrder(b) - getProductOrder(a);
+    if (state.sort === "review-high") return parseNumber(b.reviews) - parseNumber(a.reviews);
+    return 0;
   });
 }
 
 function updateProductHeading(total) {
   if (!productKicker || !productTitle) return;
 
-  if (state.query.length >= 2) {
+  if (!isSearchMode()) {
     productKicker.textContent = "검색 결과";
-    productTitle.textContent = `"${state.query}" 검색 결과`;
+    productTitle.textContent = "상품을 검색해보세요";
     return;
   }
 
-  if (state.category !== "전체") {
-    productKicker.textContent = "검색 결과";
-    productTitle.textContent = state.query.length >= 2 ? `${state.category} 검색 결과` : "검색 결과";
+  productKicker.textContent = "쿠팡 검색 결과";
+  if (state.query.length < 2) {
+    productTitle.textContent = "검색어를 조금 더 입력해주세요";
     return;
   }
 
-  productKicker.textContent = "검색 결과";
-  productTitle.textContent = "검색 결과";
+  productTitle.textContent = total > 0 ? `"${state.query}" 검색 결과` : `"${state.query}" 검색 결과가 없습니다`;
 }
 
-function createProductCard(product) {
-  const card = template.content.firstElementChild.cloneNode(true);
-  const media = card.querySelector(".product-media");
-  const photo = card.querySelector(".product-photo");
-  const badge = card.querySelector(".product-badge");
-  const category = card.querySelector(".product-category");
-  const review = card.querySelector(".product-review");
-  const title = card.querySelector("h3");
-  const summary = card.querySelector(".product-summary");
-  const benefitList = card.querySelector(".benefit-list");
+function fillPriceBoard(card, product) {
   const originalPriceValue = card.querySelector(".card-original-price-value");
   const discountLabel = card.querySelector(".card-discount-label");
   const discountValue = card.querySelector(".card-discount-value");
   const salePriceValue = card.querySelector(".card-sale-price-value");
   const reviewLabel = card.querySelector(".card-review-label");
   const reviewValue = card.querySelector(".card-review-value");
-  const buyLink = card.querySelector(".buy-link");
 
-  media.href = product.productUrl;
-  media.setAttribute("aria-label", `${product.name} 상품 페이지로 이동`);
-  photo.src = product.imageUrl;
-  photo.alt = product.name;
-  badge.textContent = product.badge;
-  category.textContent = product.category;
-  review.textContent = product.review;
-  title.textContent = product.name;
-  renderHighlightedText(summary, product.summary, product.highlightTerms);
-  originalPriceValue.textContent = product.originalPrice;
-  discountLabel.textContent = "할인율";
-  discountValue.textContent = product.discount;
-  salePriceValue.textContent = product.price;
+  originalPriceValue.textContent = product.originalPrice || "쿠팡 확인";
+  discountLabel.textContent = product.discount ? "할인율" : "가격";
+  discountValue.textContent = product.discount || "쿠팡 확인";
+  salePriceValue.textContent = product.price || "쿠팡 확인";
   reviewLabel.textContent = "상품평";
-  reviewValue.textContent = product.review.replace(" 상품평", "");
-  buyLink.href = product.productUrl;
-  buyLink.setAttribute("aria-label", `${product.name} 쿠팡에서 보기`);
+  reviewValue.textContent = product.reviews || "쿠팡 확인";
+}
 
-  (product.benefits || []).forEach((benefit) => {
+function createProductCard(product) {
+  const node = template.content.cloneNode(true);
+  const card = node.querySelector(".product-card");
+  const media = node.querySelector(".product-media");
+  const image = node.querySelector(".product-photo");
+  const badge = node.querySelector(".product-badge");
+  const category = node.querySelector(".product-category");
+  const review = node.querySelector(".product-review");
+  const title = node.querySelector("h3");
+  const summary = node.querySelector(".product-summary");
+  const benefits = node.querySelector(".benefit-list");
+  const link = node.querySelector(".buy-link");
+  const words = product.keywords || [];
+
+  if (card) card.dataset.productId = product.id || "";
+  media.href = product.link || "#";
+  link.href = product.link || "#";
+  image.src = product.image;
+  image.alt = product.title;
+  badge.textContent = product.badge || product.category || "추천";
+  category.textContent = product.category || "추천";
+  review.textContent = product.reviews ? `${product.reviews} 상품평` : "쿠팡 상품";
+
+  title.textContent = "";
+  title.append(highlightedText(product.title, words));
+  summary.textContent = "";
+  summary.append(highlightedText(product.summary || "쿠팡 상품 페이지에서 실제 가격과 배송 조건을 확인하세요.", words));
+
+  benefits.innerHTML = "";
+  (product.benefits || []).slice(0, 3).forEach((benefit) => {
     const item = document.createElement("li");
-    item.textContent = benefit;
-    benefitList.append(item);
+    item.append(highlightedText(benefit, words));
+    benefits.append(item);
   });
 
-  return card;
+  fillPriceBoard(node, product);
+  return node;
+}
+
+function renderEmpty(message, detail = "") {
+  grid.innerHTML = "";
+  const empty = document.createElement("div");
+  empty.className = "empty-state";
+  empty.innerHTML = `<strong>${message}</strong>${detail ? `<span>${detail}</span>` : ""}`;
+  grid.append(empty);
+  if (loadMoreButton) loadMoreButton.hidden = true;
 }
 
 function renderProducts() {
-  const isRemoteSearch = state.query.length >= 2;
-  const remoteProducts = isRemoteSearch
-    ? state.remoteProducts.filter((product) => state.category === "전체" || product.category === state.category)
+  if (!grid || !resultCount) return;
+
+  setSearchMode();
+  const searchMode = isSearchMode();
+  const categoryProducts = searchMode
+    ? state.remoteProducts.filter((product) => state.category === ALL_CATEGORY || product.category === state.category)
     : [];
-  const filteredProducts = [...remoteProducts];
-  const sortedProducts = sortProducts(filteredProducts);
+  const sortedProducts = sortProducts(categoryProducts);
   const visibleProducts = sortedProducts.slice(0, state.visibleCount);
 
-  grid.innerHTML = "";
-  resultCount.textContent = `${filteredProducts.length}개`;
-  updateProductHeading(filteredProducts.length);
+  resultCount.textContent = `${categoryProducts.length}개`;
+  updateProductHeading(categoryProducts.length);
   renderCategories();
 
-  if (visibleProducts.length === 0) {
-    const empty = document.createElement("div");
-    empty.className = "empty-state";
-    if (state.remoteLoading) {
-      empty.textContent = "쿠팡 상품을 검색 중입니다.";
-    } else if (state.query.length === 0) {
-      empty.textContent = "검색어를 입력하면 결과가 여기에 표시됩니다.";
-    } else if (state.query.length < 2) {
-      empty.textContent = "검색어를 2글자 이상 입력하세요.";
-    } else {
-      empty.textContent = "조건에 맞는 검색 결과가 없습니다.";
-    }
-    grid.append(empty);
-  } else {
-    visibleProducts.forEach((product) => grid.append(createProductCard(product)));
+  if (!searchMode) {
+    grid.innerHTML = "";
+    if (loadMoreButton) loadMoreButton.hidden = true;
+    return;
   }
 
+  if (state.query.length < 2) {
+    renderEmpty("검색어를 2글자 이상 입력하세요.", "입력하면 이 화면에서 검색 결과만 15개씩 보여드립니다.");
+    return;
+  }
+
+  if (state.remoteLoading) {
+    renderEmpty("쿠팡 상품을 검색 중입니다.", "잠시만 기다려주세요.");
+    return;
+  }
+
+  if (visibleProducts.length === 0) {
+    renderEmpty("검색 결과가 없습니다.", "다른 상품명이나 키워드로 다시 검색해보세요.");
+    return;
+  }
+
+  grid.innerHTML = "";
+  visibleProducts.forEach((product) => grid.append(createProductCard(product)));
+
   if (loadMoreButton) {
-    const hasMore = state.visibleCount < sortedProducts.length;
-    loadMoreButton.hidden = !hasMore;
-    loadMoreButton.textContent = `더보기 (${Math.min(PAGE_SIZE, sortedProducts.length - state.visibleCount)}개)`;
+    const remaining = sortedProducts.length - state.visibleCount;
+    loadMoreButton.hidden = remaining <= 0;
+    loadMoreButton.textContent = `더보기 (${Math.min(PAGE_SIZE, remaining)}개)`;
   }
 }
 
-function normalizeRemoteProduct(product, index, query) {
+function normalizeRemoteProduct(product, index, keyword) {
+  const price = product.price || product.salePrice || product.finalPrice || "";
+  const reviews = product.reviews || product.review || product.reviewCount || "";
+  const title = product.title || product.name || product.productName || "쿠팡 상품";
+  const category = product.category || keyword || "검색 상품";
+  const keywords = keyword.split(/\s+/).filter(Boolean);
+
   return {
-    ...product,
-    id: `api-${query}-${index}-${product.id || "product"}`,
-    source: "api",
-    badge: product.badge || "쿠팡 검색",
-    review: product.review || "쿠팡 확인",
-    originalPrice: product.originalPrice || "쿠팡 확인",
-    discount: product.discount || "쿠팡 확인",
-    benefits: product.benefits || ["쿠팡 API 검색 결과", "상품 이미지와 가격 자동 확인", "쿠팡 상품 페이지에서 조건 최종 확인"]
+    id: product.id || product.productId || `remote-${Date.now()}-${index}`,
+    title,
+    category,
+    badge: product.badge || category,
+    image: product.image || product.imageUrl || product.productImage || "",
+    link: product.link || product.productUrl || "#",
+    originalPrice: product.originalPrice || product.basePrice || "쿠팡 확인",
+    discount: product.discount || product.discountRate || "",
+    price: price ? String(price) : "쿠팡 확인",
+    reviews: reviews ? String(reviews) : "쿠팡 확인",
+    summary: product.summary || `${title} 상품입니다. 실제 가격과 배송 조건은 쿠팡 상품 페이지에서 확인하세요.`,
+    benefits: product.benefits || [
+      "쿠팡 상품 페이지에서 실시간 가격 확인",
+      "배송 조건과 쿠폰 적용 여부 확인 가능",
+      "관심 상품을 바로 비교하기 좋음"
+    ],
+    keywords
   };
 }
 
@@ -375,9 +444,9 @@ async function searchRemoteProducts(query) {
     const params = new URLSearchParams({
       action: "public-search",
       keyword: query,
-      limit: "10"
+      limit: String(SEARCH_FETCH_LIMIT)
     });
-    const response = await fetch(`/api/coupang?${params}`, {
+    const response = await fetch(`/api/coupang?${params.toString()}`, {
       signal: currentController.signal
     });
     const payload = await response.json();
@@ -387,22 +456,20 @@ async function searchRemoteProducts(query) {
 
     if (state.query !== query) return;
 
-    state.remoteProducts = (payload.normalizedProducts || []).map((product, index) =>
-      normalizeRemoteProduct(product, index, query)
-    );
+    const remoteItems = payload.products || payload.normalizedProducts || [];
+    state.remoteProducts = remoteItems.map((product, index) => normalizeRemoteProduct(product, index, query));
     state.remoteMessage = state.remoteProducts.length
-      ? `쿠팡 검색 결과 ${state.remoteProducts.length}개`
-      : "쿠팡 검색 결과가 없습니다.";
+      ? `검색 결과 ${state.remoteProducts.length}개`
+      : "검색 결과가 없습니다.";
     updateSearchStatus(state.remoteMessage, state.remoteProducts.length ? "success" : "empty");
   } catch (error) {
     if (error.name === "AbortError") return;
     state.remoteProducts = [];
-    state.remoteMessage = "쿠팡 검색 결과를 불러오지 못했습니다.";
+    state.remoteMessage = "검색 결과를 불러오지 못했습니다.";
     updateSearchStatus(state.remoteMessage, "error");
   } finally {
     if (currentController === searchAbortController) {
       state.remoteLoading = false;
-      renderCategories();
       renderProducts();
     }
   }
@@ -414,10 +481,11 @@ function scheduleRemoteSearch() {
 
   const query = state.query;
   state.remoteProducts = [];
-  state.remoteLoading = false;
+  state.visibleCount = PAGE_SIZE;
 
   if (query.length < 2) {
-    updateSearchStatus("");
+    state.remoteLoading = false;
+    updateSearchStatus(query.length ? "검색어를 2글자 이상 입력하세요." : "", query.length ? "empty" : "");
     renderProducts();
     return;
   }
@@ -430,29 +498,26 @@ function scheduleRemoteSearch() {
 
 async function loadProducts() {
   try {
-    const response = await fetch(`./products.json?v=${Date.now()}`);
-    if (!response.ok) throw new Error("products.json load failed");
+    const response = await fetch("./products.json?v=category-slider-20260609");
     state.products = await response.json();
-    renderHero(state.products[0]);
     renderFixedPicks();
+    renderCategoryShowcase();
     renderCategories();
     renderProducts();
   } catch (error) {
-    grid.innerHTML = "";
-    const empty = document.createElement("div");
-    empty.className = "empty-state";
-    empty.textContent = "상품 데이터를 불러오지 못했습니다.";
-    grid.append(empty);
+    renderEmpty("상품 정보를 불러오지 못했습니다.", "잠시 후 다시 시도해주세요.");
   }
 }
 
-searchInput.addEventListener("input", (event) => {
-  state.query = event.target.value.trim();
-  state.category = "전체";
-  state.visibleCount = PAGE_SIZE;
-  renderProducts();
-  scheduleRemoteSearch();
-});
+if (searchInput) {
+  searchInput.addEventListener("input", (event) => {
+    state.query = event.target.value.trim();
+    state.category = ALL_CATEGORY;
+    state.visibleCount = PAGE_SIZE;
+    renderProducts();
+    scheduleRemoteSearch();
+  });
+}
 
 if (sortSelect) {
   sortSelect.addEventListener("change", (event) => {

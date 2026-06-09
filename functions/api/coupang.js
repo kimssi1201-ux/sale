@@ -119,7 +119,7 @@ function buildSearchUri(params) {
 
 function buildPublicSearchParams(url) {
   const keyword = (url.searchParams.get("keyword") || "").trim().slice(0, 50);
-  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 10), 1), 10);
+  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 15), 1), 20);
   const params = new URLSearchParams();
   params.set("keyword", keyword);
   params.set("limit", String(limit));
@@ -165,12 +165,14 @@ async function publicSearch(request, env) {
 
   const result = await fetchCoupangData({ method: "GET", uri: buildSearchUri(params) }, env);
   const products = result.data?.data?.productData || [];
+  const normalizedProducts = products.map((item) => normalizeSearchItem(item, keyword));
   const response = jsonResponse({
     ok: result.ok,
     status: result.status,
     landingUrl: result.data?.data?.landingUrl || "",
     message: result.data?.rMessage || result.message || "",
-    normalizedProducts: products.map((item) => normalizeSearchItem(item, keyword))
+    products: normalizedProducts,
+    normalizedProducts
   }, result.ok ? 200 : result.status);
 
   response.headers.set("cache-control", result.ok ? "public, max-age=300" : "no-store");

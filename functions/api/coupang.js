@@ -15,6 +15,16 @@ function getSecret(env, name) {
   return env[name] || "";
 }
 
+function getEnvHealth(env) {
+  const required = ["COUPANG_ACCESS_KEY", "COUPANG_SECRET_KEY", "COUPANG_ADMIN_TOKEN"];
+  return {
+    ok: true,
+    checkedAt: new Date().toISOString(),
+    variables: Object.fromEntries(required.map((name) => [name, Boolean(getSecret(env, name))])),
+    missing: required.filter((name) => !getSecret(env, name))
+  };
+}
+
 function assertAdmin(request, env) {
   const configuredToken = getSecret(env, "COUPANG_ADMIN_TOKEN");
   if (!configuredToken) {
@@ -127,11 +137,15 @@ function normalizeSearchItem(item, keyword = "") {
 }
 
 export async function onRequestGet({ request, env }) {
-  const admin = assertAdmin(request, env);
-  if (!admin.ok) return jsonResponse({ ok: false, message: admin.message }, admin.status);
-
   const url = new URL(request.url);
   const action = url.searchParams.get("action") || "search";
+
+  if (action === "health") {
+    return jsonResponse(getEnvHealth(env));
+  }
+
+  const admin = assertAdmin(request, env);
+  if (!admin.ok) return jsonResponse({ ok: false, message: admin.message }, admin.status);
 
   if (action !== "search") {
     return jsonResponse({ ok: false, message: "GET은 action=search만 지원합니다." }, 400);

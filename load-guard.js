@@ -1,6 +1,10 @@
 (function () {
   var root = document.documentElement;
   var observer = null;
+  var searchCache = {};
+  var lastSearchAt = 0;
+  var SEARCH_COOLDOWN_MS = 2500;
+  var SEARCH_CACHE_MS = 5 * 60 * 1000;
 
   root.setAttribute("data-load-guard-loaded", "1");
 
@@ -19,19 +23,64 @@
         var url = new URL(requestUrl, window.location.href);
         var search = document.querySelector("#search");
         var userQuery = search && search.value ? search.value.trim() : "";
+        var requestKeyword = (url.searchParams.get("keyword") || "").trim();
         var isSearchApi = url.pathname === "/api/coupang" && url.searchParams.get("action") === "public-search";
 
-        if (isSearchApi && userQuery.length < 2) {
+        if (isSearchApi && (userQuery.length < 2 || requestKeyword !== userQuery)) {
           return Promise.resolve(new Response(JSON.stringify({
             ok: true,
             status: 200,
-            message: "home recommendations skipped",
+            message: "automatic recommendation search skipped",
             products: [],
             normalizedProducts: []
           }), {
             status: 200,
             headers: { "content-type": "application/json; charset=utf-8" }
           }));
+        }
+
+        if (isSearchApi) {
+          var cacheKey = url.pathname + "?" + url.searchParams.toString();
+          var cached = searchCache[cacheKey];
+          var now = Date.now();
+
+          if (cached && now - cached.time < SEARCH_CACHE_MS) {
+            return Promise.resolve(new Response(cached.body, {
+              status: cached.status,
+              headers: { "content-type": "application/json; charset=utf-8" }
+            }));
+          }
+
+          if (now - lastSearchAt < SEARCH_COOLDOWN_MS) {
+            return Promise.resolve(new Response(JSON.stringify({
+              ok: false,
+              status: 429,
+              message: "검색 요청이 너무 빠릅니다. 잠시 후 다시 검색하세요.",
+              products: [],
+              normalizedProducts: []
+            }), {
+              status: 429,
+              headers: {
+                "content-type": "application/json; charset=utf-8",
+                "retry-after": "3"
+              }
+            }));
+          }
+
+          lastSearchAt = now;
+          return nativeFetch(input, init).then(function (response) {
+            var clone = response.clone();
+            clone.text().then(function (body) {
+              if (response.ok) {
+                searchCache[cacheKey] = {
+                  time: Date.now(),
+                  status: response.status,
+                  body: body
+                };
+              }
+            }).catch(function () {});
+            return response;
+          });
         }
       } catch {
         // Fall through to the original fetch.

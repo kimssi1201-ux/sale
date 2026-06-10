@@ -1,5 +1,7 @@
 const COUPANG_HOST = "https://api-gateway.coupang.com";
 const API_PREFIX = "/v2/providers/affiliate_open_api/apis/openapi/v1";
+const SEARCH_CACHE_CONTROL = "public, max-age=900, s-maxage=900, stale-while-revalidate=3600";
+const IMAGE_CACHE_CONTROL = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800";
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -158,7 +160,7 @@ async function proxyCoupangImage(request) {
   const upstream = await fetch(source, {
     redirect: "follow",
     headers: { "user-agent": "Mozilla/5.0" },
-    cf: { cacheEverything: true, cacheTtl: 86400 }
+    cf: { cacheEverything: true, cacheTtl: 604800 }
   });
 
   if (!upstream.ok || !upstream.body) {
@@ -170,7 +172,7 @@ async function proxyCoupangImage(request) {
 
   const headers = new Headers();
   headers.set("content-type", upstream.headers.get("content-type") || "image/jpeg");
-  headers.set("cache-control", "public, max-age=86400");
+  headers.set("cache-control", IMAGE_CACHE_CONTROL);
   headers.set("access-control-allow-origin", "*");
   return new Response(upstream.body, { status: 200, headers });
 }
@@ -262,7 +264,7 @@ async function publicSearch(request, env) {
     normalizedProducts
   }, result.ok ? 200 : result.status);
 
-  response.headers.set("cache-control", result.ok ? "public, max-age=300" : "no-store");
+  response.headers.set("cache-control", result.ok ? SEARCH_CACHE_CONTROL : "no-store");
   if (cache && result.ok) await cache.put(cacheKey, response.clone());
   return response;
 }

@@ -5,7 +5,11 @@
   root.setAttribute("data-load-guard-loaded", "1");
 
   function installSearchRequestGuard() {
-    if (!window.fetch || window.__picknsaleFetchGuardInstalled) return;
+    if (window.__picknsaleFetchGuardInstalled) return;
+    if (!window.fetch) {
+      window.setTimeout(installSearchRequestGuard, 100);
+      return;
+    }
     var nativeFetch = window.fetch.bind(window);
     window.__picknsaleFetchGuardInstalled = true;
 

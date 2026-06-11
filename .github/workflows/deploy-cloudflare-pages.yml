@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      deployments: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,3 +30,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ef86597f793d8e02242ae0adb5faf9c4
           command: pages deploy dist --project-name=sale --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

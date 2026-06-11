@@ -100,6 +100,30 @@
     Array.prototype.slice.call((scope || document).querySelectorAll("img")).forEach(tuneImage);
   }
 
+  function installFixedPicksGrid() {
+    if (!document.head) return;
+    if (document.getElementById("fixed-picks-grid-style")) return;
+    var style = document.createElement("style");
+    style.id = "fixed-picks-grid-style";
+    style.textContent = [
+      ".fixed-picks{overflow:visible!important}",
+      ".fixed-picks-head .slide-controls,.fixed-picks .slide-controls{display:none!important}",
+      ".fixed-picks-grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;overflow:visible!important;scroll-snap-type:none!important}",
+      ".fixed-pick-card{min-width:0!important;width:auto!important;scroll-snap-align:unset!important}",
+      ".fixed-pick-image img{display:block!important}",
+      "@media(max-width:980px){.fixed-picks-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}",
+      "@media(max-width:720px){.fixed-picks-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.fixed-pick-card{grid-template-columns:1fr!important;align-content:start!important;min-height:190px!important}.fixed-pick-image{width:100%!important;height:104px!important}}"
+    ].join("");
+    document.head.appendChild(style);
+  }
+
+  function tuneFixedPicks() {
+    installFixedPicksGrid();
+    Array.prototype.slice.call(document.querySelectorAll(".fixed-picks-head .slide-controls,.fixed-picks .slide-controls")).forEach(function (control) {
+      control.remove();
+    });
+  }
+
   function installObserver() {
     if (observer || !window.MutationObserver) return;
     observer = new MutationObserver(function (mutations) {
@@ -108,6 +132,7 @@
           if (!node || node.nodeType !== 1) return;
           if (node.tagName === "IMG") tuneImage(node);
           else if (node.querySelectorAll) tuneImages(node);
+          tuneFixedPicks();
         });
       });
     });
@@ -115,12 +140,14 @@
   }
 
   function start() {
+    tuneFixedPicks();
     installObserver();
     tuneImages(document);
     var runWhenIdle = window.requestIdleCallback || function (callback) {
       return window.setTimeout(callback, 600);
     };
     runWhenIdle(function () {
+      tuneFixedPicks();
       tuneImages(document);
       root.setAttribute("data-load-guard-ran", "1");
     });

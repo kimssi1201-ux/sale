@@ -108,7 +108,7 @@
     style.textContent = [
       ".fixed-picks{overflow:visible!important}",
       ".fixed-picks-head .slide-controls,.fixed-picks .slide-controls{display:none!important}",
-      ".fixed-picks-grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;overflow:visible!important;scroll-snap-type:none!important}",
+      ".fixed-picks-grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:12px!important;overflow:visible!important;scroll-snap-type:none!important}",
       ".fixed-pick-card{min-width:0!important;width:auto!important;scroll-snap-align:unset!important}",
       ".fixed-pick-image img{display:block!important}",
       "@media(max-width:980px){.fixed-picks-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}",

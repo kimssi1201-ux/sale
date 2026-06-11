@@ -3,6 +3,7 @@
   var observer = null;
   var searchCache = {};
   var lastSearchAt = 0;
+  var isSearchComposing = false;
   var SEARCH_COOLDOWN_MS = 2500;
   var SEARCH_CACHE_MS = 5 * 60 * 1000;
 
@@ -89,6 +90,36 @@
     };
   }
 
+  function installSearchInputGuard() {
+    var search = document.querySelector("#search");
+    if (!search || search.__picknsaleInputGuardInstalled) return;
+    search.__picknsaleInputGuardInstalled = true;
+
+    search.addEventListener("compositionstart", function () {
+      isSearchComposing = true;
+      if (search.__picknsaleCompositionTimer) {
+        window.clearTimeout(search.__picknsaleCompositionTimer);
+      }
+    }, true);
+
+    search.addEventListener("compositionend", function () {
+      isSearchComposing = false;
+      if (search.__picknsaleCompositionTimer) {
+        window.clearTimeout(search.__picknsaleCompositionTimer);
+      }
+      search.__picknsaleCompositionTimer = window.setTimeout(function () {
+        search.dispatchEvent(new Event("input", { bubbles: true }));
+      }, 30);
+    }, true);
+
+    search.addEventListener("input", function (event) {
+      var inputType = event.inputType || "";
+      if (isSearchComposing || event.isComposing || inputType === "insertCompositionText") {
+        event.stopImmediatePropagation();
+      }
+    }, true);
+  }
+
   function tuneImage(image) {
     if (!image || image.nodeType !== 1 || image.tagName !== "IMG") return;
     image.loading = "lazy";
@@ -134,6 +165,7 @@
           if (!node || node.nodeType !== 1) return;
           if (node.tagName === "IMG") tuneImage(node);
           else if (node.querySelectorAll) tuneImages(node);
+          installSearchInputGuard();
           tuneFixedPicks();
         });
       });
@@ -142,6 +174,7 @@
   }
 
   function start() {
+    installSearchInputGuard();
     tuneFixedPicks();
     installObserver();
     tuneImages(document);

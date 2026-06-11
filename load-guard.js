@@ -102,9 +102,12 @@
 
   function installFixedPicksGrid() {
     if (!document.head) return;
-    if (document.getElementById("fixed-picks-grid-style")) return;
-    var style = document.createElement("style");
-    style.id = "fixed-picks-grid-style";
+    var style = document.getElementById("fixed-picks-grid-style");
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "fixed-picks-grid-style";
+      document.head.appendChild(style);
+    }
     style.textContent = [
       ".fixed-picks{overflow:visible!important}",
       ".fixed-picks-head .slide-controls,.fixed-picks .slide-controls{display:none!important}",
@@ -114,7 +117,6 @@
       "@media(max-width:980px){.fixed-picks-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}",
       "@media(max-width:720px){.fixed-picks-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.fixed-pick-card{grid-template-columns:1fr!important;align-content:start!important;min-height:190px!important}.fixed-pick-image{width:100%!important;height:104px!important}}"
     ].join("");
-    document.head.appendChild(style);
   }
 
   function tuneFixedPicks() {

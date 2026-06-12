@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "node -e \"const fs=require('fs'); fs.rmSync('dist',{recursive:true,force:true}); fs.mkdirSync('dist',{recursive:true}); for (const f of ['index.html','admin.html','styles.css','manual.css','app.js','products.json','README.md','load-guard.js','category-cleanup.js','top-category-cleanup.js','price-review-accuracy.js']) if (fs.existsSync(f)) fs.copyFileSync(f, 'dist/'+f); for (const d of ['functions','assets']) if (fs.existsSync(d)) fs.cpSync(d, 'dist/'+d, {recursive:true});\""
+    "build": "node -e \"const fs=require('fs'); fs.rmSync('dist',{recursive:true,force:true}); fs.mkdirSync('dist',{recursive:true}); for (const f of ['index.html','about.html','contact.html','privacy.html','partner-disclosure.html','admin.html','styles.css','manual.css','app.js','products.json','README.md','load-guard.js','category-cleanup.js','top-category-cleanup.js','price-review-accuracy.js','robots.txt','sitemap.xml','ads.txt']) if (fs.existsSync(f)) fs.copyFileSync(f, 'dist/'+f); for (const d of ['functions','assets']) if (fs.existsSync(d)) fs.cpSync(d, 'dist/'+d, {recursive:true});\""
   }
 }

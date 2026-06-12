@@ -157,6 +157,49 @@
     });
   }
 
+  function installContentQualitySections() {
+    var main = document.querySelector("main");
+    if (!main || document.getElementById("guide")) return;
+
+    var style = document.getElementById("adsense-ready-style");
+    if (!style && document.head) {
+      style = document.createElement("style");
+      style.id = "adsense-ready-style";
+      style.textContent = [
+        ".editorial-guide,.site-footer{width:min(1180px,calc(100% - 40px));margin-inline:auto}",
+        ".editorial-guide{padding:26px 0 42px}.guide-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}",
+        ".guide-card{padding:18px;border:1px solid #dde2da;border-radius:8px;background:#fff}.guide-card h3{margin:0 0 10px;color:#171b22;font-size:20px;line-height:1.3}.guide-card p{margin:0;color:#3f4750;font-size:16px;line-height:1.7}",
+        ".site-footer{display:grid;gap:10px;padding:28px 0 42px;border-top:1px solid #dde2da;color:#4a535d}.site-footer strong{color:#171b22;font-size:20px}.site-footer nav{display:flex;flex-wrap:wrap;gap:10px 18px;font-weight:800}.site-footer a:hover{color:#075e58}.site-footer p{margin:0;font-size:14px}",
+        "@media(max-width:980px){.guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}",
+        "@media(max-width:720px){.editorial-guide,.site-footer{width:calc(100% - 24px)}.guide-grid{grid-template-columns:1fr}.guide-card{padding:16px}}"
+      ].join("");
+      document.head.appendChild(style);
+    }
+
+    var guide = document.createElement("section");
+    guide.className = "editorial-guide";
+    guide.id = "guide";
+    guide.setAttribute("aria-label", "계절 상품 구매 가이드");
+    guide.innerHTML = [
+      '<div class="section-head"><div><p class="kicker">구매 전 체크</p><h2>생활 준비템을 고를 때 확인할 기준</h2></div></div>',
+      '<div class="guide-grid">',
+      '<article class="guide-card"><h3>습기와 장마 대비</h3><p>제습기나 제습제를 볼 때는 방 크기, 물통 용량, 배수 방식, 소음 정도를 먼저 확인하는 것이 좋습니다. 원룸이나 작은 방은 보관과 이동이 쉬운 제품이 편하고, 거실처럼 넓은 공간은 제습량과 연속 배수 가능 여부가 중요합니다.</p></article>',
+      '<article class="guide-card"><h3>더위와 냉방 보조</h3><p>선풍기, 서큘레이터, 냉감패드는 사용 장소가 기준입니다. 책상 위에서 쓰는 제품은 소음과 각도 조절이 중요하고, 침구류는 피부에 닿는 원단감과 세탁 편의성을 함께 보는 편이 실패를 줄입니다.</p></article>',
+      '<article class="guide-card"><h3>야외활동 준비</h3><p>물놀이, 캠핑, 외출용 상품은 휴대성과 관리가 핵심입니다. 접이식 구조, 무게, 방수 여부, 사용 후 건조가 쉬운지를 확인하면 한두 번 쓰고 방치되는 일을 줄일 수 있습니다.</p></article>',
+      '<article class="guide-card"><h3>가격 확인 방식</h3><p>쿠팡 상품은 가격, 쿠폰, 배송 조건이 자주 바뀝니다. 이 사이트는 확인 가능한 상품명, 이미지, 현재 표시 가격을 중심으로 정리하며, 최종 구매 전에는 쿠팡 상품 페이지에서 실제 결제 금액과 배송 조건을 다시 확인하는 것을 권장합니다.</p></article>',
+      "</div>"
+    ].join("");
+    main.appendChild(guide);
+
+    if (!document.querySelector(".site-footer")) {
+      var footer = document.createElement("footer");
+      footer.className = "site-footer";
+      footer.setAttribute("aria-label", "사이트 정보");
+      footer.innerHTML = '<strong>픽앤세일</strong><nav aria-label="정책 및 운영 정보"><a href="./about.html">사이트 소개</a><a href="./contact.html">문의</a><a href="./privacy.html">개인정보처리방침</a><a href="./partner-disclosure.html">제휴 및 광고 고지</a></nav><p>쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>';
+      document.body.appendChild(footer);
+    }
+  }
+
   function installObserver() {
     if (observer || !window.MutationObserver) return;
     observer = new MutationObserver(function (mutations) {
@@ -175,6 +218,7 @@
 
   function start() {
     installSearchInputGuard();
+    installContentQualitySections();
     tuneFixedPicks();
     installObserver();
     tuneImages(document);

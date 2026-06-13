@@ -143,10 +143,19 @@
       ".fixed-picks{overflow:visible!important}",
       ".fixed-picks-head .slide-controls,.fixed-picks .slide-controls{display:none!important}",
       ".fixed-picks-grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:12px!important;overflow:visible!important;scroll-snap-type:none!important}",
-      ".fixed-pick-card{min-width:0!important;width:auto!important;scroll-snap-align:unset!important}",
-      ".fixed-pick-image img{display:block!important}",
+      ".fixed-pick-card{display:grid!important;grid-template-rows:auto 1fr!important;align-content:start!important;min-width:0!important;width:auto!important;min-height:236px!important;overflow:hidden!important;scroll-snap-align:unset!important}",
+      ".fixed-pick-image{display:grid!important;place-items:center!important;width:100%!important;height:126px!important;min-height:126px!important;overflow:hidden!important;background:#fffdf3!important;border-radius:8px!important}",
+      ".fixed-pick-image img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;padding:6px!important}",
+      ".fixed-pick-copy{display:grid!important;grid-template-rows:auto 1fr auto!important;gap:5px!important;min-width:0!important;overflow:hidden!important}",
+      ".fixed-pick-copy strong{display:-webkit-box!important;min-height:40px!important;overflow:hidden!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow-wrap:anywhere!important;word-break:keep-all!important}",
+      ".fixed-pick-price{align-self:end!important;white-space:normal!important;overflow-wrap:anywhere!important}",
+      ".product-card{overflow:hidden!important}",
+      ".product-media{min-width:0!important;overflow:hidden!important}",
+      ".product-photo{width:100%!important;height:100%!important;object-fit:contain!important}",
+      ".product-content{min-width:0!important;overflow:hidden!important}",
+      ".product-card h3,.product-summary,.benefit-list li{overflow-wrap:anywhere!important;word-break:keep-all!important}",
       "@media(max-width:980px){.fixed-picks-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}",
-      "@media(max-width:720px){.fixed-picks-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.fixed-pick-card{grid-template-columns:1fr!important;align-content:start!important;min-height:190px!important}.fixed-pick-image{width:100%!important;height:104px!important}}"
+      "@media(max-width:720px){.fixed-picks-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.fixed-pick-card{grid-template-columns:1fr!important;min-height:214px!important;padding:8px!important;gap:8px!important}.fixed-pick-image{height:112px!important;min-height:112px!important}.fixed-pick-copy strong{font-size:14px!important;min-height:38px!important}.fixed-pick-price{font-size:16px!important}.product-card{grid-template-columns:1fr!important}.product-media{min-height:220px!important;border-right:0!important;border-bottom:1px solid #dde2da!important}.product-content{padding:16px!important}}"
     ].join("");
   }
 

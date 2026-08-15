@@ -3,662 +3,123 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>픽앤세일 | 추천 상품 큐레이션</title>
+    <title>픽앤세일 | 생활 상품 큐레이션</title>
     <meta
       name="description"
-      content="장마, 더위, 습기, 야외활동 대비 상품을 빠르게 비교하고 쿠팡 상품 페이지로 이동할 수 있는 쇼핑 큐레이션 화면입니다."
+      content="계절과 생활 상황에 맞는 쿠팡 추천 상품을 보기 쉽게 정리하고, 원하는 상품은 바로 검색할 수 있는 생활 상품 큐레이션입니다."
     />
     <meta name="naver-site-verification" content="7abb9223b048d8207c59607e303e6403d921d884" />
+    <link rel="canonical" href="https://nicetopic.xyz/" />
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8468106244002167"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./styles.css?v=notice-center-20260609" />
-    <link rel="stylesheet" href="./manual.css?v=category-slider-search15-20260609" />
-    <style>
-      :root {
-        --notice-bar-height: 42px;
-      }
-
-      html,
-      body {
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-
-      .notice-bar {
-        position: sticky;
-        top: 0;
-        z-index: 30;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: 6px 14px;
-        width: 100%;
-        min-height: var(--notice-bar-height);
-        padding: 8px 24px;
-        text-align: center;
-        background: #fff4d6;
-        box-shadow: 0 4px 14px rgba(23, 27, 34, 0.06);
-      }
-
-      .notice-bar span {
-        text-align: center;
-      }
-
-      .site-header {
-        top: var(--notice-bar-height);
-      }
-
-      .mobile-tabs {
-        display: none !important;
-      }
-
-      .content-layout .section-head {
-        display: flex;
-      }
-
-      .search-status {
-        min-height: 22px;
-        margin: -2px 0 0;
-        color: #68707b;
-        font-size: 14px;
-        font-weight: 800;
-      }
-
-      .search-status[data-tone="success"] {
-        color: #075e58;
-      }
-
-      .search-status[data-tone="error"] {
-        color: #bd3e28;
-      }
-
-      .fixed-picks {
-        width: min(1180px, calc(100% - 40px));
-        margin: 0 auto 18px;
-        padding: 16px;
-        overflow: hidden;
-        border: 1px solid #ead58f;
-        border-radius: 8px;
-        background: #fff8d8;
-      }
-
-      .fixed-picks-head {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-      }
-
-      .fixed-picks-head > div,
-      .category-rail-head > div {
-        min-width: 0;
-      }
-
-      .fixed-picks-head strong,
-      .fixed-picks-head span {
-        display: block;
-      }
-
-      .fixed-picks-head strong {
-        color: #7a460e;
-        font-size: 22px;
-        line-height: 1.25;
-        font-weight: 950;
-      }
-
-      .fixed-picks-head span {
-        margin-top: 3px;
-        color: #6f5a2d;
-        font-size: 15px;
-        font-weight: 800;
-      }
-
-      .fixed-picks-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .fixed-pick-card {
-        display: grid;
-        grid-template-columns: 86px minmax(0, 1fr);
-        gap: 10px;
-        align-content: start;
-        align-items: center;
-        min-height: 126px;
-        overflow: hidden;
-        padding: 10px;
-        border: 1px solid #ead58f;
-        border-radius: 8px;
-        background: #fff;
-      }
-
-      .fixed-pick-card:hover {
-        border-color: #d49a22;
-        box-shadow: 0 10px 24px rgba(122, 70, 14, 0.12);
-      }
-
-      .fixed-pick-image {
-        display: grid;
-        place-items: center;
-        width: 86px;
-        height: 86px;
-        overflow: hidden;
-        border-radius: 8px;
-        background: #fffdf3;
-      }
-
-      .fixed-pick-image img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        padding: 6px;
-      }
-
-      .fixed-pick-copy {
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        gap: 5px;
-        min-width: 0;
-        overflow: hidden;
-      }
-
-      .fixed-pick-badge {
-        display: inline-flex;
-        width: fit-content;
-        min-height: 24px;
-        align-items: center;
-        border-radius: 8px;
-        padding: 0 8px;
-        color: #7a460e;
-        background: #fff2b6;
-        font-size: 13px;
-        font-weight: 900;
-      }
-
-      .fixed-pick-copy strong {
-        display: -webkit-box;
-        min-height: 40px;
-        overflow: hidden;
-        color: #171b22;
-        font-size: 16px;
-        line-height: 1.32;
-        font-weight: 950;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow-wrap: anywhere;
-        word-break: keep-all;
-      }
-
-      .fixed-pick-price {
-        align-self: end;
-        color: #bd3e28;
-        font-size: 18px;
-        line-height: 1.15;
-        font-weight: 950;
-        overflow-wrap: anywhere;
-        white-space: normal;
-      }
-
-      @media (max-width: 980px) {
-        .notice-extra {
-          display: none;
-        }
-
-        .fixed-picks-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-
-      @media (max-width: 720px) {
-        :root {
-          --notice-bar-height: 72px;
-        }
-
-        .notice-bar {
-          padding: 7px 12px;
-          font-size: 12.5px;
-          line-height: 1.35;
-          text-align: center;
-        }
-
-        .notice-extra {
-          display: none;
-        }
-
-        .fixed-picks {
-          width: calc(100% - 24px);
-          padding: 12px;
-        }
-
-        .fixed-picks-head strong {
-          font-size: 20px;
-        }
-
-        .fixed-picks-head span {
-          font-size: 13.5px;
-          line-height: 1.45;
-        }
-
-        .fixed-picks-grid {
-          gap: 8px;
-        }
-
-        .fixed-pick-card {
-          grid-template-columns: 1fr;
-          align-content: start;
-          min-height: 214px;
-          gap: 8px;
-          padding: 8px;
-        }
-
-        .fixed-pick-image {
-          width: 100%;
-          height: 112px;
-          min-height: 112px;
-        }
-
-        .fixed-pick-copy strong {
-          min-height: 38px;
-          font-size: 14px;
-        }
-
-        .fixed-pick-price {
-          font-size: 16px;
-        }
-      }
-
-      .fixed-picks-grid {
-        grid-template-columns: none;
-        grid-auto-flow: column;
-        grid-auto-columns: minmax(210px, 250px);
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        gap: 12px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 2px 2px 8px;
-        scroll-padding-inline: 2px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .slide-controls {
-        display: inline-flex;
-        flex: 0 0 auto;
-        align-items: center;
-        gap: 7px;
-      }
-
-      .slide-button {
-        display: grid;
-        place-items: center;
-        width: 42px;
-        height: 42px;
-        border: 1px solid #d49a22;
-        border-radius: 50%;
-        color: #7a460e;
-        background: #fff;
-        box-shadow: 0 6px 14px rgba(122, 70, 14, 0.1);
-        font-size: 22px;
-        line-height: 1;
-        font-weight: 950;
-        cursor: pointer;
-      }
-
-      .slide-button:hover {
-        color: #fff;
-        background: #b66a16;
-      }
-
-      .slide-button:active {
-        transform: translateY(1px);
-      }
-
-      .fixed-pick-card {
-        grid-template-columns: 1fr;
-        align-content: start;
-        min-height: 230px;
-        scroll-snap-align: start;
-      }
-
-      .fixed-pick-image {
-        width: 100%;
-        height: 128px;
-      }
-
-      .category-showcase {
-        width: min(1180px, calc(100% - 40px));
-        margin: 0 auto 20px;
-        display: grid;
-        gap: 14px;
-      }
-
-      .category-showcase-head {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .category-showcase-head strong {
-        display: block;
-        color: #171b22;
-        font-size: 23px;
-        line-height: 1.25;
-        font-weight: 950;
-      }
-
-      .category-showcase-head span {
-        display: block;
-        margin-top: 3px;
-        color: #68707b;
-        font-size: 15px;
-        font-weight: 800;
-      }
-
-      .category-slider-sections {
-        display: grid;
-        gap: 14px;
-      }
-
-      .category-rail {
-        padding: 14px;
-        overflow: hidden;
-        border: 1px solid #ead58f;
-        border-radius: 8px;
-        background: #fff9dc;
-      }
-
-      .category-rail-head {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 10px;
-      }
-
-      .category-rail-head span {
-        display: block;
-        color: #8a651d;
-        font-size: 12px;
-        font-weight: 900;
-      }
-
-      .category-rail-head strong {
-        display: block;
-        color: #171b22;
-        font-size: 20px;
-        line-height: 1.2;
-        font-weight: 950;
-      }
-
-      .category-rail-head em {
-        color: #a16a16;
-        font-style: normal;
-        font-size: 14px;
-        font-weight: 900;
-      }
-
-      .category-rail-meta {
-        display: inline-flex;
-        flex: 0 0 auto;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .category-rail-track {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: minmax(176px, 210px);
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        gap: 10px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-bottom: 6px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .category-slide-card {
-        display: grid;
-        gap: 8px;
-        min-height: 258px;
-        padding: 10px;
-        border: 1px solid #ead58f;
-        border-radius: 8px;
-        color: inherit;
-        text-decoration: none;
-        background: #fff;
-        scroll-snap-align: start;
-      }
-
-      .category-slide-card:hover {
-        border-color: #d49a22;
-        box-shadow: 0 10px 24px rgba(122, 70, 14, 0.12);
-      }
-
-      .category-slide-image {
-        display: grid;
-        place-items: center;
-        height: 122px;
-        border-radius: 8px;
-        background: #fffdf3;
-      }
-
-      .category-slide-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 8px;
-      }
-
-      .category-slide-badge {
-        width: fit-content;
-        min-height: 24px;
-        border-radius: 8px;
-        padding: 4px 8px;
-        color: #7a460e;
-        background: #fff2b6;
-        font-size: 12px;
-        font-weight: 900;
-      }
-
-      .category-slide-title {
-        display: -webkit-box;
-        overflow: hidden;
-        color: #171b22;
-        font-size: 15px;
-        line-height: 1.35;
-        font-weight: 950;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow-wrap: anywhere;
-      }
-
-      .category-slide-price {
-        color: #bd3e28;
-        font-size: 17px;
-        line-height: 1.15;
-        font-weight: 950;
-      }
-
-      .category-slide-action {
-        display: grid;
-        place-items: center;
-        min-height: 36px;
-        margin-top: auto;
-        border-radius: 8px;
-        color: #fff;
-        background: #e65139;
-        font-size: 14px;
-        font-weight: 950;
-      }
-
-      body.is-search-mode .fixed-picks,
-      body.is-search-mode .category-showcase {
-        display: none;
-      }
-
-      .content-layout[hidden] {
-        display: none !important;
-      }
-
-      @media (max-width: 720px) {
-        .fixed-picks-head,
-        .category-rail-head {
-          align-items: center;
-        }
-
-        .slide-controls {
-          gap: 6px;
-        }
-
-        .slide-button {
-          width: 38px;
-          height: 38px;
-          font-size: 20px;
-        }
-
-        .category-rail-meta em {
-          display: none;
-        }
-
-        .fixed-picks-grid {
-          grid-auto-columns: minmax(166px, 72vw);
-        }
-
-        .category-showcase {
-          width: calc(100% - 24px);
-          margin-bottom: 16px;
-        }
-
-        .category-showcase-head strong {
-          font-size: 21px;
-        }
-
-        .category-showcase-head span {
-          font-size: 13.5px;
-          line-height: 1.45;
-        }
-
-        .category-rail {
-          padding: 12px;
-        }
-
-        .category-rail-track {
-          grid-auto-columns: minmax(154px, 68vw);
-        }
-
-        .category-slide-card {
-          min-height: 238px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="./styles.css?v=mustview-store-20260815" />
   </head>
   <body>
-    <section class="notice-bar" id="notice" aria-label="파트너스 고지">
-      <strong>파트너스 고지</strong>
+    <section class="notice-bar" aria-label="파트너스 고지">
       <span>쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
     </section>
 
     <header class="site-header">
-      <a class="brand" href="#top" aria-label="픽앤세일 홈">
+      <a class="brand" href="./" aria-label="픽앤세일 홈">
         <span class="brand-mark">P</span>
         <span class="brand-copy">
           <strong>픽앤세일</strong>
-          <small>추천 상품 큐레이션</small>
+          <small>생활 상품 큐레이션</small>
         </span>
       </a>
 
       <nav class="main-nav" aria-label="주요 메뉴">
-        <a href="#products">상품</a>
-        <a href="#guide">구매가이드</a>
+        <a href="#recommendations">추천상품</a>
+        <a href="#searchArea">상품검색</a>
+        <a href="#guide">구매기준</a>
         <a href="./about.html">소개</a>
         <a href="./contact.html">문의</a>
-        <a href="#notice">고지</a>
       </nav>
-
-      <a class="header-cta" href="#products">상품 보기</a>
     </header>
 
     <main id="top">
-      <section class="shop-toolbar" aria-label="상품 검색">
-        <div class="search-box">
-          <label for="search">상품 검색</label>
-          <input id="search" type="search" placeholder="찾고 싶은 상품을 검색해보세요!" autocomplete="off" />
-          <p id="searchStatus" class="search-status" hidden></p>
+      <section class="home-only hero-section" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="eyebrow">오늘 필요한 생활템만 빠르게</p>
+          <h1 id="heroTitle">쇼핑 전에 한 번 훑어보는 상품 큐레이션</h1>
+          <p>
+            장마, 더위, 외출, 차량 관리처럼 생활에서 바로 필요한 상품을 한 화면에 모았습니다.
+            가격과 조건은 바뀔 수 있으니 최종 결제 전 쿠팡 상품 페이지에서 다시 확인하세요.
+          </p>
         </div>
 
-        <div class="sort-box">
-          <label for="sort">정렬</label>
-          <select id="sort">
-            <option value="latest">최신순</option>
-            <option value="price-low">낮은 가격순</option>
-          </select>
-        </div>
-      </section>
-
-      <section class="fixed-picks" aria-label="픽앤세일 추천상품">
-        <div class="fixed-picks-head">
-          <div>
-            <strong>픽앤세일 추천상품</strong>
-            <span>비 오기 전에, 더워지기 전에 먼저 챙기세요. 지금 많이 찾는 생활 준비템만 골랐습니다.</span>
-          </div>
-        </div>
-        <div id="fixedPicksGrid" class="fixed-picks-grid"></div>
-      </section>
-      <section class="content-layout" id="products" aria-label="검색 결과와 추천 상품 목록">
-        <section class="product-area" aria-label="상품 카드">
-          <div class="section-head">
+        <aside class="hero-facts" aria-label="사이트 핵심 정보">
+          <dl>
             <div>
-              <p class="kicker" id="productKicker">검색 결과</p>
-              <h2 id="productTitle">추천 상품</h2>
+              <dt>고정 추천</dt>
+              <dd>30개</dd>
             </div>
-            <span id="resultCount" class="result-count">0개</span>
-          </div>
-
-          <div id="productGrid" class="product-grid" aria-live="polite"></div>
-          <div class="catalog-actions">
-            <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
-          </div>
-        </section>
+            <div>
+              <dt>검색 결과</dt>
+              <dd>15개씩</dd>
+            </div>
+            <div>
+              <dt>정보 기준</dt>
+              <dd>확인 정보</dd>
+            </div>
+          </dl>
+        </aside>
       </section>
 
-      <section class="editorial-guide" id="guide" aria-label="계절 상품 구매 가이드">
-        <div class="section-head">
-          <div>
-            <p class="kicker">구매 전 체크</p>
-            <h2>생활 준비템을 고를 때 확인할 기준</h2>
-          </div>
+      <section class="search-panel" id="searchArea" aria-label="상품 검색">
+        <div>
+          <p class="eyebrow">상품검색</p>
+          <h2>찾고 싶은 상품을 검색해보세요!</h2>
+        </div>
+        <form class="search-form" id="searchForm" role="search">
+          <label class="sr-only" for="search">상품명 검색</label>
+          <input id="search" type="search" placeholder="예: 제습기, 선풍기, 텀블러" autocomplete="off" />
+          <button type="submit">검색</button>
+        </form>
+        <p id="searchStatus" class="search-status" hidden></p>
+      </section>
+
+      <section class="home-only recommendation-section" id="recommendations" aria-labelledby="recommendationTitle">
+        <div class="section-title">
+          <p class="eyebrow">추천상품</p>
+          <h2 id="recommendationTitle">지금 챙기면 좋은 생활 상품</h2>
+          <p>비 오기 전, 더워지기 전, 나가기 전. 미리 준비하면 편한 상품만 골랐습니다.</p>
+        </div>
+        <div id="fixedPicksGrid" class="recommendation-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="search-results" id="results" aria-labelledby="resultTitle" hidden>
+        <div class="section-title">
+          <p class="eyebrow" id="resultKicker">검색 결과</p>
+          <h2 id="resultTitle">검색 결과</h2>
+          <p id="resultSummary">확인 가능한 상품명, 가격, 카테고리를 기준으로 보여드립니다.</p>
+        </div>
+        <div id="productGrid" class="result-list" aria-live="polite"></div>
+        <div class="catalog-actions">
+          <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
+        </div>
+      </section>
+
+      <section class="home-only guide-section" id="guide" aria-labelledby="guideTitle">
+        <div class="section-title">
+          <p class="eyebrow">구매 전 기준</p>
+          <h2 id="guideTitle">상품을 고를 때 먼저 볼 것</h2>
         </div>
         <div class="guide-grid">
-          <article class="guide-card">
-            <h3>습기와 장마 대비</h3>
-            <p>제습기나 제습제를 볼 때는 방 크기, 물통 용량, 배수 방식, 소음 정도를 먼저 확인하는 것이 좋습니다. 원룸이나 작은 방은 보관과 이동이 쉬운 제품이 편하고, 거실처럼 넓은 공간은 제습량과 연속 배수 가능 여부가 중요합니다.</p>
+          <article>
+            <h3>가격은 마지막에 다시 확인</h3>
+            <p>쿠폰, 배송비, 옵션 가격은 수시로 달라질 수 있습니다. 카드에 보이는 가격은 참고용이며 결제 전 쿠팡 화면의 실제 금액을 확인하는 편이 안전합니다.</p>
           </article>
-          <article class="guide-card">
-            <h3>더위와 냉방 보조</h3>
-            <p>선풍기, 서큘레이터, 냉감패드는 사용 장소가 기준입니다. 책상 위에서 쓰는 제품은 소음과 각도 조절이 중요하고, 침구류는 피부에 닿는 원단감과 세탁 편의성을 함께 보는 편이 실패를 줄입니다.</p>
+          <article>
+            <h3>상품평은 숫자보다 내용</h3>
+            <p>상품평 수가 많아도 사용 환경에 따라 만족도가 달라집니다. 소음, 크기, 설치, 세탁, 보관처럼 생활에서 체감되는 조건을 함께 보세요.</p>
           </article>
-          <article class="guide-card">
-            <h3>야외활동 준비</h3>
-            <p>물놀이, 캠핑, 외출용 상품은 휴대성과 관리가 핵심입니다. 접이식 구조, 무게, 방수 여부, 사용 후 건조가 쉬운지를 확인하면 한두 번 쓰고 방치되는 일을 줄일 수 있습니다.</p>
-          </article>
-          <article class="guide-card">
-            <h3>가격 확인 방식</h3>
-            <p>쿠팡 상품은 가격, 쿠폰, 배송 조건이 자주 바뀝니다. 이 사이트는 확인 가능한 상품명, 이미지, 현재 표시 가격을 중심으로 정리하며, 최종 구매 전에는 쿠팡 상품 페이지에서 실제 결제 금액과 배송 조건을 다시 확인하는 것을 권장합니다.</p>
+          <article>
+            <h3>계절 상품은 미리 준비</h3>
+            <p>장마, 폭염, 휴가철 상품은 필요한 시점에 품절되거나 가격이 오를 수 있습니다. 사용 시기가 정해져 있다면 여유 있게 비교하는 것이 좋습니다.</p>
           </article>
         </div>
       </section>
@@ -666,55 +127,16 @@
 
     <footer class="site-footer" aria-label="사이트 정보">
       <strong>픽앤세일</strong>
+      <p>확인 가능한 상품 정보를 보기 쉽게 정리합니다. 최종 가격, 배송, 반품 조건은 쿠팡 상품 페이지 기준입니다.</p>
       <nav aria-label="정책 및 운영 정보">
         <a href="./about.html">사이트 소개</a>
         <a href="./contact.html">문의</a>
         <a href="./privacy.html">개인정보처리방침</a>
         <a href="./partner-disclosure.html">제휴 및 광고 고지</a>
+        <a href="./terms.html">이용안내</a>
       </nav>
-      <p>쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
     </footer>
 
-    <template id="productTemplate">
-      <article class="product-card">
-        <a class="product-media" href="#" target="_blank" rel="nofollow sponsored noopener">
-          <span class="product-badge"></span>
-          <img class="product-photo" src="" alt="" loading="eager" />
-        </a>
-        <div class="product-content">
-          <div class="product-meta">
-            <span class="product-category"></span>
-            <span class="product-review"></span>
-          </div>
-          <h3></h3>
-          <p class="product-summary"></p>
-          <ul class="benefit-list"></ul>
-          <div class="card-bottom">
-            <div class="price-board card-price-board" aria-label="상품 가격 정보">
-              <div>
-                <span>정가</span>
-                <strong class="card-original-price-value"></strong>
-              </div>
-              <div>
-                <span class="card-discount-label"></span>
-                <strong class="card-discount-value"></strong>
-              </div>
-              <div>
-                <span>가격</span>
-                <strong class="card-sale-price-value sale-price-value"></strong>
-              </div>
-              <div>
-                <span class="card-review-label"></span>
-                <strong class="card-review-value"></strong>
-              </div>
-            </div>
-            <a class="buy-link" href="#" target="_blank" rel="nofollow sponsored noopener">쿠팡에서 보기</a>
-          </div>
-        </div>
-      </article>
-    </template>
-
-  <script src="./load-guard.js?v=overlap-fix-20260613"></script>
-  <script src="./app.js?v=search-ime-20260612"></script>
+    <script src="./app.js?v=mustview-store-20260815"></script>
   </body>
 </html>

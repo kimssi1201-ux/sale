@@ -212,7 +212,7 @@ function renderDetail(product, products) {
 
 async function start() {
   try {
-    const response = await fetch("./products.json?v=support-info-20260815");
+    const response = await fetch("./products.json?v=support-info-20260816");
     const products = await response.json();
     const id = new URLSearchParams(window.location.search).get("id") || "";
     const product = products.find((item) => item.id === id) || products[0];

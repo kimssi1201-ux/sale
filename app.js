@@ -384,7 +384,7 @@ function scheduleSearch() {
 
 async function loadProducts() {
   try {
-    const response = await fetch("./products.json?v=support-info-20260815");
+    const response = await fetch("./products.json?v=support-info-20260816");
     state.products = (await response.json()).map((product) => ({ ...product, source: "fixed" }));
     renderFixedProducts();
   } catch {

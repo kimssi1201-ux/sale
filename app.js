@@ -22,7 +22,9 @@ const els = {
   searchForm: document.querySelector("#searchForm"),
   searchInput: document.querySelector("#search"),
   searchStatus: document.querySelector("#searchStatus"),
-  loadMore: document.querySelector("#loadMore")
+  loadMore: document.querySelector("#loadMore"),
+  fixedCountFact: document.querySelector("#fixedCountFact"),
+  fixedCountNav: document.querySelector("#fixedCountNav")
 };
 
 let searchTimer = 0;
@@ -186,6 +188,10 @@ function renderFixedProducts() {
   state.products.slice(0, 30).forEach((product) => {
     els.fixedGrid.append(createInfoCard({ ...product, source: "fixed" }));
   });
+
+  const countText = `${state.products.length}건`;
+  if (els.fixedCountFact) els.fixedCountFact.textContent = countText;
+  if (els.fixedCountNav) els.fixedCountNav.textContent = countText;
 }
 
 function setSearchStatus(message = "", tone = "") {

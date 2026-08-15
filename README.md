@@ -1,13 +1,13 @@
-# 픽앤세일 쇼핑 큐레이션
+# 픽앤세일 생활상품 자료실
 
-쿠팡 상품 링크를 쇼핑몰처럼 보여주는 정적 사이트입니다. 상품 데이터는 `products.json`에서 불러오며, 쿠팡 파트너스 API는 Cloudflare Pages Functions에서만 호출합니다.
+쿠팡 상품 링크를 자료실형 정보 사이트처럼 정리하는 정적 사이트입니다. 상품 데이터는 `products.json`에서 불러오며, 쿠팡 파트너스 연동은 Cloudflare Pages Functions에서만 처리합니다.
 
 ## 파일
 
 - `index.html`: 화면 구조
-- `styles.css`: 전체 쇼핑몰 디자인
+- `styles.css`: 전체 정보 사이트 디자인
 - `manual.css`: 상품별 추가 스타일
-- `app.js`: 상품 데이터와 카드 렌더링
+- `app.js`: 상품 데이터와 자료 목록 렌더링
 - `products.json`: 상품 데이터
 - `admin.html`: 쿠팡 API 검색/딥링크 테스트 화면
 - `functions/api/coupang.js`: 쿠팡 파트너스 API 프록시
@@ -20,7 +20,7 @@
 - `category`: 카테고리
 - `productUrl`: 사용자가 직접 만든 쿠팡 파트너스 링크
 - `imageUrl`: 상품 이미지 URL 1개
-- `summary`: 모바일에서 빠르게 읽히는 짧은 구매 유도 문구
+- `summary`: 모바일에서 빠르게 읽히는 짧은 요약 문구
 - `benefits`: 장점 3개
 
 가격, 쿠폰, 배송일은 자주 바뀌므로 화면에는 최종 확인 문구를 같이 노출합니다.

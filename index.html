@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>픽앤세일 | 생활 상품 큐레이션</title>
+    <title>픽앤세일 | 생활상품 자료실</title>
     <meta
       name="description"
-      content="계절과 생활 상황에 맞는 쿠팡 추천 상품을 보기 쉽게 정리하고, 원하는 상품은 바로 검색할 수 있는 생활 상품 큐레이션입니다."
+      content="생활상품을 구매하기 전 확인할 상품명, 가격 표시, 용도, 구매 전 확인 기준을 자료형 글로 정리합니다."
     />
     <meta name="naver-site-verification" content="7abb9223b048d8207c59607e303e6403d921d884" />
     <link rel="canonical" href="https://nicetopic.xyz/" />
@@ -15,9 +15,9 @@
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8468106244002167"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./styles.css?v=mustview-store-20260815" />
+    <link rel="stylesheet" href="./styles.css?v=support-info-20260815" />
   </head>
-  <body>
+  <body class="home-page">
     <section class="notice-bar" aria-label="파트너스 고지">
       <span>쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
     </section>
@@ -27,107 +27,134 @@
         <span class="brand-mark">P</span>
         <span class="brand-copy">
           <strong>픽앤세일</strong>
-          <small>생활 상품 큐레이션</small>
+          <small>구매 전 확인하는 생활상품 자료실</small>
         </span>
       </a>
 
       <nav class="main-nav" aria-label="주요 메뉴">
-        <a href="#recommendations">추천상품</a>
-        <a href="#searchArea">상품검색</a>
-        <a href="#guide">구매기준</a>
+        <a href="./">홈</a>
+        <a href="#recommendations">상품자료</a>
+        <a href="#searchArea">검색</a>
+        <a href="#guide">확인기준</a>
         <a href="./about.html">소개</a>
         <a href="./contact.html">문의</a>
       </nav>
     </header>
 
-    <main id="top">
-      <section class="home-only hero-section" aria-labelledby="heroTitle">
-        <div class="hero-copy">
-          <p class="eyebrow">오늘 필요한 생활템만 빠르게</p>
-          <h1 id="heroTitle">쇼핑 전에 한 번 훑어보는 상품 큐레이션</h1>
-          <p>
-            장마, 더위, 외출, 차량 관리처럼 생활에서 바로 필요한 상품을 한 화면에 모았습니다.
-            가격과 조건은 바뀔 수 있으니 최종 결제 전 쿠팡 상품 페이지에서 다시 확인하세요.
-          </p>
-        </div>
+    <main class="site-main" id="top">
+      <div class="site-grid">
+        <article class="content-area">
+          <section class="home-only archive-title" aria-labelledby="heroTitle">
+            <p>생활상품 자료</p>
+            <h1 id="heroTitle">생활상품 구매 전 확인 자료</h1>
+            <p class="archive-intro">
+              상품을 바로 진열하기보다, 상품명과 표시 가격, 용도, 확인해야 할 조건을 먼저 볼 수 있도록 자료실 형태로 정리했습니다.
+              최종 가격과 배송 조건은 쿠팡 상품 페이지에서 다시 확인하세요.
+            </p>
+          </section>
 
-        <aside class="hero-facts" aria-label="사이트 핵심 정보">
-          <dl>
+          <section class="search-panel" id="searchArea" aria-label="자료 검색">
             <div>
-              <dt>고정 추천</dt>
-              <dd>30개</dd>
+              <p class="section-label">자료 검색</p>
+              <h2>찾고 싶은 상품명을 입력하세요</h2>
+              <p>확인 가능한 상품명, 가격, 카테고리 중심으로 결과를 보여드립니다.</p>
             </div>
-            <div>
-              <dt>검색 결과</dt>
-              <dd>15개씩</dd>
+            <form class="search-form" id="searchForm" role="search">
+              <label class="sr-only" for="search">상품명 검색</label>
+              <input id="search" type="search" placeholder="찾고 싶은 상품을 검색해보세요!" autocomplete="off" />
+              <button type="submit">검색</button>
+            </form>
+            <p id="searchStatus" class="search-status" hidden></p>
+          </section>
+
+          <section class="home-only article-panel" aria-labelledby="guideTitle">
+            <div class="article-content">
+              <p class="lead">
+                픽앤세일은 생활상품을 고를 때 먼저 확인할 내용을 짧게 모아 둔 자료실입니다. 가격과 쿠폰은 수시로 달라질 수 있으므로,
+                이곳에서는 확인 가능한 항목만 요약하고 마지막 판단은 판매 페이지의 최신 조건을 기준으로 안내합니다.
+              </p>
+
+              <details class="table-of-contents" open>
+                <summary>목차</summary>
+                <ol class="toc-list">
+                  <li><a href="#recommendations">생활상품 자료 목록</a></li>
+                  <li><a href="#guide">자료 확인 기준</a></li>
+                  <li><a href="#searchArea">상품명 검색</a></li>
+                </ol>
+              </details>
+
+              <aside class="key-facts" aria-label="생활상품 자료 핵심 정보">
+                <strong>핵심 정보</strong>
+                <dl>
+                  <dt>등록 자료</dt>
+                  <dd>30건</dd>
+                  <dt>검색 표시</dt>
+                  <dd>15건씩</dd>
+                  <dt>정보 기준</dt>
+                  <dd>확인 가능한 상품명, 가격, 이미지, 링크</dd>
+                  <dt>최종 확인</dt>
+                  <dd>구매 전 쿠팡 상품 페이지</dd>
+                </dl>
+              </aside>
+
+              <h2 id="recommendations">생활상품 자료 목록</h2>
+              <p>아래 목록은 고정 자료입니다. 각 글에서 상품 요약, 가격 표시, 구매 전 확인 포인트를 먼저 보고 이동할 수 있습니다.</p>
             </div>
-            <div>
-              <dt>정보 기준</dt>
-              <dd>확인 정보</dd>
+
+            <div id="fixedPicksGrid" class="post-list" aria-live="polite"></div>
+          </section>
+
+          <section class="search-results" id="results" aria-labelledby="resultTitle" hidden>
+            <div class="archive-title compact">
+              <p id="resultKicker">검색 결과</p>
+              <h2 id="resultTitle">검색 결과</h2>
+              <p class="archive-intro" id="resultSummary">확인 가능한 상품명, 가격, 카테고리를 기준으로 보여드립니다.</p>
             </div>
-          </dl>
+            <div id="productGrid" class="post-list" aria-live="polite"></div>
+            <div class="catalog-actions">
+              <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
+            </div>
+          </section>
+
+          <section class="home-only article-panel" id="guide" aria-labelledby="guideTitle">
+            <div class="article-content">
+              <h2 id="guideTitle">자료 확인 기준</h2>
+              <h3>가격과 쿠폰</h3>
+              <p>목록에 표시된 가격은 참고용입니다. 옵션, 쿠폰, 배송비, 재고 상황에 따라 실제 결제 금액은 달라질 수 있습니다.</p>
+
+              <h3>상품 정보</h3>
+              <p>상품명, 이미지, 카테고리, 상품평 수처럼 확인 가능한 정보만 우선 반영합니다. 확인되지 않은 내용은 단정해서 표시하지 않습니다.</p>
+
+              <h3>구매 전 확인</h3>
+              <p>상세 옵션, 배송 예정일, 무료배송, 반품 조건은 판매 페이지에서 마지막으로 확인하는 것이 좋습니다.</p>
+            </div>
+          </section>
+        </article>
+
+        <aside class="widget-area" aria-label="사이트 안내">
+          <section class="widget notice-widget">
+            <h2 class="widget-title">확인 안내</h2>
+            <p>가격, 쿠폰, 배송 조건은 판매 페이지 상황에 따라 달라질 수 있습니다. 구매 전 최신 조건을 다시 확인하세요.</p>
+          </section>
+          <section class="widget">
+            <h2 class="widget-title">자료 구성</h2>
+            <ul>
+              <li><a href="#recommendations">상품자료 <span>30건</span></a></li>
+              <li><a href="#searchArea">상품명 검색 <span>15건씩</span></a></li>
+              <li><a href="#guide">확인기준 <span>안내</span></a></li>
+            </ul>
+          </section>
+          <section class="widget">
+            <h2 class="widget-title">운영 고지</h2>
+            <p>이 사이트의 일부 링크는 쿠팡 파트너스 링크이며, 링크를 통한 구매 시 운영자가 일정액의 수수료를 제공받을 수 있습니다.</p>
+          </section>
         </aside>
-      </section>
-
-      <section class="search-panel" id="searchArea" aria-label="상품 검색">
-        <div>
-          <p class="eyebrow">상품검색</p>
-          <h2>찾고 싶은 상품을 검색해보세요!</h2>
-        </div>
-        <form class="search-form" id="searchForm" role="search">
-          <label class="sr-only" for="search">상품명 검색</label>
-          <input id="search" type="search" placeholder="예: 제습기, 선풍기, 텀블러" autocomplete="off" />
-          <button type="submit">검색</button>
-        </form>
-        <p id="searchStatus" class="search-status" hidden></p>
-      </section>
-
-      <section class="home-only recommendation-section" id="recommendations" aria-labelledby="recommendationTitle">
-        <div class="section-title">
-          <p class="eyebrow">추천상품</p>
-          <h2 id="recommendationTitle">지금 챙기면 좋은 생활 상품</h2>
-          <p>비 오기 전, 더워지기 전, 나가기 전. 미리 준비하면 편한 상품만 골랐습니다.</p>
-        </div>
-        <div id="fixedPicksGrid" class="recommendation-grid" aria-live="polite"></div>
-      </section>
-
-      <section class="search-results" id="results" aria-labelledby="resultTitle" hidden>
-        <div class="section-title">
-          <p class="eyebrow" id="resultKicker">검색 결과</p>
-          <h2 id="resultTitle">검색 결과</h2>
-          <p id="resultSummary">확인 가능한 상품명, 가격, 카테고리를 기준으로 보여드립니다.</p>
-        </div>
-        <div id="productGrid" class="result-list" aria-live="polite"></div>
-        <div class="catalog-actions">
-          <button class="load-more" id="loadMore" type="button" hidden>더보기</button>
-        </div>
-      </section>
-
-      <section class="home-only guide-section" id="guide" aria-labelledby="guideTitle">
-        <div class="section-title">
-          <p class="eyebrow">구매 전 기준</p>
-          <h2 id="guideTitle">상품을 고를 때 먼저 볼 것</h2>
-        </div>
-        <div class="guide-grid">
-          <article>
-            <h3>가격은 마지막에 다시 확인</h3>
-            <p>쿠폰, 배송비, 옵션 가격은 수시로 달라질 수 있습니다. 카드에 보이는 가격은 참고용이며 결제 전 쿠팡 화면의 실제 금액을 확인하는 편이 안전합니다.</p>
-          </article>
-          <article>
-            <h3>상품평은 숫자보다 내용</h3>
-            <p>상품평 수가 많아도 사용 환경에 따라 만족도가 달라집니다. 소음, 크기, 설치, 세탁, 보관처럼 생활에서 체감되는 조건을 함께 보세요.</p>
-          </article>
-          <article>
-            <h3>계절 상품은 미리 준비</h3>
-            <p>장마, 폭염, 휴가철 상품은 필요한 시점에 품절되거나 가격이 오를 수 있습니다. 사용 시기가 정해져 있다면 여유 있게 비교하는 것이 좋습니다.</p>
-          </article>
-        </div>
-      </section>
+      </div>
     </main>
 
     <footer class="site-footer" aria-label="사이트 정보">
       <strong>픽앤세일</strong>
-      <p>확인 가능한 상품 정보를 보기 쉽게 정리합니다. 최종 가격, 배송, 반품 조건은 쿠팡 상품 페이지 기준입니다.</p>
+      <p>생활상품 정보를 자료형 글로 정리합니다. 최종 가격, 배송, 반품 조건은 쿠팡 상품 페이지 기준입니다.</p>
       <nav aria-label="정책 및 운영 정보">
         <a href="./about.html">사이트 소개</a>
         <a href="./contact.html">문의</a>
@@ -137,6 +164,6 @@
       </nav>
     </footer>
 
-    <script src="./app.js?v=mustview-store-20260815"></script>
+    <script src="./app.js?v=support-info-20260815"></script>
   </body>
 </html>

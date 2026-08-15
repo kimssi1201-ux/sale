@@ -65,13 +65,31 @@ function createElement(tag, className, content) {
   return element;
 }
 
-function makeImage(product, className) {
-  const wrap = createElement("span", className);
+function createChip(label) {
+  return createElement("span", "category-chip", label);
+}
+
+function createImage(product) {
+  const wrap = createElement("a", "post-card-thumbnail image-thumbnail");
+  wrap.href = text(product.id) ? detailUrl(product) : productUrl(product);
+  if (!text(product.id)) {
+    wrap.target = "_blank";
+    wrap.rel = "nofollow sponsored noopener";
+  }
+
   const image = document.createElement("img");
   image.src = productImage(product);
   image.alt = productName(product);
   image.loading = "lazy";
   image.decoding = "async";
+  image.referrerPolicy = "no-referrer";
+  image.addEventListener("error", () => {
+    image.remove();
+    if (!wrap.querySelector("span")) {
+      wrap.append(createElement("span", "", "이미지 확인"));
+      wrap.append(createElement("strong", "", "상품 자료"));
+    }
+  });
   wrap.append(image);
   return wrap;
 }
@@ -82,7 +100,7 @@ function getBenefits(product) {
 
   return [
     productPrice(product) !== "쿠팡 확인" ? `현재 표시 가격 ${productPrice(product)}` : "",
-    product.category ? `${product.category} 상품` : "",
+    product.category ? `${product.category} 자료` : "",
     "세부 조건은 쿠팡 상품 페이지에서 확인"
   ].filter(Boolean).slice(0, 3);
 }
@@ -91,107 +109,74 @@ function verifiedSummary(product) {
   if (product.summary) return product.summary;
 
   const parts = [];
-  if (product.category) parts.push(`카테고리: ${product.category}`);
-  if (productPrice(product) !== "쿠팡 확인") parts.push(`현재 표시 가격: ${productPrice(product)}`);
+  if (product.category) parts.push(`분류: ${product.category}`);
+  if (productPrice(product) !== "쿠팡 확인") parts.push(`가격 표시: ${productPrice(product)}`);
   if (productReviews(product)) parts.push(`상품평: ${productReviews(product)}`);
 
   return parts.length
-    ? `${parts.join(" · ")} 기준으로 확인된 상품입니다. 쿠폰, 배송, 옵션은 쿠팡 상품 페이지에서 다시 확인하세요.`
-    : "확인 가능한 상품명과 링크 기준으로 보여드립니다. 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.";
+    ? `${parts.join(" · ")} 기준으로 확인된 자료입니다. 쿠폰, 배송, 옵션은 쿠팡 상품 페이지에서 다시 확인하세요.`
+    : "확인 가능한 상품명과 링크 기준으로 정리한 자료입니다. 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 확인하세요.";
 }
 
-function createChip(label, muted = false) {
-  return createElement("span", muted ? "chip muted" : "chip", label);
-}
-
-function appendPriceBoard(parent, product) {
-  const board = createElement("div", "price-board");
-  const items = [
-    ["정가", text(product.originalPrice, "확인 필요"), ""],
-    ["할인율", text(product.discount, "확인 필요"), ""],
-    ["할인가", productPrice(product), "sale-price"],
-    ["상품평", productReviews(product) || "확인 필요", ""]
-  ];
-
-  items.forEach(([label, value, strongClass]) => {
-    const item = document.createElement("div");
+function createMeta(product) {
+  const meta = createElement("ul", "post-meta-list");
+  [
+    ["가격 표시", productPrice(product), "price"],
+    ["상품평", productReviews(product) || "확인 필요", ""],
+    ["분류", text(product.category, "생활상품"), ""]
+  ].forEach(([label, value, className]) => {
+    const item = document.createElement("li");
     item.append(createElement("span", "", label));
-    item.append(createElement("strong", strongClass, value));
-    board.append(item);
+    item.append(createElement("strong", className, value));
+    meta.append(item);
   });
-
-  parent.append(board);
+  return meta;
 }
 
-function createPickCard(product) {
-  const card = document.createElement("a");
-  card.className = "pick-card";
-  card.href = text(product.id) ? detailUrl(product) : productUrl(product);
-  card.setAttribute("aria-label", `${productName(product)} 상세 보기`);
-
-  card.append(makeImage(product, "pick-image"));
-
-  const copy = createElement("div", "pick-copy");
-  const badgeRow = createElement("div", "badge-row");
-  badgeRow.append(createChip(product.badge || product.category || "추천"));
-  copy.append(badgeRow);
-  copy.append(createElement("h3", "", productName(product)));
-  copy.append(createElement("span", "pick-price", productPrice(product)));
-  card.append(copy);
-  card.append(createElement("span", "pick-action", "상세 보기"));
-
-  return card;
-}
-
-function createBenefitList(product) {
-  const list = createElement("ul", "benefit-list");
-  getBenefits(product).forEach((benefit) => {
-    list.append(createElement("li", "", benefit));
-  });
-  return list;
-}
-
-function createResultCard(product) {
+function createInfoCard(product) {
   const localDetail = product.source === "fixed" && text(product.id);
-  const card = createElement("article", "result-card");
-  const imageLink = document.createElement("a");
-  imageLink.href = localDetail ? detailUrl(product) : productUrl(product);
-  imageLink.className = "result-image";
+  const card = createElement("article", "post-card");
+  const content = createElement("div", "post-card-content");
+  const meta = createElement("p", "entry-meta");
+  meta.append(createChip(product.badge || product.category || "상품자료"));
+  if (product.category) {
+    meta.append(createElement("span", "", product.category));
+  }
+  content.append(meta);
+
+  const row = createElement("div", "post-card-body");
+  row.append(createImage(product));
+
+  const copy = createElement("div", "post-card-copy");
+  const title = createElement("h2", "entry-title");
+  const titleLink = createElement("a", "", productName(product));
+  titleLink.href = localDetail ? detailUrl(product) : productUrl(product);
   if (!localDetail) {
-    imageLink.target = "_blank";
-    imageLink.rel = "nofollow sponsored noopener";
+    titleLink.target = "_blank";
+    titleLink.rel = "nofollow sponsored noopener";
   }
-  imageLink.append(makeImage(product, "result-image-inner").firstElementChild);
+  title.append(titleLink);
+  copy.append(title);
+  copy.append(createElement("p", "entry-summary", verifiedSummary(product)));
+  copy.append(createMeta(product));
 
-  const copy = createElement("div", "result-copy");
-  const badgeRow = createElement("div", "badge-row");
-  badgeRow.append(createChip(product.badge || product.category || "검색상품"));
-  if (product.category) badgeRow.append(createChip(product.category, true));
-  copy.append(badgeRow);
-  copy.append(createElement("h3", "", productName(product)));
-  copy.append(createElement("p", "result-summary", verifiedSummary(product)));
-  copy.append(createBenefitList(product));
-  appendPriceBoard(copy, product);
-
-  const actions = createElement("div", "card-actions");
-  const primary = document.createElement("a");
-  primary.className = "product-action";
-  primary.href = productUrl(product);
-  primary.target = "_blank";
-  primary.rel = "nofollow sponsored noopener";
-  primary.textContent = "쿠팡에서 보기";
-  actions.append(primary);
-
+  const actions = createElement("div", "post-actions");
   if (localDetail) {
-    const secondary = document.createElement("a");
-    secondary.className = "product-action secondary";
-    secondary.href = detailUrl(product);
-    secondary.textContent = "상세 설명";
-    actions.append(secondary);
+    const detail = createElement("a", "read-more", "자료 보기");
+    detail.href = detailUrl(product);
+    actions.append(detail);
   }
+
+  const coupang = createElement("a", localDetail ? "read-more secondary" : "read-more", localDetail ? "상품 페이지 확인" : "쿠팡에서 확인");
+  coupang.href = productUrl(product);
+  coupang.target = "_blank";
+  coupang.rel = "nofollow sponsored noopener";
+  actions.append(coupang);
 
   copy.append(actions);
-  card.append(imageLink, copy);
+  row.append(copy);
+  content.append(row);
+  card.append(content);
   return card;
 }
 
@@ -199,7 +184,7 @@ function renderFixedProducts() {
   if (!els.fixedGrid) return;
   els.fixedGrid.innerHTML = "";
   state.products.slice(0, 30).forEach((product) => {
-    els.fixedGrid.append(createPickCard({ ...product, source: "fixed" }));
+    els.fixedGrid.append(createInfoCard({ ...product, source: "fixed" }));
   });
 }
 
@@ -236,18 +221,18 @@ function renderResults() {
   els.resultKicker.textContent = state.loading ? "검색 중" : "검색 결과";
   els.resultTitle.textContent = state.query.length < 2
     ? "검색어를 2글자 이상 입력해주세요"
-    : `"${state.query}" 검색 결과`;
+    : `"${state.query}" 자료 검색 결과`;
   els.resultSummary.textContent = total
-    ? `확인 가능한 상품 ${total}개를 찾았습니다. 한 번에 ${PAGE_SIZE}개씩 보여드립니다.`
+    ? `확인 가능한 자료 ${total}건을 찾았습니다. 한 번에 ${PAGE_SIZE}건씩 보여드립니다.`
     : "확인 가능한 상품명, 가격, 카테고리를 기준으로 보여드립니다.";
 
   if (state.query.length < 2) {
-    renderEmpty("검색어를 2글자 이상 입력하세요.", "조금 더 구체적으로 입력하면 결과를 보여드립니다.");
+    renderEmpty("검색어를 2글자 이상 입력하세요.", "상품명이나 브랜드명을 조금 더 구체적으로 입력해주세요.");
     return;
   }
 
   if (state.loading) {
-    renderEmpty("상품을 찾는 중입니다.", "잠시만 기다려주세요.");
+    renderEmpty("자료를 찾는 중입니다.", "잠시만 기다려주세요.");
     return;
   }
 
@@ -257,12 +242,12 @@ function renderResults() {
   }
 
   els.resultGrid.innerHTML = "";
-  visible.forEach((product) => els.resultGrid.append(createResultCard(product)));
+  visible.forEach((product) => els.resultGrid.append(createInfoCard(product)));
 
   if (els.loadMore) {
     const remaining = total - state.visibleCount;
     els.loadMore.hidden = remaining <= 0;
-    els.loadMore.textContent = `더보기 (${Math.min(PAGE_SIZE, remaining)}개)`;
+    els.loadMore.textContent = `더보기 (${Math.min(PAGE_SIZE, remaining)}건)`;
   }
 }
 
@@ -275,7 +260,7 @@ function parseRemoteProducts(payload, query) {
     imageUrl: product.imageUrl || product.image || product.productImage,
     productUrl: product.productUrl || product.link,
     category: product.category || "검색상품",
-    badge: product.badge || product.category || "검색상품",
+    badge: product.badge || product.category || "검색자료",
     price: product.price || product.finalPrice || product.salePrice,
     reviews: product.reviews || product.review || product.reviewCount || "",
     originalPrice: product.originalPrice || "",
@@ -314,14 +299,14 @@ async function searchProducts(query) {
   if (cached && Date.now() - cached.time < SEARCH_CACHE_MS) {
     state.results = cached.products;
     state.loading = false;
-    setSearchStatus(`검색 결과 ${cached.products.length}개`, cached.products.length ? "success" : "");
+    setSearchStatus(`검색 결과 ${cached.products.length}건`, cached.products.length ? "success" : "");
     renderResults();
     return;
   }
 
   state.loading = true;
   state.results = [];
-  setSearchStatus("상품을 찾고 있습니다.", "");
+  setSearchStatus("자료를 찾고 있습니다.", "");
   renderResults();
 
   const elapsed = Date.now() - lastSearchAt;
@@ -349,13 +334,13 @@ async function searchProducts(query) {
     const products = parseRemoteProducts(payload, query);
     state.results = products;
     state.cache.set(cacheKey, { time: Date.now(), products });
-    setSearchStatus(products.length ? `검색 결과 ${products.length}개` : "검색 결과가 없습니다.", products.length ? "success" : "");
+    setSearchStatus(products.length ? `검색 결과 ${products.length}건` : "검색 결과가 없습니다.", products.length ? "success" : "");
   } catch (error) {
     if (error.name === "AbortError") return;
     const fallback = localSearch(query);
     state.results = fallback;
     setSearchStatus(
-      fallback.length ? "연결이 잠시 느려 고정 추천상품에서 먼저 찾았습니다." : "검색 결과를 불러오지 못했습니다.",
+      fallback.length ? "연결이 잠시 느려 등록 자료에서 먼저 찾았습니다." : "검색 결과를 불러오지 못했습니다.",
       fallback.length ? "success" : "error"
     );
   } finally {
@@ -393,13 +378,13 @@ function scheduleSearch() {
 
 async function loadProducts() {
   try {
-    const response = await fetch("./products.json?v=mustview-store-20260815");
+    const response = await fetch("./products.json?v=support-info-20260815");
     state.products = (await response.json()).map((product) => ({ ...product, source: "fixed" }));
     renderFixedProducts();
   } catch {
     if (els.fixedGrid) {
       els.fixedGrid.innerHTML = "";
-      els.fixedGrid.append(createElement("div", "empty-state", "추천 상품을 불러오지 못했습니다."));
+      els.fixedGrid.append(createElement("div", "empty-state", "자료를 불러오지 못했습니다."));
     }
   }
 }

@@ -1,4 +1,5 @@
 const detailRoot = document.querySelector("#productDetail");
+const TODAY_LABEL = "2026. 8. 15.";
 
 function text(value, fallback = "") {
   return String(value || fallback).trim();
@@ -17,7 +18,7 @@ function productUrl(product) {
 }
 
 function productPrice(product) {
-  return text(product.price || product.finalPrice || product.salePrice, "쿠팡 확인");
+  return text(product.price || product.finalPrice || product.salePrice);
 }
 
 function productReviews(product) {
@@ -31,8 +32,10 @@ function createElement(tag, className, content) {
   return element;
 }
 
-function createChip(label, muted = false) {
-  return createElement("span", muted ? "chip muted" : "chip", label);
+function createLink(className, label, href) {
+  const link = createElement("a", className, label);
+  link.href = href;
+  return link;
 }
 
 function getBenefits(product) {
@@ -40,132 +43,176 @@ function getBenefits(product) {
   if (benefits.length) return benefits.slice(0, 3);
 
   return [
-    productPrice(product) !== "쿠팡 확인" ? `현재 표시 가격 ${productPrice(product)}` : "",
-    product.category ? `${product.category} 상품` : "",
+    productPrice(product) ? `표시 가격 ${productPrice(product)}` : "",
+    product.category ? `${product.category} 분류 상품` : "",
     "세부 조건은 쿠팡 상품 페이지에서 확인"
   ].filter(Boolean).slice(0, 3);
 }
 
-function appendPriceBoard(parent, product) {
-  const board = createElement("div", "price-board");
-  [
-    ["정가", text(product.originalPrice, "확인 필요"), ""],
-    ["할인율", text(product.discount, "확인 필요"), ""],
-    ["할인가", productPrice(product), "sale-price"],
-    ["상품평", productReviews(product) || "확인 필요", ""]
-  ].forEach(([label, value, strongClass]) => {
-    const item = document.createElement("div");
-    item.append(createElement("span", "", label));
-    item.append(createElement("strong", strongClass, value));
-    board.append(item);
+function buildFactRows(product) {
+  const rows = [
+    ["분류", text(product.category, "생활상품")],
+    ["상품명", productName(product)]
+  ];
+
+  if (text(product.originalPrice)) rows.push(["정가", text(product.originalPrice)]);
+  if (text(product.discount)) rows.push(["할인율", text(product.discount)]);
+  if (productPrice(product)) rows.push(["표시 가격", productPrice(product)]);
+  if (productReviews(product)) rows.push(["상품평", productReviews(product)]);
+  rows.push(["최종 확인", "쿠팡 상품 페이지"]);
+  return rows;
+}
+
+function appendKeyFacts(parent, product) {
+  const facts = createElement("aside", "key-facts");
+  facts.setAttribute("aria-label", `${productName(product)} 핵심 정보`);
+  facts.append(createElement("strong", "", "핵심 정보"));
+
+  const list = createElement("dl", "");
+  buildFactRows(product).forEach(([label, value]) => {
+    list.append(createElement("dt", "", label));
+    list.append(createElement("dd", "", value));
   });
-  parent.append(board);
+  facts.append(list);
+  parent.append(facts);
 }
 
-function createBenefitList(product) {
-  const list = createElement("ul", "benefit-list");
-  getBenefits(product).forEach((benefit) => list.append(createElement("li", "", benefit)));
-  return list;
+function appendTableOfContents(parent) {
+  const details = createElement("details", "table-of-contents");
+  details.open = true;
+  details.append(createElement("summary", "", "목차"));
+
+  const list = createElement("ol", "toc-list");
+  [
+    ["상품 정보", "#product-info"],
+    ["구매 전 확인 포인트", "#check-points"],
+    ["가격 및 링크 확인", "#price-link"],
+    ["자료 기준", "#source-check"]
+  ].forEach(([label, href]) => {
+    const item = document.createElement("li");
+    item.append(createLink("", label, href));
+    list.append(item);
+  });
+  details.append(list);
+  parent.append(details);
 }
 
-function createRelatedCard(product) {
-  const card = document.createElement("a");
-  card.className = "pick-card";
-  card.href = `./product.html?id=${encodeURIComponent(text(product.id))}`;
-
-  const imageWrap = createElement("span", "pick-image");
+function appendVisual(parent, product) {
+  const figure = createElement("figure", "article-visual");
   const image = document.createElement("img");
   image.src = productImage(product);
   image.alt = productName(product);
   image.loading = "lazy";
   image.decoding = "async";
-  imageWrap.append(image);
-
-  const copy = createElement("div", "pick-copy");
-  const badgeRow = createElement("div", "badge-row");
-  badgeRow.append(createChip(product.badge || product.category || "추천"));
-  copy.append(badgeRow);
-  copy.append(createElement("h3", "", productName(product)));
-  copy.append(createElement("span", "pick-price", productPrice(product)));
-
-  card.append(imageWrap, copy, createElement("span", "pick-action", "상세 보기"));
-  return card;
+  image.referrerPolicy = "no-referrer";
+  image.addEventListener("error", () => {
+    figure.classList.add("image-missing");
+    image.remove();
+    figure.append(createElement("strong", "", "상품 이미지 확인"));
+    figure.append(createElement("span", "", "이미지는 쿠팡 상품 페이지에서 다시 확인하세요."));
+  });
+  figure.append(image);
+  parent.append(figure);
 }
 
-function renderMissing() {
-  detailRoot.innerHTML = "";
-  const empty = createElement("article", "policy-article");
-  empty.append(createElement("h1", "", "상품을 찾을 수 없습니다"));
-  empty.append(createElement("p", "", "주소가 잘못되었거나 추천상품 목록에서 제외된 상품입니다. 메인 화면에서 다시 확인해주세요."));
-  const link = createElement("a", "detail-buy-link", "추천상품 보기");
-  link.href = "./";
-  empty.append(link);
-  detailRoot.append(empty);
+function appendCheckList(parent, product) {
+  const list = createElement("ul", "check-list");
+  getBenefits(product).forEach((benefit) => list.append(createElement("li", "", benefit)));
+  parent.append(list);
 }
 
-function renderDetail(product, products) {
-  detailRoot.innerHTML = "";
-  document.title = `${productName(product)} | 픽앤세일`;
-
-  const detail = createElement("article", "detail-layout");
-  const media = createElement("div", "detail-media");
-  const image = document.createElement("img");
-  image.src = productImage(product);
-  image.alt = productName(product);
-  image.loading = "eager";
-  media.append(image);
-
-  const content = createElement("div", "detail-content");
-  const badges = createElement("div", "badge-row");
-  badges.append(createChip(product.badge || product.category || "추천"));
-  if (product.category) badges.append(createChip(product.category, true));
-  content.append(badges);
-  content.append(createElement("h1", "", productName(product)));
-  content.append(createElement("p", "detail-summary", product.summary || "확인 가능한 상품 정보 기준으로 정리했습니다. 가격, 쿠폰, 배송 조건은 쿠팡 상품 페이지에서 다시 확인하세요."));
-  appendPriceBoard(content, product);
-  content.append(createBenefitList(product));
-
-  const buy = createElement("a", "detail-buy-link", "쿠팡에서 확인");
-  buy.href = productUrl(product);
-  buy.target = "_blank";
-  buy.rel = "nofollow sponsored noopener";
-  content.append(buy);
-
-  detail.append(media, content);
-  detailRoot.append(detail);
-
-  const summarySection = createElement("section", "article-section");
-  summarySection.append(createElement("h2", "", "상품 요약"));
-  summarySection.append(createElement("p", "", product.summary || `${productName(product)} 상품입니다. 확인 가능한 가격과 상품명 기준으로 정리했습니다.`));
-  detailRoot.append(summarySection);
-
-  const pointSection = createElement("section", "article-section");
-  pointSection.append(createElement("h2", "", "구매 포인트"));
-  pointSection.append(createBenefitList(product));
-  detailRoot.append(pointSection);
-
-  const priceSection = createElement("section", "article-section");
-  priceSection.append(createElement("h2", "", "가격 확인"));
-  priceSection.append(createElement("p", "", "상품 가격, 쿠폰, 배송 예정일, 무료배송 여부는 판매 페이지 상황에 따라 달라질 수 있습니다. 구매 전에는 쿠팡 상품 페이지에서 실제 결제 금액과 배송 조건을 다시 확인하세요."));
-  detailRoot.append(priceSection);
-
+function appendRelated(parent, product, products) {
   const related = products
     .filter((item) => item.id !== product.id && item.category === product.category)
     .slice(0, 4);
 
-  if (related.length) {
-    const relatedSection = createElement("section", "article-section");
-    relatedSection.append(createElement("h2", "", "같이 볼 상품"));
-    const grid = createElement("div", "related-grid");
-    related.forEach((item) => grid.append(createRelatedCard(item)));
-    relatedSection.append(grid);
-    detailRoot.append(relatedSection);
-  }
+  if (!related.length) return;
+
+  const footer = createElement("nav", "post-navigation");
+  footer.setAttribute("aria-label", "관련 자료");
+  footer.append(createLink("", "상품자료 목록", "./#recommendations"));
+  footer.append(createLink("", related[0] ? `${productName(related[0])} 보기` : "다음 자료", `./product.html?id=${encodeURIComponent(text(related[0].id))}`));
+  parent.append(footer);
+}
+
+function renderMissing() {
+  detailRoot.innerHTML = "";
+  detailRoot.append(createElement("h1", "", "상품 자료를 찾을 수 없습니다"));
+  detailRoot.append(createElement("p", "entry-description", "주소가 잘못되었거나 등록 자료에서 제외된 상품입니다. 메인 화면에서 다시 확인해주세요."));
+  detailRoot.append(createLink("read-more", "자료 목록 보기", "./"));
+}
+
+function renderDetail(product, products) {
+  detailRoot.innerHTML = "";
+  document.title = `${productName(product)} | 픽앤세일 생활상품 자료`;
+
+  const breadcrumbs = createElement("nav", "breadcrumbs");
+  breadcrumbs.setAttribute("aria-label", "현재 위치");
+  breadcrumbs.append(createLink("", "홈", "./"));
+  breadcrumbs.append(createElement("span", "", "/"));
+  breadcrumbs.append(createLink("", "상품자료", "./#recommendations"));
+  breadcrumbs.append(createElement("span", "", "/"));
+  breadcrumbs.append(createElement("span", "", productName(product)));
+  detailRoot.append(breadcrumbs);
+
+  const header = createElement("header", "entry-header");
+  const meta = createElement("p", "entry-meta");
+  meta.append(createLink("category-chip", text(product.category, "상품자료"), "./#recommendations"));
+  meta.append(createElement("span", "", TODAY_LABEL));
+  meta.append(createElement("span", "", "·"));
+  meta.append(createElement("span", "", `최종 확인 ${TODAY_LABEL}`));
+  header.append(meta);
+  header.append(createElement("h1", "", productName(product)));
+  header.append(createElement("p", "entry-description", product.summary || "확인 가능한 상품명, 가격 표시, 링크 기준으로 정리한 생활상품 자료입니다."));
+  detailRoot.append(header);
+
+  const content = createElement("section", "article-content");
+  content.setAttribute("data-post-content", "");
+  content.append(createElement("p", "lead", "구매 전에 먼저 볼 수 있도록 상품명, 표시 가격, 주요 확인 포인트를 한 번에 정리했습니다. 가격, 쿠폰, 배송 조건은 판매 페이지 상황에 따라 달라질 수 있습니다."));
+  appendTableOfContents(content);
+  appendKeyFacts(content, product);
+
+  content.append(createElement("h2", "", "상품 정보"));
+  content.lastElementChild.id = "product-info";
+  appendVisual(content, product);
+  content.append(createElement("p", "", product.summary || `${productName(product)} 상품입니다. 확인 가능한 정보 기준으로 정리했습니다.`));
+
+  content.append(createElement("h2", "", "구매 전 확인 포인트"));
+  content.lastElementChild.id = "check-points";
+  appendCheckList(content, product);
+
+  content.append(createElement("h2", "", "가격 및 링크 확인"));
+  content.lastElementChild.id = "price-link";
+  content.append(createElement("p", "", "표시 가격은 참고용입니다. 쿠폰 적용, 옵션 선택, 배송비, 재고에 따라 실제 결제 금액이 달라질 수 있으니 구매 전 판매 페이지에서 최신 조건을 확인하세요."));
+  const action = createLink("detail-action", "쿠팡 상품 페이지 확인", productUrl(product));
+  action.target = "_blank";
+  action.rel = "nofollow sponsored noopener";
+  content.append(action);
+
+  content.append(createElement("h2", "", "자료 기준"));
+  content.lastElementChild.id = "source-check";
+  content.append(createElement("p", "", "이 자료는 등록된 상품명, 이미지, 표시 가격, 카테고리, 상품 링크처럼 확인 가능한 항목을 기준으로 작성했습니다. 확인되지 않은 상품평, 쿠폰, 배송 조건은 단정해서 표시하지 않습니다."));
+  detailRoot.append(content);
+
+  const sources = createElement("footer", "official-sources");
+  sources.append(createElement("h2", "", "확인 출처"));
+  sources.append(createElement("p", "", `최종 확인일 ${TODAY_LABEL}`));
+  const sourceList = createElement("ul", "");
+  const sourceItem = createElement("li", "");
+  const sourceLink = createLink("", "쿠팡 상품 페이지", productUrl(product));
+  sourceLink.target = "_blank";
+  sourceLink.rel = "nofollow sponsored noopener";
+  sourceItem.append(sourceLink);
+  sourceList.append(sourceItem);
+  sources.append(sourceList);
+  detailRoot.append(sources);
+
+  appendRelated(detailRoot, product, products);
 }
 
 async function start() {
   try {
-    const response = await fetch("./products.json?v=mustview-store-20260815");
+    const response = await fetch("./products.json?v=support-info-20260815");
     const products = await response.json();
     const id = new URLSearchParams(window.location.search).get("id") || "";
     const product = products.find((item) => item.id === id) || products[0];
